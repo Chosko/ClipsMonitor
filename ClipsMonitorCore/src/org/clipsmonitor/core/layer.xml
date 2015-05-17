@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Windows2">
+        <folder name="Modes">
+            <file name="agenda.wsmode" url="agendaWsmode.xml"/>
+            <file name="controls.wsmode" url="controlsWsmode.xml"/>
+            <file name="debugger.wsmode" url="debuggerWsmode.xml"/>
+            <file name="facts.wsmode" url="factsWsmode.xml"/>
+            <file name="output.wsmode" url="outputWsmode.xml"/>
+            <file name="map.wsmode" url="mapWsmode.xml"/>
+        </folder>
+    </folder>
+    <file name="Toolbars_hidden"/>
+</filesystem>

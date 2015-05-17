@@ -1,0 +1,13 @@
+(event (step 2) (type request) (source T1) (food 2) (drink 2))
+(event (step 5) (type request) (source T2) (food 3) (drink 2))
+(event (step 10) (type request) (source T3) (food 3) (drink 4))
+(event (step 40) (type request) (source T4) (food 4) (drink 2))
+(event (step 60) (type finish) (source T1))
+(event (step 80) (type finish) (source T2))
+(event (step 90) (type request) (source T1) (food 3) (drink 4))
+(event (step 100) (type request) (source T2) (food 4) (drink 4))
+(event (step 230) (type finish) (source T2))
+(event (step 235) (type request) (source T2) (food 4) (drink 4))
+(event (step 250) (type finish) (source T2))
+(event (step 300) (type finish) (source T4))
+

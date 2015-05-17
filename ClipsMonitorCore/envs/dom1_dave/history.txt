@@ -1,0 +1,99 @@
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C1)
+        (pos-r 9)
+        (pos-c 3)
+        (activity seated))
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C2)
+        (pos-r 9)
+        (pos-c 2)
+        (activity seated))
+
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C3)
+        (pos-r 7)
+        (pos-c 9)
+        (activity seated))
+        
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C4)
+        (pos-r 4)
+        (pos-c 6)
+        (activity seated))
+
+(event (step 1) (type request) (source T4) (food 1) (drink 1))
+(event (step 5) (type request) (source T3) (food 2) (drink 2))
+(event (step 9) (type finish) (source T4))
+(event (step 33) (type finish) (source T3))
+(event (step 60) (type request) (source T3) (food 2) (drink 2))
+(event (step 100) (type finish) (source T3))
+(event (step 105) (type request) (source T3) (food 4) (drink 4))
+(event (step 110) (type request) (source T2) (food 3) (drink 2))
+(event (step 115) (type finish) (source T2))
+(event (step 116) (type request) (source T5) (food 2) (drink 0))
+(event (step 180) (type finish) (source T5))
+
+
+
+
+(personmove (step 25) (ident C4) (path-id P7))
+(personmove (step 50) (ident C3) (path-id P3))
+(personmove (step 58) (ident C3) (path-id P4))
+(personmove (step 81) (ident C3) (path-id P8))
+(personmove (step 140) (ident C1) (path-id P1))
+(personmove (step 150) (ident C1) (path-id P5))
+(personmove (step 200) (ident C1) (path-id P6))
+(personmove (step 205) (ident C2) (path-id P2))
+
+
+(move-path P3 1 C3 7 8)
+(move-path P3 2 C3 8 8)
+
+(move-path P3 3 C3 9 8)
+
+(move-path P1 1 C1 9 4)
+(move-path P1 2 C1 9 5)
+(move-path P1 3 C1 9 6)
+(move-path P1 4 C1 8 6)
+
+(move-path P5 1 C1 9 6)
+(move-path P5 2 C1 9 5)
+(move-path P5 3 C1 9 4)
+(move-path P5 4 C1 9 3)
+
+(move-path P2 1 C2 8 2)
+(move-path P2 2 C2 7 2)
+(move-path P2 3 C2 6 2)
+(move-path P2 4 C2 6 3)
+
+(move-path P6 1 C1 9 4)
+(move-path P6 2 C1 8 4)
+
+(move-path P7 1 C4 4 7)
+(move-path P7 2 C4 5 7)
+(move-path P7 3 C4 6 7)
+(move-path P7 4 C4 6 8)
+(move-path P7 5 C4 7 8)
+(move-path P7 6 C4 7 9)
+
+(move-path P8 1 C3 9 7)
+(move-path P8 2 C3 9 6)
+
+;penality no-solution STRATEGY_FIFO_WAIT
+;penality 6620 STRATEGY_FIFO
+;penality 6780 STRATEGY_LOW_PENALITY
+;penality 6780 HARD
+;Non funziona con la strategia FIFO_WAIT proprio per come è fatta la strategia. Per definizione, il robottino si mette in wait
+;quando vuole raggiungere una cella occupata da una persona e aspetta fintanto che la cella non si libera. Ma se ci troviamo nel
+;caso in cui la persona vuole muoversi verso la cella occupata dal robot e il robot vuole muoversi verso la cella occupata dalla
+;persona si va a creare un deadlock.

@@ -1,0 +1,109 @@
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C1)
+        (pos-r 7)
+        (pos-c 9)
+        (activity seated))
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C2)
+        (pos-r 4)
+        (pos-c 6)
+        (activity seated))
+
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C3)
+        (pos-r 9)
+        (pos-c 9)
+        (activity seated))
+
+(event (step 1) (type request) (source T4) (food 1) (drink 1))
+(event (step 5) (type request) (source T2) (food 2) (drink 2))
+(event (step 9) (type finish) (source T4))
+(event (step 12) (type request) (source T3) (food 3) (drink 2))
+(event (step 15) (type request) (source T1) (food 1) (drink 1))
+
+(personmove (step 51) (ident C3) (path-id P3))
+
+(move-path P3 1 C3 7 8)
+(move-path P3 2 C3 7 8)
+(move-path P3 3 C3 7 8)
+(move-path P3 4 C3 8 8)
+(move-path P3 5 C3 9 8)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

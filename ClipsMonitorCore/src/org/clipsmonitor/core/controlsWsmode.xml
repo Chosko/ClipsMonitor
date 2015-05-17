@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><mode version="2.4">
+    <name unique="controls"/>
+  <kind type="view"/>
+  <state type="joined"/>
+  <constraints>
+    <path orientation="horizontal" number="20" weight="0.47874720357941836"/>
+    <path orientation="vertical" number="21" weight="0.26495726495726496"/>
+  </constraints>
+  <bounds x="136" y="160" width="437" height="364"/>
+  <frame state="0"/>
+    
+    <empty-behavior permanent="true"/>
+</mode>

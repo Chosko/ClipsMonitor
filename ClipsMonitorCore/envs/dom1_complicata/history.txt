@@ -1,0 +1,71 @@
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C1)
+        (pos-r 9)
+        (pos-c 3)
+        (activity seated))
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C2)
+        (pos-r 9)
+        (pos-c 2)
+        (activity seated))
+
+
+(personstatus
+        (step 0)
+        (time 0)
+        (ident C3)
+        (pos-r 7)
+        (pos-c 9)
+        (activity seated))
+
+(event (step 1) (type request) (source T4) (food 1) (drink 1))
+(event (step 5) (type request) (source T2) (food 2) (drink 2))
+(event (step 9) (type finish) (source T4))
+(event (step 12) (type request) (source T3) (food 3) (drink 2))
+(event (step 25) (type request) (source T5) (food 2) (drink 0))
+(event (step 90) (type finish) (source T5))
+(event (step 108) (type request) (source T1) (food 1) (drink 1))
+(event (step 110) (type finish) (source T2))
+(event (step 111) (type request) (source T2) (food 2) (drink 2))
+
+(personmove (step 50) (ident C3) (path-id P3))
+(personmove (step 62) (ident C3) (path-id P4))
+(personmove (step 98) (ident C1) (path-id P1))
+(personmove (step 120) (ident C1) (path-id P5))
+(personmove (step 130) (ident C1) (path-id P6))
+(personmove (step 139) (ident C2) (path-id P2))
+
+(move-path P3 1 C3 7 8)
+(move-path P3 2 C3 8 8)
+
+(move-path P4 1 C3 9 8)
+
+(move-path P1 1 C1 9 4)
+(move-path P1 2 C1 9 5)
+(move-path P1 3 C1 9 6)
+(move-path P1 4 C1 8 6)
+
+(move-path P5 1 C1 9 6)
+(move-path P5 2 C1 9 5)
+(move-path P5 3 C1 9 4)
+(move-path P5 4 C1 9 3)
+
+(move-path P2 1 C2 8 2)
+(move-path P2 2 C2 7 2)
+(move-path P2 3 C2 6 2)
+(move-path P2 4 C2 6 3)
+
+(move-path P6 1 C1 9 4)
+(move-path P6 2 C1 8 4)
+
+;penality 5048 STRATEGY_FIFO_WAIT
+;penality 4841 STRATEGY_FIFO
+;penality 4426 LOW_PENALITY
+;penality 3946 HARD
+
+
