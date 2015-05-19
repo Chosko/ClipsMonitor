@@ -9,7 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Observable;
 import java.util.StringTokenizer;
+import org.clipsmonitor.core.MonitorConsole;
 
 /**
  * Questa classe implemente il cuore di connessione con l'ambiente clips,
@@ -20,7 +22,7 @@ import java.util.StringTokenizer;
  * Varesano Marco, Busso Marco, Cotrino Roberto, Enrico Mensa, Matteo Madeddu,
  * Davide Dell'Anna
  */
-public class ClipsCore {
+public class ClipsCore extends Observable{
 
     private Environment clips;
     private RouterDialog router;
@@ -63,7 +65,7 @@ public class ClipsCore {
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equals("clp") || extension.equals("txt"))) {
                     System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
-                    clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
+                    load("CLP" + File.separator + strategyFolder_name + File.separator + fileName);
                 }
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());
@@ -111,15 +113,15 @@ public class ClipsCore {
      */
     public PrimitiveValue evaluate(String module, String eval) {
         boolean isModuleOk = true;
-        PrimitiveValue fc = clips.eval("(get-focus)");
+        PrimitiveValue fc = eval("(get-focus)");
         String focus = fc.toString();
         if (!focus.equals(module)) {
             isModuleOk = false;
-            clips.eval("(focus " + module + ")");
+            eval("(focus " + module + ")");
         }
         PrimitiveValue result = clips.eval(eval);
         if (!isModuleOk) {
-            clips.eval("(pop-focus)");
+            eval("(pop-focus)");
         }
         return result;
     }
@@ -130,6 +132,7 @@ public class ClipsCore {
      *
      */
     public void reset() {
+        this.notifyObservers("(reset)");
         clips.reset();
     }
 
@@ -139,6 +142,7 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run() {
+        this.notifyObservers("(run)");
         return clips.run();
     }
 
@@ -149,6 +153,7 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run(long l) {
+        this.notifyObservers("(run " + l + ")");
         return clips.run(l);
     }
 
@@ -158,6 +163,7 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long runOne() {
+        this.notifyObservers("(run 1)");
         return clips.run(1);
     }
 
@@ -218,7 +224,7 @@ public class ClipsCore {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
-        PrimitiveValue fc = clips.eval("(get-focus)");
+        PrimitiveValue fc = eval("(get-focus)");
         String focus = fc.toString();
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
@@ -388,6 +394,17 @@ public class ClipsCore {
      */
 
     void clear() {
+        this.notifyObservers("(clear)");
         clips.clear();
+    }
+
+    private void load(String loadString) {
+        this.notifyObservers("(load " + loadString + ")");
+        clips.load(loadString); //carica ogni file
+    }
+
+    private PrimitiveValue eval(String command) {
+        this.notifyObservers(command);
+        return clips.eval(command);
     }
 }

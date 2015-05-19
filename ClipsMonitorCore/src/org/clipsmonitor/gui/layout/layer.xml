@@ -4,6 +4,7 @@
     <folder name="Windows2">
         <folder name="Modes">
             <file name="agenda.wsmode" url="agendaWsmode.xml"/>
+            <file name="console.wsmode" url="consoleWsmode.xml"/>
             <file name="controls.wsmode" url="controlsWsmode.xml"/>
             <file name="debugger.wsmode" url="debuggerWsmode.xml"/>
             <file name="facts.wsmode" url="factsWsmode.xml"/>

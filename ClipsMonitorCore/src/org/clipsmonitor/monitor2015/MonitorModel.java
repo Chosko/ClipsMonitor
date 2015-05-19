@@ -2,6 +2,7 @@ package org.clipsmonitor.monitor2015;
 
 import org.clipsmonitor.clips.ClipsException;
 import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorConsole;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Waitor
@@ -25,6 +26,7 @@ public class MonitorModel extends ClipsModel {
     private String l_d_waste; // presenza di spazzatura drink
     private Integer l_drink; // quantità di drink contenuta
     private Integer l_food; //quantità di food contenuta
+    private MonitorConsole console;
     private static MonitorModel instance;
     
     /**
@@ -43,6 +45,7 @@ public class MonitorModel extends ClipsModel {
      */
     private MonitorModel() {
         super();
+        console = MonitorConsole.getInstance();
     }
 
     /**
@@ -56,11 +59,11 @@ public class MonitorModel extends ClipsModel {
         step = 0;
         maxduration = Integer.MAX_VALUE;
         try {
-            //DebugFrame.appendText("[SYSTEM] Esecuzione del primo passo al fine di caricare i fatti relativi alla mappa.");
+            console.debug("Esecuzione del primo passo al fine di caricare i fatti relativi alla mappa.");
             core.evaluate("MAIN", "(run 1)"); //Eseguiamo la prima regola create-world1 per far sì che venga eseguita la regola di init della mappa [POCO GENERALE]
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
 
-            //DebugFrame.appendText("[SYSTEM] Inizializzazione del modello (mappa).");
+            console.debug("Inizializzazione del modello (mappa).");
             String[] array = {"pos-r", "pos-c", "contains"};
             String[][] mp = core.findAllFacts("MAIN", "prior-cell", "TRUE", array);
             int maxr = 0;
@@ -82,11 +85,11 @@ public class MonitorModel extends ClipsModel {
                 map[r - 1][c - 1] = mp[i][2];
                 //System.out.println(mp[i][2]);  // COMMENTAMI
             }
-            //DebugFrame.appendText("[SYSTEM] Il modello è pronto.");
+            console.debug("Il modello è pronto.");
 
         } catch (ClipsException ex) {
-            //DebugFrame.appendText("[ERROR] L'inizializzazione è fallita:");
-            //DebugFrame.appendText(ex.toString());
+            console.error("L'inizializzazione è fallita:");
+            console.error(ex.toString());
         }
     }
 
@@ -99,7 +102,7 @@ public class MonitorModel extends ClipsModel {
     private synchronized void updateMap() throws ClipsException {
 
         // ######################## FATTI DI TIPO cell ##########################
-        //DebugFrame.appendText("[SYSTEM] Aggiornamento modello mappa in corso...");
+        console.debug("Aggiornamento modello mappa in corso...");
         String[] array = {"pos-r", "pos-c", "contains"};
         String[][] mp;
 
@@ -114,10 +117,10 @@ public class MonitorModel extends ClipsModel {
 
             //System.out.println(map[r - 1][c - 1]);
         }
-        //DebugFrame.appendText("[SYSTEM] Modello aggiornato.");
+        console.debug("Modello aggiornato.");
 
         // ######################## FATTO agentstatus ##########################
-        //DebugFrame.appendText("[SYSTEM] Acquisizione posizione dell'agente...");
+        console.debug("Acquisizione posizione dell'agente...");
         String[] arrayRobot = {"step", "time", "pos-r", "pos-c", "direction", "l-drink", "l-food", "l_d_waste", "l_f_waste"};
         String[] robot = core.findFact("ENV", "agentstatus", "TRUE", arrayRobot);
         if (robot[0] != null) { //Se hai trovato il fatto
@@ -135,10 +138,10 @@ public class MonitorModel extends ClipsModel {
             String background = map[r - 1][c - 1];
             map[r - 1][c - 1] = "agent_" + background;
         }
-        //DebugFrame.appendText("[SYSTEM] Aggiornato lo stato dell'agente.");
+        console.debug("Aggiornato lo stato dell'agente.");
 
         // ######################## FATTI personstatus ##########################
-        //DebugFrame.appendText("[SYSTEM] Acquisizione posizione degli altri agenti...");
+        console.debug("Acquisizione posizione degli altri agenti...");
         String[] arrayPersons = {"step", "time", "ident", "pos-r", "pos-c", "activity", "move"};
         String[][] persons = core.findAllFacts("ENV", "personstatus", "TRUE", arrayPersons);
         if (persons != null) {
@@ -154,7 +157,7 @@ public class MonitorModel extends ClipsModel {
                 }
             }
         }
-        //DebugFrame.appendText("[SYSTEM] Aggiornato lo stato dell'agente.");
+        console.debug("Aggiornato lo stato dell'agente.");
 
         // ######################## FATTO status ##########################
         String[] arrayStatus = {"step", "time", "result"};
@@ -163,7 +166,7 @@ public class MonitorModel extends ClipsModel {
             step = new Integer(status[0]);
             time = new Integer(status[1]);
             result = status[2];
-            //DebugFrame.appendText("[SYSTEM] Step: " + step + " Time: " + time + " Result: " + result);
+            console.debug("Step: " + step + " Time: " + time + " Result: " + result);
         }
 
         // ######################## FATTO tablestatus ##########################
@@ -193,14 +196,13 @@ public class MonitorModel extends ClipsModel {
 
                     map[table_r - 1][table_c - 1] = "Table" + "_" + table_status + "_" + table_id;
 
-                    //DebugFrame.appendText("[ENV] Table-id: " + table_id + " at position (" + table_r + "," + table_c + ") is " + table_status);
+                    console.debug("Table-id: " + table_id + " at position (" + table_r + "," + table_c + ") is " + table_status);
                 }
             }
         }
 
-        //DebugFrame.appendText("[SYSTEM] Aggiornato lo stato del mondo.");
-
-        //DebugFrame.appendText("[SYSTEM] Aggiornamento completato.");
+        console.debug("Aggiornato lo stato del mondo.");
+        console.debug("Aggiornamento completato.");
     }
 
     /**
