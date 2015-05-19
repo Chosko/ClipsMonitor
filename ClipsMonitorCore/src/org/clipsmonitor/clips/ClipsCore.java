@@ -1,4 +1,4 @@
-package org.clipsmonitor.core.clips;
+package org.clipsmonitor.clips;
 
 import CLIPSJNI.Environment;
 import CLIPSJNI.MultifieldValue;

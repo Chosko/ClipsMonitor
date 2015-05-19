@@ -1,4 +1,4 @@
-package org.clipsmonitor.core.clips;
+package org.clipsmonitor.clips;
 
 /**
  * Questa classe implementa un'eccezione specifica per le eccezioni lanciate

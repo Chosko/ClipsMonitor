@@ -1,7 +1,7 @@
-package org.clipsmonitor.core.monitor2015;
+package org.clipsmonitor.monitor2015;
 
-import org.clipsmonitor.core.clips.ClipsException;
-import org.clipsmonitor.core.clips.ClipsModel;
+import org.clipsmonitor.clips.ClipsException;
+import org.clipsmonitor.clips.ClipsModel;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Waitor

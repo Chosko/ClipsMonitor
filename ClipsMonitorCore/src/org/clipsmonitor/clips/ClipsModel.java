@@ -1,4 +1,4 @@
-package org.clipsmonitor.core.clips;
+package org.clipsmonitor.clips;
 
 import java.util.Observable;
 import java.util.logging.Level;
