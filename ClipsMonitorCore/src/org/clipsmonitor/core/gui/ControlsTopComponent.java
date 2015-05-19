@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.clipsmonitor.core;
+package org.clipsmonitor.core.gui;
 
 import java.io.File;
 import javax.swing.ComboBoxModel;
@@ -11,6 +11,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.core.clips.ClipsModel;
+import org.clipsmonitor.core.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -349,6 +350,7 @@ public final class ControlsTopComponent extends TopComponent {
         envsSelector.setEnabled(false);
         String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
+        model = MonitorModel.getInstance();
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode("START");
         model.execute();

@@ -21,12 +21,12 @@ public abstract class ClipsModel extends Observable implements Runnable {
     protected ClipsCore core;
     private int executionMode;
     private final Thread t;
-
+    
     /**
      * costruttore del modello.
      *
      */
-    public ClipsModel() {
+    protected ClipsModel() {
         executionMode = 0;
         t = new Thread(this);
     }
