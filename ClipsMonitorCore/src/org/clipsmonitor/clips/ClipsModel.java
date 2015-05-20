@@ -163,11 +163,9 @@ public abstract class ClipsModel extends Observable implements Runnable {
             this.setChanged();
             this.notifyObservers("disposeDone");
         } catch (NumberFormatException ex) {
-            this.setChanged();
-            this.notifyObservers(ex.toString());
+            console.error(ex);
         } catch(ClipsException ex) {
-            this.setChanged();
-            this.notifyObservers(ex.toString());
+            console.error(ex);
         }
     }
 
@@ -307,10 +305,5 @@ public abstract class ClipsModel extends Observable implements Runnable {
 
     public void reset() {
         core.reset();
-    }
-
-    public void resetCore() {
-        this.setChanged();
-        this.notifyObservers("resetCore");
     }
 }

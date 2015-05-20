@@ -5,6 +5,12 @@
  */
 package org.clipsmonitor.gui;
 
+import java.util.Observable;
+import java.util.Observer;
+import org.clipsmonitor.clips.ClipsException;
+import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorConsole;
+import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -35,13 +41,17 @@ import org.openide.util.NbBundle.Messages;
     "CTL_AgendaTopComponent=Agenda Window",
     "HINT_AgendaTopComponent=This is a Agenda window"
 })
-public final class AgendaTopComponent extends TopComponent {
-
+public final class AgendaTopComponent extends TopComponent implements Observer {
+private ClipsModel model;
+    private MonitorConsole console;
+    
     public AgendaTopComponent() {
         initComponents();
         setName(Bundle.CTL_AgendaTopComponent());
         setToolTipText(Bundle.HINT_AgendaTopComponent());
-
+        model = MonitorModel.getInstance();
+        console = MonitorConsole.getInstance();
+        model.addObserver(this);
     }
 
     /**
@@ -94,5 +104,21 @@ public final class AgendaTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof ClipsModel){
+            this.updateFacts();
+        }
+    }
+    
+    private void updateFacts(){
+        try{
+            this.jTextPane1.setText(model.getAgenda());
+        }
+        catch(ClipsException ex){
+            console.error(ex);
+        }
     }
 }

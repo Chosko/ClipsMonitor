@@ -332,7 +332,7 @@ public final class ControlsTopComponent extends TopComponent {
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         model.clear();
-        model.resetCore();
+        model.reset();
         loadDefaultFileButton.setEnabled(true);
         runButton.setEnabled(false);
         runOneButton.setEnabled(false);

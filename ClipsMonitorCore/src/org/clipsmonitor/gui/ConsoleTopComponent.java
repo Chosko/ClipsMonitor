@@ -5,6 +5,7 @@
  */
 package org.clipsmonitor.gui;
 
+import java.awt.Color;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.control.Alert;
@@ -68,7 +69,9 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         jScrollPane1.setToolTipText(org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.jScrollPane1.toolTipText")); // NOI18N
 
         jTextPane1.setEditable(false);
+        jTextPane1.setBackground(new java.awt.Color(230, 230, 230));
         jTextPane1.setText(org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.jTextPane1.text")); // NOI18N
+        jTextPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTextPane1.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextPane1FocusGained(evt);
@@ -160,9 +163,11 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
             String evt = (String)arg;
             if(evt.equals("activated")){
                 jTextPane1.setEditable(true);
+                jTextPane1.setBackground(new Color(255,255,255));
             } 
             else if(evt.equals("deactivated")){
                 jTextPane1.setEditable(false);
+                jTextPane1.setBackground(new Color(230,230,230));
             }
             else if(evt.equals("debug") 
                     || evt.equals("error")

@@ -34,6 +34,8 @@ public class MonitorConsole extends Observable {
         logDebug = true;
         logError = true;
         logClips = true;
+        logWarn = true;
+        logInfo = true;
     }
     
     /**
@@ -85,7 +87,7 @@ public class MonitorConsole extends Observable {
     }
     
     public void setLogWarn(boolean value){
-        logError = value;
+        logWarn = value;
     }
     
     public void setLogClips(boolean value){
