@@ -5,6 +5,11 @@
  */
 package org.clipsmonitor.gui;
 
+import java.util.Observable;
+import java.util.Observer;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import org.clipsmonitor.core.MonitorConsole;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -35,13 +40,18 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ConsoleTopComponent=Console Window",
     "HINT_ConsoleTopComponent=This is a Console window"
 })
-public final class ConsoleTopComponent extends TopComponent {
-
+public final class ConsoleTopComponent extends TopComponent implements Observer {
+    private String text;
+    private MonitorConsole console;
+    
     public ConsoleTopComponent() {
         initComponents();
         setName(Bundle.CTL_ConsoleTopComponent());
         setToolTipText(Bundle.HINT_ConsoleTopComponent());
-
+        console = MonitorConsole.getInstance();
+        console.addObserver(this);
+        text = console.getFullOutput();
+        this.updatePane();
     }
 
     /**
@@ -57,7 +67,18 @@ public final class ConsoleTopComponent extends TopComponent {
 
         jScrollPane1.setToolTipText(org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.jScrollPane1.toolTipText")); // NOI18N
 
+        jTextPane1.setEditable(false);
         jTextPane1.setText(org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.jTextPane1.text")); // NOI18N
+        jTextPane1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextPane1FocusGained(evt);
+            }
+        });
+        jTextPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextPane1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -72,18 +93,26 @@ public final class ConsoleTopComponent extends TopComponent {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jTextPane1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPane1FocusGained
+        this.setCursorPosition();
+    }//GEN-LAST:event_jTextPane1FocusGained
+
+    private void jTextPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextPane1MouseClicked
+        this.setCursorPosition();
+    }//GEN-LAST:event_jTextPane1MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        
     }
 
     void writeProperties(java.util.Properties p) {
@@ -96,5 +125,55 @@ public final class ConsoleTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+    
+    private void append(String s){
+        if(this.text.length() > 0){
+            this.text += "\n";
+        }
+        this.text += s;
+        this.updatePane();
+    }
+    
+    private void clear(){
+        this.text = "";
+        this.updatePane();
+    }
+    
+    private void updatePane(){
+        String newText = this.text;
+        if(this.text.length() > 0){
+            newText += "\n";
+        }
+        newText += "CLIPS > ";
+        this.jTextPane1.setText(newText);
+        this.setCursorPosition();
+    }
+    
+    private void setCursorPosition(){
+        this.jTextPane1.setCaretPosition(this.jTextPane1.getText().length());
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof MonitorConsole){
+            String evt = (String)arg;
+            if(evt.equals("activated")){
+                jTextPane1.setEditable(true);
+            } 
+            else if(evt.equals("deactivated")){
+                jTextPane1.setEditable(false);
+            }
+            else if(evt.equals("debug") 
+                    || evt.equals("error")
+                    || evt.equals("warn")
+                    || evt.equals("info")
+                    || evt.equals("clips")){
+                this.append(console.getLastOutput());
+            }
+            else if(evt.equals("clear")){
+                this.clear();
+            }
+        }
     }
 }

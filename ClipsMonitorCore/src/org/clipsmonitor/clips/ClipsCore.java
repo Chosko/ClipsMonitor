@@ -22,11 +22,30 @@ import org.clipsmonitor.core.MonitorConsole;
  * Varesano Marco, Busso Marco, Cotrino Roberto, Enrico Mensa, Matteo Madeddu,
  * Davide Dell'Anna
  */
-public class ClipsCore extends Observable{
+public class ClipsCore {
 
     private Environment clips;
     private RouterDialog router;
-
+    private static ClipsCore instance;
+    private MonitorConsole console;
+    
+    /**
+     * Singleton
+     */
+    public static ClipsCore getInstance(){
+        if(instance == null){
+            instance = new ClipsCore();
+        }
+        return instance;
+    }
+    
+    private ClipsCore(){
+        clips = new Environment();
+        router = new RouterDialog("routerCore");
+        clips.addRouter(router);
+        console = MonitorConsole.getInstance();
+    }
+    
     /**
      * Costruisce una nuova istanza di CLIPS, prelevando dalla cartella
      * CPL/nome_strategia tutti i file .cpl oppure .txt. Il nome_strategia è
@@ -51,11 +70,9 @@ public class ClipsCore extends Observable{
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    public ClipsCore(String strategyFolder_name, String envsFolder_name) {
+    public void initialize(String strategyFolder_name, String envsFolder_name) {
 
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
-        clips = new Environment();
-
         File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
@@ -64,16 +81,13 @@ public class ClipsCore extends Observable{
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equals("clp") || extension.equals("txt"))) {
-                    System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
+                    console.debug("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
                     load("CLP" + File.separator + strategyFolder_name + File.separator + fileName);
                 }
             } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+                console.error(e);
             }
         }
-
-        router = new RouterDialog("routerCore");
-        clips.addRouter(router);
 
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
         File env_folder = new File("envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
@@ -87,13 +101,13 @@ public class ClipsCore extends Observable{
                     File source = envFile;
                     File dest = new File(envFile.getName());
 
-                    System.out.println("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
+                    console.debug("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
 
                     copyFileUsingFileStreams(source, dest); //Copiamo il file
                     dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
                 }
             } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+                console.error(e);
             }
         }
     }
@@ -132,7 +146,7 @@ public class ClipsCore extends Observable{
      *
      */
     public void reset() {
-        this.notifyObservers("(reset)");
+        console.clips("(reset)");
         clips.reset();
     }
 
@@ -142,7 +156,7 @@ public class ClipsCore extends Observable{
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run() {
-        this.notifyObservers("(run)");
+        console.clips("(run)");
         return clips.run();
     }
 
@@ -153,7 +167,7 @@ public class ClipsCore extends Observable{
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run(long l) {
-        this.notifyObservers("(run " + l + ")");
+        console.clips("(run " + l + ")");
         return clips.run(l);
     }
 
@@ -163,7 +177,7 @@ public class ClipsCore extends Observable{
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long runOne() {
-        this.notifyObservers("(run 1)");
+        console.clips("(run 1)");
         return clips.run(1);
     }
 
@@ -394,17 +408,17 @@ public class ClipsCore extends Observable{
      */
 
     void clear() {
-        this.notifyObservers("(clear)");
+        console.clips("(clear)");
         clips.clear();
     }
 
     private void load(String loadString) {
-        this.notifyObservers("(load " + loadString + ")");
+        console.clips("(load " + loadString + ")");
         clips.load(loadString); //carica ogni file
     }
 
     private PrimitiveValue eval(String command) {
-        this.notifyObservers(command);
+        console.clips(command);
         return clips.eval(command);
     }
 }

@@ -47,7 +47,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
                  * HO CLICCATO IL TASTO START
                  */
                 if (executionMode == 1) {
-                    System.out.println("Clicked on START BUTTON");
+                    console.debug("Clicked on START BUTTON");
                     String[] arrayPercept = {"step"};
                     long run_feedback = 1;
                     /* Alla pressione del tasto START, il while entra una volta nel ciclo.
@@ -71,7 +71,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
                 } /*
                  * HO CLICCATO IL TASTO RUN 1
                  */ else if (executionMode == 2) {
-                    System.out.println("Clicked on RUN 1 BUTTON");
+                    console.debug("Clicked on RUN 1 BUTTON");
                     core.runOne();
                     action();
                     this.setChanged();
@@ -80,7 +80,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
                 } /*
                  * HO CLICCATO IL TASTO STEP
                  */ else if (executionMode == 3) {
-                    System.out.println("Clicked on STEP BUTTON");
+                    console.debug("Clicked on STEP BUTTON");
                     long run_feedback = 1;
                     String[] arrayPercept = {"step"};
                     String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
@@ -121,7 +121,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
                 } /*
                  * HO CLICCATO IL TASTO RUN
                  */ else if (executionMode == 4) {
-                    System.out.println("Clicked on RUN (infinite)");
+                    console.debug("Clicked on RUN (infinite)");
                     long run_feedback = 1;
                     String[] arrayPercept = {"step"};
                     String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
@@ -213,9 +213,9 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public void startCore(String strategyFolder_name, String envsFolder_name) {
         try {
             /*inizializza l'ambiente clips caricando i vari file*/
-            core = new ClipsCore(strategyFolder_name, envsFolder_name);
-            System.out.println("[Clips Environment created and ready to run]");
-            console.log("[Clips Environment created and ready to run]");
+            core = ClipsCore.getInstance();
+            core.initialize(strategyFolder_name, envsFolder_name);
+            console.debug("Clips Environment created and ready to run");
             /*effettua una reset di clips dopo aver caricato i file e
              carica le info iniziali dei file clips, per poi terminare la fase di setup*/
             core.reset();
@@ -225,6 +225,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
         } catch (ClipsException ex) {
             Logger.getLogger(ClipsModel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        console.setActive(true);
     }
 
     /**
