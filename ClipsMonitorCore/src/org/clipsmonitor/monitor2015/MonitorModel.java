@@ -1,6 +1,6 @@
 package org.clipsmonitor.monitor2015;
 
-import org.clipsmonitor.clips.ClipsException;
+import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorConsole;
 
@@ -87,9 +87,10 @@ public class MonitorModel extends ClipsModel {
             }
             console.debug("Il modello è pronto.");
 
-        } catch (ClipsException ex) {
+        } catch (CLIPSError ex) {
             console.error("L'inizializzazione è fallita:");
-            console.error(ex.toString());
+            ex.printStackTrace();
+            console.error(ex);
         }
     }
 
@@ -99,7 +100,7 @@ public class MonitorModel extends ClipsModel {
      *
      * @throws ClipsException
      */
-    private synchronized void updateMap() throws ClipsException {
+    private synchronized void updateMap() throws CLIPSError {
 
         // ######################## FATTI DI TIPO cell ##########################
         console.debug("Aggiornamento modello mappa in corso...");
@@ -279,14 +280,18 @@ public class MonitorModel extends ClipsModel {
     }
 
     @Override
-    protected void setup() throws ClipsException {
+    protected void setup(){
         init();
     }
 
     @Override
-    protected void action() throws ClipsException {
-        updateMap();
-
+    protected void action() {
+        try{
+            updateMap();
+        }
+        catch (CLIPSError ex){
+            console.error(ex);
+        }
     }
 
     @Override
@@ -303,11 +308,16 @@ public class MonitorModel extends ClipsModel {
     }
 
     @Override
-    protected void dispose() throws ClipsException {
-        score = new Integer(core.findOrderedFact("MAIN", "penalty"));
+    protected void dispose() {
+        try{
+            score = new Integer(core.findOrderedFact("MAIN", "penalty"));
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
+        }
     }
 
-    public String[][] findAllFacts(String template, String conditions, String[] slots) throws ClipsException {
+    public String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError{
         return core.findAllFacts(template, conditions, slots);
     }
 

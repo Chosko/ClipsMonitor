@@ -1,8 +1,8 @@
 package org.clipsmonitor.clips;
 
-import CLIPSJNI.Environment;
-import CLIPSJNI.MultifieldValue;
-import CLIPSJNI.PrimitiveValue;
+import net.sf.clipsrules.jni.Environment;
+import net.sf.clipsrules.jni.MultifieldValue;
+import net.sf.clipsrules.jni.PrimitiveValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Observable;
 import java.util.StringTokenizer;
+import net.sf.clipsrules.jni.CLIPSError;
+import net.sf.clipsrules.jni.FactAddressValue;
 import org.clipsmonitor.core.MonitorConsole;
 
 /**
@@ -73,6 +75,8 @@ public class ClipsCore {
     public void initialize(String strategyFolder_name, String envsFolder_name) {
 
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
+        clips = new Environment();
+
         File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
@@ -81,13 +85,16 @@ public class ClipsCore {
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equals("clp") || extension.equals("txt"))) {
-                    console.debug("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
-                    load("CLP" + File.separator + strategyFolder_name + File.separator + fileName);
+                    System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
+                    clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
                 }
             } catch (Exception e) {
                 console.error(e);
             }
         }
+
+        router = new RouterDialog("routerCore");
+        clips.addRouter(router);
 
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
         File env_folder = new File("envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
@@ -101,7 +108,7 @@ public class ClipsCore {
                     File source = envFile;
                     File dest = new File(envFile.getName());
 
-                    console.debug("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
+                    System.out.println("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
 
                     copyFileUsingFileStreams(source, dest); //Copiamo il file
                     dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
@@ -111,11 +118,6 @@ public class ClipsCore {
             }
         }
     }
-
-    private void throwException(Exception ex) throws ClipsException {
-        throw new ClipsException(ex.getMessage());
-    }
-
     /**
      * Metodo da usare con cautela, serve per un comando su un modulo in clips.
      * La sintassi dev'essere quella di clips, non verranno eseguiti controlli
@@ -125,17 +127,17 @@ public class ClipsCore {
      * @param eval l'interrogazione da passare a clips
      * @return un PrimitiveValue che contiene il risultato dell'interrogazione
      */
-    public PrimitiveValue evaluate(String module, String eval) {
+    public PrimitiveValue evaluate(String module, String eval) throws CLIPSError{
         boolean isModuleOk = true;
-        PrimitiveValue fc = eval("(get-focus)");
+        PrimitiveValue fc = clips.eval("(get-focus)");
         String focus = fc.toString();
         if (!focus.equals(module)) {
             isModuleOk = false;
-            eval("(focus " + module + ")");
+            clips.eval("(focus " + module + ")");
         }
         PrimitiveValue result = clips.eval(eval);
         if (!isModuleOk) {
-            eval("(pop-focus)");
+            clips.eval("(pop-focus)");
         }
         return result;
     }
@@ -146,7 +148,6 @@ public class ClipsCore {
      *
      */
     public void reset() {
-        console.clips("(reset)");
         clips.reset();
     }
 
@@ -156,7 +157,6 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run() {
-        console.clips("(run)");
         return clips.run();
     }
 
@@ -167,7 +167,6 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long run(long l) {
-        console.clips("(run " + l + ")");
         return clips.run(l);
     }
 
@@ -177,7 +176,6 @@ public class ClipsCore {
      * @return ritona 1 se ha successo 0 se fallisce
      */
     public long runOne() {
-        console.clips("(run 1)");
         return clips.run(1);
     }
 
@@ -199,24 +197,19 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public String[][] findAllFacts(String module, String template, String conditions, String[] slots) throws ClipsException {
+    public String[][] findAllFacts(String module, String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(module, eval);
-        try {
-            String[][] result = new String[facts.size()][slots.length];
-            for (int i = 0; i < facts.size(); i++) {
-                for (int j = 0; j < slots.length; j++) {
-                    result[i][j] = facts.get(i).getFactSlot(slots[j]).toString();
-                }
+        String[][] result = new String[facts.size()][slots.length];
+        for (int i = 0; i < facts.size(); i++) {
+            for (int j = 0; j < slots.length; j++) {
+                result[i][j] = ((FactAddressValue)facts.get(i)).getFactSlot(slots[j]).toString();
             }
-            return result;
-        } catch (Exception ex) {
-            throwException(ex);
         }
-        return null;
+        return result;
     }
 
     /**
@@ -234,32 +227,27 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public String[][] findAllFacts(String template, String conditions, String[] slots) throws ClipsException {
+    public String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
-        PrimitiveValue fc = eval("(get-focus)");
+        PrimitiveValue fc = clips.eval("(get-focus)");
         String focus = fc.toString();
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
-        try {
-            String[][] result = new String[facts.size()][slots.length];
-            for (int i = 0; i < facts.size(); i++) {
-                for (int j = 0; j < slots.length; j++) {
-                    PrimitiveValue fact = facts.get(i);
-                    PrimitiveValue factSlot = fact.getFactSlot(slots[j]);
-                    if (factSlot != null) {
-                        result[i][j] = factSlot.toString();
-                    } else {
-                        result[i][j] = "";
-                    }
+        String[][] result = new String[facts.size()][slots.length];
+        for (int i = 0; i < facts.size(); i++) {
+            for (int j = 0; j < slots.length; j++) {
+                FactAddressValue fact = (FactAddressValue)facts.get(i);
+                PrimitiveValue factSlot = fact.getFactSlot(slots[j]);
+                if (factSlot != null) {
+                    result[i][j] = factSlot.toString();
+                } else {
+                    result[i][j] = "";
                 }
             }
-            return result;
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
-        return null;
+        return result;
     }
 
     /**
@@ -279,24 +267,19 @@ public class ClipsCore {
      * null se non c'e' nessun fatto che corrisponde all'interrogazione
      * @throws ClipsException
      */
-    public String[] findFact(String module, String template, String conditions, String[] slots) throws ClipsException {
+    public String[] findFact(String module, String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
         String eval = "(find-fact ((?f " + template + ")) " + conditions + ")";
-        PrimitiveValue facts = evaluate(module, eval);
-        try {
-            String[] result = new String[slots.length];
-            if (facts.size() > 0) {
-                for (int j = 0; j < slots.length; j++) {
-                    result[j] = facts.get(0).getFactSlot(slots[j]).toString();
-                }
+        MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
+        String[] result = new String[slots.length];
+        if (facts.size() > 0) {
+            for (int j = 0; j < slots.length; j++) {
+                result[j] = ((FactAddressValue)facts.get(0)).getFactSlot(slots[j]).toString();
             }
-            return result;
-        } catch (Exception ex) {
-            throwException(ex);
         }
-        return null;
+        return result;
     }
 
     /**
@@ -311,22 +294,17 @@ public class ClipsCore {
      * @return il resto del fatto, null se il fatto non esiste
      * @throws ClipsException
      */
-    public String findOrderedFact(String module, String template) throws ClipsException {
+    public String findOrderedFact(String module, String template) throws CLIPSError {
         String eval = "(find-fact ((?f " + template + ")) TRUE)";
-        PrimitiveValue facts = evaluate(module, eval);
+        MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
         String result = "";
-        try {
-            if (facts.size() != 0) {
-                String fatto = facts.get(0).toString();
-                StringTokenizer st = new StringTokenizer(fatto, "<Fact- >");
-                facts = clips.eval("(fact-slot-value " + (new Integer(st.nextToken())) + " implied)");
-                result = facts.get(0).toString();
-                return result;
-            }
-        } catch (Exception ex) {
-            this.throwException(ex);
+        if (facts.size() != 0) {
+            String fatto = facts.get(0).toString();
+            StringTokenizer st = new StringTokenizer(fatto, "<Fact- >");
+            facts = (MultifieldValue)clips.eval("(fact-slot-value " + (new Integer(st.nextToken())) + " implied)");
+            result = facts.get(0).toString();
         }
-        return null;
+        return result;
     }
 
     /**
@@ -336,12 +314,17 @@ public class ClipsCore {
      * @return una stringa che rappresenta i facts del modulo corrente
      * @throws ClipsException
      */
-    public String getFactList() throws ClipsException {
+    public String getFactList() {
         router.startRec();
-        PrimitiveValue fc = clips.eval("(get-focus)");
-        String focus = fc.toString();
-        String eval = "(facts)";
-        evaluate(focus, eval);
+        try{
+            PrimitiveValue fc = clips.eval("(get-focus)");
+            String focus = fc.toString();
+            String eval = "(facts)";
+            evaluate(focus, eval);
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
+        }
         router.stopRec();
         return router.getStdout();
     }
@@ -353,12 +336,17 @@ public class ClipsCore {
      * @return una stringa che rappresenta le azioni attivabili al momento
      * @throws ClipsException
      */
-    public String getAgenda() throws ClipsException {
+    public String getAgenda() {
         router.startRec();
-        PrimitiveValue fc = clips.eval("(get-focus)");
-        String focus = fc.toString();
-        String eval = "(agenda)";
-        evaluate(focus, eval);
+        try{
+            PrimitiveValue fc = clips.eval("(get-focus)");
+            String focus = fc.toString();
+            String eval = "(agenda)";
+            evaluate(focus, eval);
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
+        }
         router.stopRec();
         return router.getStdout();
     }
@@ -372,11 +360,17 @@ public class ClipsCore {
      * @return true se non ci sono stati problemi, false altrimenti
      */
     public boolean defrule(String module, String rule) {
-        PrimitiveValue val = evaluate(module, rule);
-        if (val.toString().equalsIgnoreCase("FALSE")) {
+        try{
+            PrimitiveValue val = evaluate(module, rule);
+            if (val.toString().equalsIgnoreCase("FALSE")) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
             return false;
-        } else {
-            return true;
         }
     }
 
@@ -408,17 +402,33 @@ public class ClipsCore {
      */
 
     void clear() {
-        console.clips("(clear)");
         clips.clear();
     }
 
-    private void load(String loadString) {
-        console.clips("(load " + loadString + ")");
-        clips.load(loadString); //carica ogni file
+    String evaluateOutput(String module, String command) throws CLIPSError {
+        router.startRec();
+        try{
+            this.evaluate(module, command);
+        }
+        catch(CLIPSError er){
+            router.stopRec();
+            throw er;
+        }
+        router.stopRec();
+        return router.getStdout();
     }
-
-    private PrimitiveValue eval(String command) {
-        console.clips(command);
-        return clips.eval(command);
+    
+    String getBanner(){
+        router.startRec();
+        clips.printBanner();
+        router.stopRec();
+        return router.getStdout();
+    }
+    
+    String getPrompt(){
+        router.startRec();
+        clips.printPrompt();
+        router.stopRec();
+        return router.getStdout();
     }
 }

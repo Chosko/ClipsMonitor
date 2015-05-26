@@ -3,6 +3,7 @@ package org.clipsmonitor.clips;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.core.MonitorConsole;
 
 /**
@@ -32,6 +33,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
         executionMode = 0;
         t = new Thread(this);
         console = MonitorConsole.getInstance();
+        core = ClipsCore.getInstance();
     }
 
     /**
@@ -164,7 +166,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
             this.notifyObservers("disposeDone");
         } catch (NumberFormatException ex) {
             console.error(ex);
-        } catch(ClipsException ex) {
+        } catch(CLIPSError ex) {
             console.error(ex);
         }
     }
@@ -209,20 +211,15 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * file relativi all'environment (envs/envFolder_name)
      */
     public void startCore(String strategyFolder_name, String envsFolder_name) {
-        try {
-            /*inizializza l'ambiente clips caricando i vari file*/
-            core = ClipsCore.getInstance();
-            core.initialize(strategyFolder_name, envsFolder_name);
-            console.debug("Clips Environment created and ready to run");
-            /*effettua una reset di clips dopo aver caricato i file e
-             carica le info iniziali dei file clips, per poi terminare la fase di setup*/
-            core.reset();
-            setup();
-            this.setChanged();
-            this.notifyObservers("setupDone");
-        } catch (ClipsException ex) {
-            Logger.getLogger(ClipsModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        /*inizializza l'ambiente clips caricando i vari file*/
+        core.initialize(strategyFolder_name, envsFolder_name);
+        console.debug("Clips Environment created and ready to run");
+        /*effettua una reset di clips dopo aver caricato i file e
+         carica le info iniziali dei file clips, per poi terminare la fase di setup*/
+        core.reset();
+        setup();
+        this.setChanged();
+        this.notifyObservers("setupDone");
         console.setActive(true);
     }
 
@@ -233,7 +230,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * @return una stringa che rappresenta i fatti del modulo corrente
      * @throws ClipsException
      */
-    public synchronized String getFactList() throws ClipsException {
+    public synchronized String getFactList() {
         return core.getFactList();
     }
 
@@ -244,7 +241,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * @return una stringa che rappresenta le azioni attivabili al momento
      * @throws ClipsException
      */
-    public synchronized String getAgenda() throws ClipsException {
+    public synchronized String getAgenda() {
         return core.getAgenda();
     }
 
@@ -254,7 +251,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      *
      * @throws ClipsException
      */
-    protected abstract void setup() throws ClipsException;
+    protected abstract void setup();
 
     /**
      * Fa avanzare l'ambiente di un turno. Viene invocato ciclicamente finche'
@@ -262,7 +259,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      *
      * @throws ClipsException
      */
-    protected abstract void action() throws ClipsException;
+    protected abstract void action();
 
     /**
      * Indica se l'ambiente ha finito la naturale esecuzione.
@@ -277,7 +274,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      *
      * @throws ClipsException
      */
-    protected abstract void dispose() throws ClipsException;
+    protected abstract void dispose();
 
     /**
      * riprende il thread sospeso tramite il metodo suspend()
@@ -295,8 +292,17 @@ public abstract class ClipsModel extends Observable implements Runnable {
         t.suspend();
     }
 
-    public void evalComandLine(String comand) {
-        core.evaluate("AGENT", comand);
+    public String evalComandLine(String command) {
+        String result = "";
+        try{
+            result = core.evaluateOutput("AGENT", command);
+            this.setChanged();
+            this.notifyObservers();
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
+        }
+        return result;
     }
 
     public void clear() {
@@ -305,5 +311,13 @@ public abstract class ClipsModel extends Observable implements Runnable {
 
     public void reset() {
         core.reset();
+    }
+
+    public String getPrompt() {
+        return core.getPrompt();
+    }
+    
+    public String getBanner() {
+        return core.getBanner();
     }
 }

@@ -7,7 +7,6 @@ package org.clipsmonitor.gui;
 
 import java.util.Observable;
 import java.util.Observer;
-import org.clipsmonitor.clips.ClipsException;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorConsole;
 import org.clipsmonitor.monitor2015.MonitorModel;
@@ -114,11 +113,6 @@ private ClipsModel model;
     }
     
     private void updateFacts(){
-        try{
-            this.jTextPane1.setText(model.getAgenda());
-        }
-        catch(ClipsException ex){
-            console.error(ex);
-        }
+        this.jTextPane1.setText(model.getAgenda());
     }
 }

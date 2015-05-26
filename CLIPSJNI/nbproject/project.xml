@@ -7,11 +7,11 @@
             <suite-component/>
             <module-dependencies/>
             <public-packages>
-                <package>CLIPSJNI</package>
+                <package>net.sf.clipsrules.jni</package>
             </public-packages>
             <class-path-extension>
-                <runtime-relative-path>ext/CLIPSJNI.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/CLIPSJNI.jar</binary-origin>
+                <runtime-relative-path>ext/clips.jni-0.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/clips.jni-0.4.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

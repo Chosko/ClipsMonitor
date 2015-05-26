@@ -109,6 +109,7 @@ public class MonitorConsole extends Observable {
             String logString = "[ERROR] " + log;
             System.out.println(logString);
             this.append(logString);
+            this.setChanged();
             this.notifyObservers("error");
         }
     }
@@ -118,6 +119,7 @@ public class MonitorConsole extends Observable {
             String logString = "[WARN] " + log;
             System.out.println(logString);
             this.append(logString);
+            this.setChanged();
             this.notifyObservers("warn");
         }
     }
@@ -127,6 +129,7 @@ public class MonitorConsole extends Observable {
             String logString = "[INFO] " + log;
             System.out.println(logString);
             this.append(logString);
+            this.setChanged();
             this.notifyObservers("info");
         }
     }
@@ -136,6 +139,7 @@ public class MonitorConsole extends Observable {
             String logString = "[CLIPS] " + log;
             System.out.println(logString);
             this.append(logString);
+            this.setChanged();
             this.notifyObservers("clips");
         }
     }

@@ -4,7 +4,7 @@
  */
 package org.clipsmonitor.clips;
 
-import CLIPSJNI.Router;
+import net.sf.clipsrules.jni.Router;
 
 /**
  *
@@ -30,15 +30,13 @@ class RouterDialog extends Router {
      * *******
      */
     @Override
-    public synchronized boolean query(
-            String routerName) {
-        if (routerName.equals("wdisplay")) {
+    public synchronized boolean query(String routerName) {
+        if (routerName.equals("wdisplay") || routerName.equals("wclips")) {
             return true;
         }
-
         return false;
     }
-
+    
     /**
      * *******
      */
@@ -49,7 +47,9 @@ class RouterDialog extends Router {
     @Override
     public synchronized void print(String routerName, String printString) {
         if (rec) {
-            stdout = stdout + printString;
+            if(routerName.equals("wdisplay") || routerName.equals("wclips")){
+                stdout = stdout + printString;
+            }
         }
     }
 

@@ -6,11 +6,15 @@
 package org.clipsmonitor.gui;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import org.clipsmonitor.clips.ClipsCore;
+import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorConsole;
+import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -43,15 +47,22 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class ConsoleTopComponent extends TopComponent implements Observer {
     private String text;
+    private String currentCmd;
     private MonitorConsole console;
+    private ClipsModel model;
     
     public ConsoleTopComponent() {
+        this.model = MonitorModel.getInstance();
         initComponents();
         setName(Bundle.CTL_ConsoleTopComponent());
         setToolTipText(Bundle.HINT_ConsoleTopComponent());
         console = MonitorConsole.getInstance();
         console.addObserver(this);
         text = console.getFullOutput();
+        if(text.isEmpty()){
+            text = model.getBanner();
+        }
+        currentCmd = "";
         this.updatePane();
     }
 
@@ -77,9 +88,15 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 jTextPane1FocusGained(evt);
             }
         });
-        jTextPane1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTextPane1MouseClicked(evt);
+        jTextPane1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextPane1KeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextPane1KeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextPane1KeyTyped(evt);
             }
         });
         jScrollPane1.setViewportView(jTextPane1);
@@ -100,9 +117,34 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         this.setCursorPosition();
     }//GEN-LAST:event_jTextPane1FocusGained
 
-    private void jTextPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextPane1MouseClicked
-        this.setCursorPosition();
-    }//GEN-LAST:event_jTextPane1MouseClicked
+    private void jTextPane1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyTyped
+        // Check if last line has been changed before "CLIPS> "
+        if(!isCursorPositionValid()){
+            this.updatePane();
+        }
+    }//GEN-LAST:event_jTextPane1KeyTyped
+
+    private void jTextPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyPressed
+        if(isCursorPositionValid()){
+            this.updateCmd();
+        }
+    }//GEN-LAST:event_jTextPane1KeyPressed
+
+    private void jTextPane1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyReleased
+        // Check if last line has been changed before "CLIPS> "
+        if(isCursorPositionValid()){
+            if(!evt.isControlDown() && !evt.isShiftDown() && evt.getKeyCode() == KeyEvent.VK_ENTER){
+                // Submit command!
+                String cmd = this.currentCmd;
+                this.currentCmd = "";
+                this.append("> " + cmd);
+                String res = model.evalComandLine(cmd);
+                if(res.length() > 0){
+                    append(res);
+                }
+            }
+        }
+    }//GEN-LAST:event_jTextPane1KeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
@@ -148,13 +190,21 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         if(this.text.length() > 0){
             newText += "\n";
         }
-        newText += "CLIPS > ";
+        newText += model.getPrompt() + currentCmd;
         this.jTextPane1.setText(newText);
         this.setCursorPosition();
     }
     
     private void setCursorPosition(){
         this.jTextPane1.setCaretPosition(this.jTextPane1.getText().length());
+    }
+    
+    private boolean isCursorPositionValid(){
+        String currentText = this.jTextPane1.getText();
+        String promptString = model.getPrompt();
+        int promptStart = currentText.lastIndexOf(promptString);
+        int cmdStart = promptStart + promptString.length();
+        return promptStart > 0 && cmdStart-1 < this.jTextPane1.getCaretPosition();
     }
 
     @Override
@@ -180,5 +230,13 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 this.clear();
             }
         }
+    }
+
+    private void updateCmd() {
+        String currentText = this.jTextPane1.getText();
+        String promptString = model.getPrompt();
+        int promptStart = currentText.lastIndexOf(promptString);
+        int cmdStart = promptStart + promptString.length();
+        this.currentCmd = currentText.substring(cmdStart);
     }
 }
