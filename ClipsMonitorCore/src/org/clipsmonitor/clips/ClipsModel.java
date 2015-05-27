@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.clipsrules.jni.CLIPSError;
-import org.clipsmonitor.core.MonitorConsole;
 
 /**
  * Questa classe astratta è la parte di model (in un'architettura MVC) che si
@@ -23,7 +22,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     protected ClipsCore core;
     private int executionMode;
     private final Thread t;
-    private MonitorConsole console;
+    private ClipsConsole console;
     
     /**
      * costruttore del modello.
@@ -32,7 +31,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     protected ClipsModel() {
         executionMode = 0;
         t = new Thread(this);
-        console = MonitorConsole.getInstance();
+        console = ClipsConsole.getInstance();
         core = ClipsCore.getInstance();
     }
 
@@ -303,21 +302,5 @@ public abstract class ClipsModel extends Observable implements Runnable {
             console.error(ex);
         }
         return result;
-    }
-
-    public void clear() {
-        core.clear();
-    }
-
-    public void reset() {
-        core.reset();
-    }
-
-    public String getPrompt() {
-        return core.getPrompt();
-    }
-    
-    public String getBanner() {
-        return core.getBanner();
     }
 }

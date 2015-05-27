@@ -9,11 +9,8 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import org.clipsmonitor.clips.ClipsCore;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.core.MonitorConsole;
 import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -48,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
 public final class ConsoleTopComponent extends TopComponent implements Observer {
     private String text;
     private String currentCmd;
-    private MonitorConsole console;
+    private ClipsConsole console;
     private ClipsModel model;
     
     public ConsoleTopComponent() {
@@ -56,14 +53,9 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         initComponents();
         setName(Bundle.CTL_ConsoleTopComponent());
         setToolTipText(Bundle.HINT_ConsoleTopComponent());
-        console = MonitorConsole.getInstance();
+        console = ClipsConsole.getInstance();
         console.addObserver(this);
-        text = console.getFullOutput();
-        if(text.isEmpty()){
-            text = model.getBanner();
-        }
-        currentCmd = "";
-        this.updatePane();
+        this.refreshAll();
     }
 
     /**
@@ -74,10 +66,86 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new javax.swing.JPanel();
+        infoCheckBox = new javax.swing.JCheckBox();
+        clipsCheckBox = new javax.swing.JCheckBox();
+        debugCheckBox = new javax.swing.JCheckBox();
+        warnCheckBox = new javax.swing.JCheckBox();
+        errorCheckBox = new javax.swing.JCheckBox();
+        clearButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
 
-        jScrollPane1.setToolTipText(org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.jScrollPane1.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(infoCheckBox, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.infoCheckBox.text")); // NOI18N
+        infoCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(clipsCheckBox, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.clipsCheckBox.text")); // NOI18N
+        clipsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clipsCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(debugCheckBox, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.debugCheckBox.text")); // NOI18N
+        debugCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(warnCheckBox, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.warnCheckBox.text")); // NOI18N
+        warnCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                warnCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(errorCheckBox, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.errorCheckBox.text")); // NOI18N
+        errorCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                errorCheckBoxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(clearButton, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.clearButton.text")); // NOI18N
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(infoCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clipsCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(debugCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(warnCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(errorCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clearButton)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(infoCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(clipsCheckBox)
+                .addComponent(debugCheckBox)
+                .addComponent(warnCheckBox)
+                .addComponent(errorCheckBox)
+                .addComponent(clearButton))
+        );
 
         jTextPane1.setEditable(false);
         jTextPane1.setBackground(new java.awt.Color(230, 230, 230));
@@ -105,17 +173,17 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextPane1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPane1FocusGained
-        this.setCursorPosition();
-    }//GEN-LAST:event_jTextPane1FocusGained
 
     private void jTextPane1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyTyped
         // Check if last line has been changed before "CLIPS> "
@@ -123,12 +191,6 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
             this.updatePane();
         }
     }//GEN-LAST:event_jTextPane1KeyTyped
-
-    private void jTextPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyPressed
-        if(isCursorPositionValid()){
-            this.updateCmd();
-        }
-    }//GEN-LAST:event_jTextPane1KeyPressed
 
     private void jTextPane1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyReleased
         // Check if last line has been changed before "CLIPS> "
@@ -146,9 +208,50 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         }
     }//GEN-LAST:event_jTextPane1KeyReleased
 
+    private void jTextPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyPressed
+        if(isCursorPositionValid()){
+            this.updateCmd();
+        }
+    }//GEN-LAST:event_jTextPane1KeyPressed
+
+    private void jTextPane1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPane1FocusGained
+        this.setCursorPosition();
+    }//GEN-LAST:event_jTextPane1FocusGained
+
+    private void infoCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoCheckBoxActionPerformed
+        console.setLogInfo(infoCheckBox.isSelected());
+    }//GEN-LAST:event_infoCheckBoxActionPerformed
+
+    private void errorCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorCheckBoxActionPerformed
+        console.setLogError(errorCheckBox.isSelected());
+    }//GEN-LAST:event_errorCheckBoxActionPerformed
+
+    private void clipsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clipsCheckBoxActionPerformed
+        console.setLogClips(clipsCheckBox.isSelected());
+    }//GEN-LAST:event_clipsCheckBoxActionPerformed
+
+    private void debugCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugCheckBoxActionPerformed
+        console.setLogDebug(debugCheckBox.isSelected());
+    }//GEN-LAST:event_debugCheckBoxActionPerformed
+
+    private void warnCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_warnCheckBoxActionPerformed
+        console.setLogWarn(warnCheckBox.isSelected());
+    }//GEN-LAST:event_warnCheckBoxActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        console.clear();
+    }//GEN-LAST:event_clearButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearButton;
+    private javax.swing.JCheckBox clipsCheckBox;
+    private javax.swing.JCheckBox debugCheckBox;
+    private javax.swing.JCheckBox errorCheckBox;
+    private javax.swing.JCheckBox infoCheckBox;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JCheckBox warnCheckBox;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -180,19 +283,28 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         this.updatePane();
     }
     
-    private void clear(){
-        this.text = "";
-        this.updatePane();
-    }
-    
     private void updatePane(){
         String newText = this.text;
         if(this.text.length() > 0){
             newText += "\n";
         }
-        newText += model.getPrompt() + currentCmd;
+        if(console.getActive()){
+            newText += console.getPrompt() + currentCmd;
+        }
         this.jTextPane1.setText(newText);
         this.setCursorPosition();
+    }
+    
+    private void refreshAll(){
+        text = console.getFullOutput();
+        currentCmd = "";
+        this.setEnabled(console.getActive());
+        infoCheckBox.setSelected(console.getLogInfo());
+        clipsCheckBox.setSelected(console.getLogClips());
+        debugCheckBox.setSelected(console.getLogDebug());
+        warnCheckBox.setSelected(console.getLogWarn());
+        errorCheckBox.setSelected(console.getLogError());
+        this.updatePane();
     }
     
     private void setCursorPosition(){
@@ -201,7 +313,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     
     private boolean isCursorPositionValid(){
         String currentText = this.jTextPane1.getText();
-        String promptString = model.getPrompt();
+        String promptString = console.getPrompt();
         int promptStart = currentText.lastIndexOf(promptString);
         int cmdStart = promptStart + promptString.length();
         return promptStart > 0 && cmdStart-1 < this.jTextPane1.getCaretPosition();
@@ -209,15 +321,53 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof MonitorConsole){
+        if(o instanceof ClipsConsole){
             String evt = (String)arg;
-            if(evt.equals("activated")){
+            /*
+            *      "info on": info log level activated
+            *      "info off": info log level deactivated
+            *      ... same for all the other log levels (debug, error, warn, clips)
+            *      "max changed": maxOutputLength has been changed
+            *      "resize": output list resized
+            *      "info", "debug", ...: log printed with specific level.
+            *      "log": generic log printed */
+            if(evt.equals("on")){
                 jTextPane1.setEditable(true);
                 jTextPane1.setBackground(new Color(255,255,255));
             } 
-            else if(evt.equals("deactivated")){
+            else if(evt.equals("off")){
                 jTextPane1.setEditable(false);
                 jTextPane1.setBackground(new Color(230,230,230));
+            }
+            else if (evt.equals("info on")) {
+                infoCheckBox.setSelected(true);
+            }
+            else if (evt.equals("info off")){
+                infoCheckBox.setSelected(false);
+            }
+            else if (evt.equals("clips on")) {
+                clipsCheckBox.setSelected(true);
+            }
+            else if (evt.equals("clips off")){
+                clipsCheckBox.setSelected(false);
+            }
+            else if (evt.equals("debug on")) {
+                debugCheckBox.setSelected(true);
+            }
+            else if (evt.equals("debug off")){
+                debugCheckBox.setSelected(false);
+            }
+            else if (evt.equals("warn on")) {
+                warnCheckBox.setSelected(true);
+            }
+            else if (evt.equals("warn off")){
+                warnCheckBox.setSelected(false);
+            }
+            else if (evt.equals("error on")) {
+                errorCheckBox.setSelected(true);
+            }
+            else if (evt.equals("error off")){
+                errorCheckBox.setSelected(false);
             }
             else if(evt.equals("debug") 
                     || evt.equals("error")
@@ -227,14 +377,15 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 this.append(console.getLastOutput());
             }
             else if(evt.equals("clear")){
-                this.clear();
+                this.text = console.getFullOutput();
             }
+            updatePane();
         }
     }
 
     private void updateCmd() {
         String currentText = this.jTextPane1.getText();
-        String promptString = model.getPrompt();
+        String promptString = console.getPrompt();
         int promptStart = currentText.lastIndexOf(promptString);
         int cmdStart = promptStart + promptString.length();
         this.currentCmd = currentText.substring(cmdStart);

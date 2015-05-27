@@ -7,8 +7,8 @@ package org.clipsmonitor.gui;
 
 import java.util.Observable;
 import java.util.Observer;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.core.MonitorConsole;
 import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -42,14 +42,14 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class AgendaTopComponent extends TopComponent implements Observer {
 private ClipsModel model;
-    private MonitorConsole console;
+    private ClipsConsole console;
     
     public AgendaTopComponent() {
         initComponents();
         setName(Bundle.CTL_AgendaTopComponent());
         setToolTipText(Bundle.HINT_AgendaTopComponent());
         model = MonitorModel.getInstance();
-        console = MonitorConsole.getInstance();
+        console = ClipsConsole.getInstance();
         model.addObserver(this);
     }
 

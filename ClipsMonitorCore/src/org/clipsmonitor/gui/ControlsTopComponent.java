@@ -11,6 +11,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -43,7 +44,8 @@ import org.openide.util.NbBundle.Messages;
     "HINT_ControlsTopComponent=This is a Controls window"
 })
 public final class ControlsTopComponent extends TopComponent {
-    ClipsModel model;
+    MonitorModel model;
+    MonitorCore core;
     
     public ControlsTopComponent() {
         initComponents();
@@ -292,6 +294,7 @@ public final class ControlsTopComponent extends TopComponent {
         String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
         model = MonitorModel.getInstance();
+        core = MonitorCore.getInstance();
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode("START");
         model.execute();
@@ -331,8 +334,7 @@ public final class ControlsTopComponent extends TopComponent {
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        model.clear();
-        model.reset();
+        core.resetApplication();
         loadDefaultFileButton.setEnabled(true);
         runButton.setEnabled(false);
         runOneButton.setEnabled(false);

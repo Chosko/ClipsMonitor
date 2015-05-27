@@ -5,11 +5,6 @@
  */
 package org.clipsmonitor.gui;
 
-import java.util.Observable;
-import java.util.Observer;
-import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.monitor2015.MonitorModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -20,37 +15,33 @@ import org.openide.util.NbBundle.Messages;
  * Top component which displays something.
  */
 @ConvertAsProperties(
-        dtd = "-//org.clipsmonitor.gui//Facts//EN",
+        dtd = "-//org.clipsmonitor.gui//map//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "FactsTopComponent",
+        preferredID = "mapTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-@TopComponent.Registration(mode = "facts", openAtStartup = true)
-@ActionID(category = "Window", id = "org.clipsmonitor.gui.FactsTopComponent")
+@TopComponent.Registration(mode = "map", openAtStartup = true)
+@ActionID(category = "Window", id = "org.clipsmonitor.gui.mapTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_FactsAction",
-        preferredID = "FactsTopComponent"
+        displayName = "#CTL_mapAction",
+        preferredID = "mapTopComponent"
 )
 @Messages({
-    "CTL_FactsAction=Facts",
-    "CTL_FactsTopComponent=Facts Window",
-    "HINT_FactsTopComponent=This is a Facts window"
+    "CTL_mapAction=map",
+    "CTL_mapTopComponent=map Window",
+    "HINT_mapTopComponent=This is a map window"
 })
-public final class FactsTopComponent extends TopComponent implements Observer {
-    private ClipsModel model;
-    private ClipsConsole console;
-    
-    public FactsTopComponent() {
+public final class mapTopComponent extends TopComponent {
+
+    public mapTopComponent() {
         initComponents();
-        setName(Bundle.CTL_FactsTopComponent());
-        setToolTipText(Bundle.HINT_FactsTopComponent());
-        model = MonitorModel.getInstance();
-        console = ClipsConsole.getInstance();
-        model.addObserver(this);
+        setName(Bundle.CTL_mapTopComponent());
+        setToolTipText(Bundle.HINT_mapTopComponent());
+
     }
 
     /**
@@ -61,27 +52,19 @@ public final class FactsTopComponent extends TopComponent implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
-
-        jTextPane1.setEditable(false);
-        jScrollPane1.setViewportView(jTextPane1);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -103,16 +86,5 @@ public final class FactsTopComponent extends TopComponent implements Observer {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if(o instanceof ClipsModel){
-            this.updateFacts();
-        }
-    }
-    
-    private void updateFacts(){
-        this.jTextPane1.setText(model.getFactList());
     }
 }

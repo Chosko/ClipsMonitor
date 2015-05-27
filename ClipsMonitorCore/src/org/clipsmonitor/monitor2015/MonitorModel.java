@@ -1,8 +1,8 @@
 package org.clipsmonitor.monitor2015;
 
 import net.sf.clipsrules.jni.CLIPSError;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.core.MonitorConsole;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Waitor
@@ -26,7 +26,7 @@ public class MonitorModel extends ClipsModel {
     private String l_d_waste; // presenza di spazzatura drink
     private Integer l_drink; // quantità di drink contenuta
     private Integer l_food; //quantità di food contenuta
-    private MonitorConsole console;
+    private ClipsConsole console;
     private static MonitorModel instance;
     
     /**
@@ -45,7 +45,7 @@ public class MonitorModel extends ClipsModel {
      */
     private MonitorModel() {
         super();
-        console = MonitorConsole.getInstance();
+        console = ClipsConsole.getInstance();
     }
 
     /**

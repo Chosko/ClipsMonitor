@@ -9,11 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Observable;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
-import org.clipsmonitor.core.MonitorConsole;
 
 /**
  * Questa classe implemente il cuore di connessione con l'ambiente clips,
@@ -29,7 +27,7 @@ public class ClipsCore {
     private Environment clips;
     private RouterDialog router;
     private static ClipsCore instance;
-    private MonitorConsole console;
+    private ClipsConsole console;
     
     /**
      * Singleton
@@ -37,15 +35,26 @@ public class ClipsCore {
     public static ClipsCore getInstance(){
         if(instance == null){
             instance = new ClipsCore();
+            instance.init();
         }
         return instance;
     }
     
-    private ClipsCore(){
+    /**
+     * Private constructor (Singleton)
+     */
+    private ClipsCore(){}
+    
+    /**
+     * Initialize the instance. Used in a separate function to avoid infinite
+     * recursion when initializing singleton classes
+     */
+    private void init(){
+        console = ClipsConsole.getInstance();
         clips = new Environment();
         router = new RouterDialog("routerCore");
         clips.addRouter(router);
-        console = MonitorConsole.getInstance();
+        console.internal("ClipsCore initialized");
     }
     
     /**
@@ -75,8 +84,6 @@ public class ClipsCore {
     public void initialize(String strategyFolder_name, String envsFolder_name) {
 
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
-        clips = new Environment();
-
         File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
@@ -118,6 +125,7 @@ public class ClipsCore {
             }
         }
     }
+    
     /**
      * Metodo da usare con cautela, serve per un comando su un modulo in clips.
      * La sintassi dev'essere quella di clips, non verranno eseguiti controlli
