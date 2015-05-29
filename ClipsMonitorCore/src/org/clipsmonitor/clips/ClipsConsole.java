@@ -68,6 +68,7 @@ public class ClipsConsole extends Observable {
     private boolean logWarn;
     private boolean logClips;
     private boolean logInfo;
+    private boolean unstableWarnSent;
     
     /**
      * Private constructor (Singleton)
@@ -82,11 +83,12 @@ public class ClipsConsole extends Observable {
         clips = ClipsCore.getInstance();
         output = new LinkedList<OutputLine>();
         active = false;
-        logDebug = true;
+        logDebug = false;
         logError = true;
         logClips = true;
         logWarn = true;
         logInfo = true;
+        unstableWarnSent = false;
         append(LogLevel.LOG, clips.getBanner());
         internal("ClipsConsole initialized");
     }
@@ -126,6 +128,14 @@ public class ClipsConsole extends Observable {
             String act = active ? "on" : "off";
             this.notifyObservers(act);
             internal("ClipsConsole " + act);
+            if(active && !unstableWarnSent){
+                this.warn("Questa versione della console è instabile perchè CLIPSJNI");
+                this.warn("non gestisce correttamente gli errori di sintassi.");
+                this.warn("Usala a tuo rishio e pericolo. Se fai errori di sintassi è necessario");
+                this.warn("riavviare l'environment cliccando su reset.");
+                this.warn("La console verrà migliorata nelle prossime versioni.");
+                unstableWarnSent = true;
+            }
         }
     }
     

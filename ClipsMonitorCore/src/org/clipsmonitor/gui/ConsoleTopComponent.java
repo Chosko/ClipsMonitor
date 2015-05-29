@@ -276,6 +276,14 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     }
     
     private void append(String s){
+        append(s, Color.BLACK, false);
+    }
+    
+    private void append(String s, Color c){
+        append(s,c,false);
+    }
+    
+    private void append(String s, Color c, boolean bold){
         if(this.text.length() > 0){
             this.text += "\n";
         }
@@ -378,12 +386,23 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 errorCheckBox.setSelected(false);
                 resetText();
             }
-            else if(evt.equals("debug") 
-                    || evt.equals("error")
-                    || evt.equals("warn")
-                    || evt.equals("info")
-                    || evt.equals("clips")){
+            else if(evt.equals("log")){
                 this.append(console.getLastOutputText());
+            }
+            else if(evt.equals("debug")) {
+                this.append(console.getLastOutputText(), Color.DARK_GRAY);
+            }
+            else if(evt.equals("error")){
+                this.append(console.getLastOutputText(), Color.RED, true);
+            }
+            else if(evt.equals("warn")){
+                this.append(console.getLastOutputText(), Color.ORANGE, true);
+            }
+            else if(evt.equals("info")){
+                this.append(console.getLastOutputText(), Color.BLUE);
+            }
+            else if(evt.equals("clips")){
+                this.append(console.getLastOutputText(), Color.GRAY);
             }
             else if(evt.equals("clear")){
                 resetText();
