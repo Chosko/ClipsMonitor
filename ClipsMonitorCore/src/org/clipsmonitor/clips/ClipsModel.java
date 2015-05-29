@@ -1,8 +1,6 @@
 package org.clipsmonitor.clips;
 
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.clipsrules.jni.CLIPSError;
 
 /**

@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
-import org.clipsmonitor.monitor2015.MonitorModel;
+import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -44,7 +44,7 @@ import org.openide.util.NbBundle.Messages;
     "HINT_ControlsTopComponent=This is a Controls window"
 })
 public final class ControlsTopComponent extends TopComponent {
-    MonitorModel model;
+    RescueModel model;
     MonitorCore core;
     
     public ControlsTopComponent() {
@@ -293,7 +293,7 @@ public final class ControlsTopComponent extends TopComponent {
         envsSelector.setEnabled(false);
         String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
-        model = MonitorModel.getInstance();
+        model = RescueModel.getInstance();
         core = MonitorCore.getInstance();
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode("START");

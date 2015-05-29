@@ -11,7 +11,7 @@ import java.util.Observable;
 import java.util.Observer;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.monitor2015.MonitorModel;
+import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -49,7 +49,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     private ClipsModel model;
     
     public ConsoleTopComponent() {
-        this.model = MonitorModel.getInstance();
+        this.model = RescueModel.getInstance();
         initComponents();
         setName(Bundle.CTL_ConsoleTopComponent());
         setToolTipText(Bundle.HINT_ConsoleTopComponent());
@@ -296,7 +296,6 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     }
     
     private void refreshAll(){
-        text = console.getFullOutput();
         currentCmd = "";
         this.setEnabled(console.getActive());
         infoCheckBox.setSelected(console.getLogInfo());
@@ -304,7 +303,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         debugCheckBox.setSelected(console.getLogDebug());
         warnCheckBox.setSelected(console.getLogWarn());
         errorCheckBox.setSelected(console.getLogError());
-        this.updatePane();
+        resetText();
     }
     
     private void setCursorPosition(){
@@ -341,43 +340,53 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
             }
             else if (evt.equals("info on")) {
                 infoCheckBox.setSelected(true);
+                resetText();
             }
             else if (evt.equals("info off")){
                 infoCheckBox.setSelected(false);
+                resetText();
             }
             else if (evt.equals("clips on")) {
                 clipsCheckBox.setSelected(true);
+                resetText();
             }
             else if (evt.equals("clips off")){
                 clipsCheckBox.setSelected(false);
+                resetText();
             }
             else if (evt.equals("debug on")) {
                 debugCheckBox.setSelected(true);
+                resetText();
             }
             else if (evt.equals("debug off")){
                 debugCheckBox.setSelected(false);
+                resetText();
             }
             else if (evt.equals("warn on")) {
                 warnCheckBox.setSelected(true);
+                resetText();
             }
             else if (evt.equals("warn off")){
                 warnCheckBox.setSelected(false);
+                resetText();
             }
             else if (evt.equals("error on")) {
                 errorCheckBox.setSelected(true);
+                resetText();
             }
             else if (evt.equals("error off")){
                 errorCheckBox.setSelected(false);
+                resetText();
             }
             else if(evt.equals("debug") 
                     || evt.equals("error")
                     || evt.equals("warn")
                     || evt.equals("info")
                     || evt.equals("clips")){
-                this.append(console.getLastOutput());
+                this.append(console.getLastOutputText());
             }
             else if(evt.equals("clear")){
-                this.text = console.getFullOutput();
+                resetText();
             }
             updatePane();
         }
@@ -389,5 +398,10 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         int promptStart = currentText.lastIndexOf(promptString);
         int cmdStart = promptStart + promptString.length();
         this.currentCmd = currentText.substring(cmdStart);
+    }
+
+    private void resetText() {
+        this.text = console.getFullOutputText();
+        updatePane();
     }
 }

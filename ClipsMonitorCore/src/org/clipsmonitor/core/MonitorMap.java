@@ -1,7 +1,8 @@
-package org.clipsmonitor.clips;
+package org.clipsmonitor.core;
 
 import java.util.Observable;
 import java.util.Observer;
+import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  * Questa classe astratta è la parte di view (in un'architettura MVC) e
@@ -12,7 +13,7 @@ import java.util.Observer;
  * @author Piovesan Luca, Verdoja Francesco Edited by: @author Violanti Luca,
  * Varesano Marco, Busso Marco, Cotrino Roberto
  */
-public abstract class ClipsMap implements Observer {
+public abstract class MonitorMap implements Observer {
     
     ClipsConsole console;
     

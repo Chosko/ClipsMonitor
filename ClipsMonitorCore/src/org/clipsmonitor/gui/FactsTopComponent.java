@@ -9,7 +9,7 @@ import java.util.Observable;
 import java.util.Observer;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
-import org.clipsmonitor.monitor2015.MonitorModel;
+import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -48,7 +48,7 @@ public final class FactsTopComponent extends TopComponent implements Observer {
         initComponents();
         setName(Bundle.CTL_FactsTopComponent());
         setToolTipText(Bundle.HINT_FactsTopComponent());
-        model = MonitorModel.getInstance();
+        model = RescueModel.getInstance();
         console = ClipsConsole.getInstance();
         model.addObserver(this);
     }

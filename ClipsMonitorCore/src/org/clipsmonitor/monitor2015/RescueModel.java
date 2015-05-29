@@ -12,7 +12,7 @@ import org.clipsmonitor.clips.ClipsModel;
  * @author Violanti Luca, Varesano Marco, Busso Marco, Cotrino Roberto
  * @edit by Enrico Mensa, Matteo Madeddu, Davide Dell'Anna
  */
-public class MonitorModel extends ClipsModel {
+public class RescueModel extends ClipsModel {
 
     private String[][] map;
     private String direction;
@@ -27,14 +27,14 @@ public class MonitorModel extends ClipsModel {
     private Integer l_drink; // quantità di drink contenuta
     private Integer l_food; //quantità di food contenuta
     private ClipsConsole console;
-    private static MonitorModel instance;
+    private static RescueModel instance;
     
     /**
      * Singleton
      */
-    public static MonitorModel getInstance(){
+    public static RescueModel getInstance(){
         if(instance == null){
-            instance = new MonitorModel();
+            instance = new RescueModel();
         }
         return instance;
     }
@@ -43,7 +43,7 @@ public class MonitorModel extends ClipsModel {
      * Costruttore del modello per il progetto Monitor
      *
      */
-    private MonitorModel() {
+    private RescueModel() {
         super();
         console = ClipsConsole.getInstance();
     }

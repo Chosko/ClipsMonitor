@@ -55,7 +55,7 @@ public class ClipsConsole extends Observable {
     /**
      * A linked list to store the output
      */
-    private LinkedList<String> output;
+    private LinkedList<OutputLine> output;
     
     /**
      * Activation status for the console
@@ -80,14 +80,14 @@ public class ClipsConsole extends Observable {
      */
     private void init(){
         clips = ClipsCore.getInstance();
-        output = new LinkedList<String>();
+        output = new LinkedList<OutputLine>();
         active = false;
         logDebug = true;
         logError = true;
         logClips = true;
         logWarn = true;
         logInfo = true;
-        append(clips.getBanner());
+        append(LogLevel.LOG, clips.getBanner());
         internal("ClipsConsole initialized");
     }
     
@@ -108,7 +108,7 @@ public class ClipsConsole extends Observable {
     public void clear(){
         if(output.size() > 0){
             output.clear();
-            append(clips.getBanner());
+            append(LogLevel.LOG, clips.getBanner());
             this.setChanged();
             this.notifyObservers("clear");
             internal("ClipsConsole cleared");
@@ -274,7 +274,7 @@ public class ClipsConsole extends Observable {
     public void log(Object log) {
         String logString = log.toString();
         System.out.println(logString);
-        this.append(logString);
+        this.append(LogLevel.LOG, logString);
         this.setChanged();
         this.notifyObservers("log");
     }
@@ -285,10 +285,10 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void debug(Object log) {
+        String logString = "[DEBUG] " + log;
+        System.out.println(logString);
+        this.append(LogLevel.DEBUG, logString);
         if(logDebug){
-            String logString = "[DEBUG] " + log;
-            System.out.println(logString);
-            this.append(logString);
             this.setChanged();
             this.notifyObservers("debug");
         }
@@ -300,10 +300,11 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void error(Object log) {
+        String logString = "[ERROR] " + log;
+        System.out.println(logString);
+        this.append(LogLevel.ERROR, logString);
+
         if(logError){
-            String logString = "[ERROR] " + log;
-            System.out.println(logString);
-            this.append(logString);
             this.setChanged();
             this.notifyObservers("error");
         }
@@ -315,10 +316,11 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void warn(Object log) {
+        String logString = "[WARN] " + log;
+        System.out.println(logString);
+        this.append(LogLevel.WARN, logString);
+
         if(logWarn){
-            String logString = "[WARN] " + log;
-            System.out.println(logString);
-            this.append(logString);
             this.setChanged();
             this.notifyObservers("warn");
         }
@@ -330,10 +332,11 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void info(Object log){
+        String logString = "[INFO] " + log;
+        System.out.println(logString);
+        this.append(LogLevel.INFO, logString);
+
         if(logInfo){
-            String logString = "[INFO] " + log;
-            System.out.println(logString);
-            this.append(logString);
             this.setChanged();
             this.notifyObservers("info");
         }
@@ -345,10 +348,11 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void clips(Object log){
+        String logString = "[CLIPS] " + log;
+        System.out.println(logString);
+        this.append(LogLevel.CLIPS, logString);
+
         if(logClips){
-            String logString = "[CLIPS] " + log;
-            System.out.println(logString);
-            this.append(logString);
             this.setChanged();
             this.notifyObservers("clips");
         }
@@ -369,11 +373,11 @@ public class ClipsConsole extends Observable {
      * 
      * @param log The string to append
      */
-    private void append(String log){
+    private void append(LogLevel level, String log){
         if(output.size() >= maxOutputLength){
             output.removeFirst();
         }
-        output.addLast(log);
+        output.addLast(new OutputLine(level, log));
     }
     
     /**
@@ -381,21 +385,67 @@ public class ClipsConsole extends Observable {
      * 
      * @return the last output saved
      */
-    public String getLastOutput(){
+    public String getLastOutputText(){
+        return output.getLast().getOutput();
+    }
+    
+    /**
+     * Get the level of last saved log
+     * 
+     * @return the level of last saved log
+     */
+    public LogLevel getLastOutputLevel(){
+        return output.getLast().getLevel();
+    }
+    
+    /**
+     * Get the last output line
+     */
+    public OutputLine getLastOutput(){
         return output.getLast();
     }
     
     /**
-     * Get the full output saved so far.
+     * Get the text of the output saved so far.
      *
      * @return the full output
      */
-    public String getFullOutput(){
+    public String getFullOutputText(){
         String text = "";
-        for(String elem : output){
-            text += elem + "\n";
+        for(OutputLine elem : output){
+            boolean add = 
+                    elem.level == LogLevel.LOG
+                    || elem.level == LogLevel.CLIPS && logClips
+                    || elem.level == LogLevel.DEBUG && logDebug
+                    || elem.level == LogLevel.INFO && logInfo
+                    || elem.level == LogLevel.WARN && logWarn
+                    || elem.level == LogLevel.ERROR && logError;
+            if(add){
+                text += elem.getOutput() + "\n";
+            }
         }
         return text;
+    }
+    
+    /**
+     * Get the output saved so far
+     */
+    public OutputLine[] getFullOutput(){
+        LinkedList<OutputLine> outList = new LinkedList<OutputLine>();
+        for(OutputLine elem : output){
+            boolean add = 
+                    elem.level == LogLevel.LOG
+                    || elem.level == LogLevel.CLIPS && logClips
+                    || elem.level == LogLevel.DEBUG && logDebug
+                    || elem.level == LogLevel.INFO && logInfo
+                    || elem.level == LogLevel.WARN && logWarn
+                    || elem.level == LogLevel.ERROR && logError;
+            if(add){
+                outList.addLast(elem);
+            }
+        }
+        OutputLine[] out = new OutputLine[outList.size()];
+        return outList.toArray(out);
     }
     
     /**
@@ -417,6 +467,33 @@ public class ClipsConsole extends Observable {
         if(i > 0){
             this.setChanged();
             this.notifyObservers("resize");
+        }
+    }
+    
+    public enum LogLevel{
+        LOG,
+        INFO,
+        CLIPS,
+        DEBUG,
+        WARN,
+        ERROR
+    }
+    
+    public final class OutputLine{
+        private final String output;
+        private final LogLevel level;
+        
+        public OutputLine(LogLevel level, String output){
+            this.output = output;
+            this.level = level;
+        }
+        
+        public String getOutput(){
+            return output;
+        }
+        
+        public LogLevel getLevel(){
+            return level;
         }
     }
 }
