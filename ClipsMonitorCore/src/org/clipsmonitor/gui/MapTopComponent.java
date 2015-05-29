@@ -19,28 +19,28 @@ import org.openide.util.NbBundle.Messages;
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "mapTopComponent",
+        preferredID = "MapTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "map", openAtStartup = true)
-@ActionID(category = "Window", id = "org.clipsmonitor.gui.mapTopComponent")
+@ActionID(category = "Window", id = "org.clipsmonitor.gui.MapTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_mapAction",
-        preferredID = "mapTopComponent"
+        preferredID = "MapTopComponent"
 )
 @Messages({
     "CTL_mapAction=map",
-    "CTL_mapTopComponent=map Window",
-    "HINT_mapTopComponent=This is a map window"
+    "CTL_MapTopComponent=map Window",
+    "HINT_MapTopComponent=This is a map window"
 })
-public final class mapTopComponent extends TopComponent {
+public final class MapTopComponent extends TopComponent {
 
-    public mapTopComponent() {
+    public MapTopComponent() {
         initComponents();
-        setName(Bundle.CTL_mapTopComponent());
-        setToolTipText(Bundle.HINT_mapTopComponent());
+        setName(Bundle.CTL_MapTopComponent());
+        setToolTipText(Bundle.HINT_MapTopComponent());
 
     }
 
