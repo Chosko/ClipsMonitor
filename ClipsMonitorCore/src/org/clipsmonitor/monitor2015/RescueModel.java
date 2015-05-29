@@ -211,7 +211,7 @@ public class RescueModel extends ClipsModel {
      *
      * @return la mappa come matrice di stringhe
      */
-    public synchronized String[][] getMap() {
+    public synchronized String[][] getEnvMap() {
         return map;
     }
 

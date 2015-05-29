@@ -13,7 +13,7 @@ import org.clipsmonitor.clips.ClipsConsole;
  * @author Piovesan Luca, Verdoja Francesco Edited by: @author Violanti Luca,
  * Varesano Marco, Busso Marco, Cotrino Roberto
  */
-public abstract class MonitorMap implements Observer {
+public abstract class MonitorMap extends Observable implements Observer {
     
     ClipsConsole console;
     
