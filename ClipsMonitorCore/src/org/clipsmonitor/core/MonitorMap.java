@@ -33,8 +33,6 @@ public abstract class MonitorMap extends Observable implements Observer {
             onAction();
         } else if (advice.equals("disposeDone")) {
             onDispose();
-        } else {
-            console.error(advice);
         }
     }
 

@@ -1,8 +1,6 @@
 package org.clipsmonitor.monitor2015;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +9,6 @@ import java.util.Map;
 import java.util.Observer;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorMap;
 
@@ -86,7 +82,7 @@ public class RescueMap extends MonitorMap implements Observer {
         }
 
         model = RescueModel.getInstance();
-        model.addObserver((Observer) this);
+        model.addObserver(this);
     }
 
     @Override

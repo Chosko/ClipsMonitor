@@ -6,12 +6,16 @@
 package org.clipsmonitor.gui;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
+import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -43,7 +47,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ControlsTopComponent=Controls Window",
     "HINT_ControlsTopComponent=This is a Controls window"
 })
-public final class ControlsTopComponent extends TopComponent {
+public final class ControlsTopComponent extends TopComponent{
     RescueModel model;
     MonitorCore core;
     
@@ -298,6 +302,8 @@ public final class ControlsTopComponent extends TopComponent {
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode("START");
         model.execute();
+        RescueMap envMap = new RescueMap();
+        model.registerMap("envMap", envMap);
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
@@ -472,7 +478,7 @@ public final class ControlsTopComponent extends TopComponent {
         }
         return result;
     }
-
+    
     private class ClpFileFilter extends FileFilter {
 
         @Override

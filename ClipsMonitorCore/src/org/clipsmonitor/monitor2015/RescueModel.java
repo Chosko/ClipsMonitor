@@ -28,6 +28,7 @@ public class RescueModel extends ClipsModel {
     private Integer l_food; //quantità di food contenuta
     private ClipsConsole console;
     private static RescueModel instance;
+    private RescueMap tmp;
     
     /**
      * Singleton
@@ -92,6 +93,23 @@ public class RescueModel extends ClipsModel {
             ex.printStackTrace();
             console.error(ex);
         }
+    }
+    
+    /**
+     * Register a map to a MapTopComponent
+     * @param target
+     * @param map 
+     */
+    public void registerMap(String target, RescueMap map){
+        this.tmp = map;
+        this.setChanged();
+        this.notifyObservers(target);
+    }
+    
+    public RescueMap getMapToRegister(){
+        RescueMap rmap = tmp;
+        this.tmp = null;
+        return rmap;
     }
 
     /**

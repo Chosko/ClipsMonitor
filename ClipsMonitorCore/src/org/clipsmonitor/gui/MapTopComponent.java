@@ -13,50 +13,24 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(
-        dtd = "-//org.clipsmonitor.gui//map//EN",
-        autostore = false
-)
-@TopComponent.Description(
-        preferredID = "MapTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-)
-@TopComponent.Registration(mode = "map", openAtStartup = true)
-@ActionID(category = "Window", id = "org.clipsmonitor.gui.MapTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
-@TopComponent.OpenActionRegistration(
-        displayName = "#CTL_mapAction",
-        preferredID = "MapTopComponent"
-)
-@Messages({
-    "CTL_mapAction=map",
-    "CTL_MapTopComponent=map Window",
-    "HINT_MapTopComponent=This is a map window"
-})
-
-public final class MapTopComponent extends TopComponent implements Observer {
+public abstract class MapTopComponent extends TopComponent implements Observer {
     private MapPanel mapPanel;
+    protected RescueModel model;
+    protected RescueMap map;
+    protected String target;
+    protected ClipsConsole console;
     
-    public MapTopComponent() {
-        initComponents();
-        setName(Bundle.CTL_MapTopComponent());
-        setToolTipText(Bundle.HINT_MapTopComponent());
-        mapPanel = new MapPanel(null);
-        this.add(mapPanel);
+    protected void initializeMapTopComponent(){
+        this.model = RescueModel.getInstance();
+        this.model.addObserver(this);
+        console = ClipsConsole.getInstance();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -103,15 +77,17 @@ public final class MapTopComponent extends TopComponent implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(arg.equals("repaint")){
-            this.repaint();
+        if(arg.equals(this.target)){
+            console.debug("Target map " + arg);
+            this.map = model.getMapToRegister();
+            this.map.addObserver(this);
         }
-        else{
-            JOptionPane.showMessageDialog(this.mapPanel, arg, "Termine Esecuzione", JOptionPane.INFORMATION_MESSAGE);
+        else if(arg.equals("repaint")){
+            this.repaint();
         }
     }
     
-    private class MapPanel extends JPanel {
+    protected class MapPanel extends JPanel {
         RescueModel model;
         RescueMap map;
         
