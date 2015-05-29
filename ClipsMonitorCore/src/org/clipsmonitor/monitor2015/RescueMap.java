@@ -200,7 +200,7 @@ public class RescueMap extends MonitorMap implements Observer {
                 String line = fatto[1] + "\t" + source + "\t" + removeFistAndLastChar(fatto[4]); //prendiamo il testo così com'è
                 //E applichiamo le sostituzioni, appendendo il risultato alla finestra
                 String parameters[] = {fatto[5], fatto[6], fatto[7], fatto[8], fatto[9]};
-                console.log(source + mapParameters(line, parameters));
+                console.clips(source + mapParameters(line, parameters));
             }
 
         } catch (Exception ex) {

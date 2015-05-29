@@ -92,6 +92,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         RescueMap map;
         
         public MapPanel(RescueMap map) {
+            
             super();
             model = RescueModel.getInstance();
             this.map = map;

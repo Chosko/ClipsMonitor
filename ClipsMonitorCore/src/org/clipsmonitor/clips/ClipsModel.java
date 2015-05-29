@@ -294,7 +294,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
         try{
             result = core.evaluateOutput("AGENT", command);
             this.setChanged();
-            this.notifyObservers();
+            this.notifyObservers("cmd");
         }
         catch(CLIPSError ex){
             console.error(ex);

@@ -31,10 +31,7 @@ class RouterDialog extends Router {
      */
     @Override
     public synchronized boolean query(String routerName) {
-        if (routerName.equals("wdisplay") || routerName.equals("wclips")) {
-            return true;
-        }
-        return false;
+        return routerName.equals("wdisplay") || routerName.equals("wclips");
     }
     
     /**
