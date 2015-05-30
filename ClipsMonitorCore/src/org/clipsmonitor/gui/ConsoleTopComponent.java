@@ -49,13 +49,25 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     private ClipsModel model;
     
     public ConsoleTopComponent() {
-        this.model = RescueModel.getInstance();
         initComponents();
         setName(Bundle.CTL_ConsoleTopComponent());
         setToolTipText(Bundle.HINT_ConsoleTopComponent());
+        init();
+    }
+    
+    private void init(){
+        this.model = RescueModel.getInstance();
         console = ClipsConsole.getInstance();
         console.addObserver(this);
+        model.addObserver(this);
         this.refreshAll();
+    }
+    
+    private void clear(){
+        this.model = null;
+        this.console = null;
+        setEditable(false);
+        this.jTextPane1.setText("");
     }
 
     /**
@@ -194,7 +206,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
 
     private void jTextPane1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyReleased
         // Check if last line has been changed before "CLIPS> "
-        if(isCursorPositionValid()){
+        if(jTextPane1.isEditable() && isCursorPositionValid()){
             if(!evt.isControlDown() && !evt.isShiftDown() && evt.getKeyCode() == KeyEvent.VK_ENTER){
                 // Submit command!
                 String cmd = this.currentCmd;
@@ -209,13 +221,15 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     }//GEN-LAST:event_jTextPane1KeyReleased
 
     private void jTextPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyPressed
-        if(isCursorPositionValid()){
+        if(jTextPane1.isEditable() && isCursorPositionValid()){
             this.updateCmd();
         }
     }//GEN-LAST:event_jTextPane1KeyPressed
 
     private void jTextPane1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPane1FocusGained
-        this.setCursorPosition();
+        if(jTextPane1.isEditable()){
+            this.setCursorPosition();
+        }
     }//GEN-LAST:event_jTextPane1FocusGained
 
     private void infoCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoCheckBoxActionPerformed
@@ -305,7 +319,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     
     private void refreshAll(){
         currentCmd = "";
-        this.setEnabled(console.getActive());
+        setEditable(console.getActive());
         infoCheckBox.setSelected(console.getLogInfo());
         clipsCheckBox.setSelected(console.getLogClips());
         debugCheckBox.setSelected(console.getLogDebug());
@@ -328,23 +342,13 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
 
     @Override
     public void update(Observable o, Object arg) {
+        String evt = (String)arg;
         if(o instanceof ClipsConsole){
-            String evt = (String)arg;
-            /*
-            *      "info on": info log level activated
-            *      "info off": info log level deactivated
-            *      ... same for all the other log levels (debug, error, warn, clips)
-            *      "max changed": maxOutputLength has been changed
-            *      "resize": output list resized
-            *      "info", "debug", ...: log printed with specific level.
-            *      "log": generic log printed */
             if(evt.equals("on")){
-                jTextPane1.setEditable(true);
-                jTextPane1.setBackground(new Color(255,255,255));
+                setEditable(true);
             } 
             else if(evt.equals("off")){
-                jTextPane1.setEditable(false);
-                jTextPane1.setBackground(new Color(230,230,230));
+                setEditable(false);
             }
             else if (evt.equals("info on")) {
                 infoCheckBox.setSelected(true);
@@ -399,7 +403,8 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 this.append(console.getLastOutputText(), Color.ORANGE, true);
             }
             else if(evt.equals("info")){
-                this.append(console.getLastOutputText(), Color.BLUE);
+                String lastOutput = console.getLastOutputText();
+                this.append(lastOutput, Color.BLUE);
             }
             else if(evt.equals("clips")){
                 this.append(console.getLastOutputText(), Color.GRAY);
@@ -408,6 +413,14 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
                 resetText();
             }
             updatePane();
+        }
+        else if(o instanceof ClipsModel){
+            if(evt.equals("startApp")){
+                init();
+            }
+            else if(evt.equals("clearApp")){
+                clear();
+            }
         }
     }
 
@@ -422,5 +435,20 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
     private void resetText() {
         this.text = console.getFullOutputText();
         updatePane();
+    }
+
+    private void setEditable(boolean editable) {
+        if(editable){
+            jTextPane1.setBackground(new Color(255,255,255));
+        }
+        else{
+            jTextPane1.setBackground(new Color(230,230,230));
+        }
+        jTextPane1.setEditable(editable);
+        clipsCheckBox.setEnabled(editable);
+        debugCheckBox.setEnabled(editable);
+        warnCheckBox.setEnabled(editable);
+        errorCheckBox.setEnabled(editable);
+        infoCheckBox.setEnabled(editable);
     }
 }

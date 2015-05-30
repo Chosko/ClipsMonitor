@@ -3,6 +3,7 @@ package org.clipsmonitor.monitor2015;
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorCore;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Waitor
@@ -29,6 +30,7 @@ public class RescueModel extends ClipsModel {
     private ClipsConsole console;
     private static RescueModel instance;
     private RescueMap tmp;
+    private String advise;
     
     /**
      * Singleton
@@ -40,6 +42,24 @@ public class RescueModel extends ClipsModel {
         return instance;
     }
     
+    public static void clearInstance() {
+        instance.advise = null;
+        instance.console = null;
+        instance.core = null;
+        instance.direction = null;
+        instance.l_d_waste = null;
+        instance.l_drink = null;
+        instance.l_f_waste = null;
+        instance.l_food = null;
+        instance.map = null;
+        instance.maxduration = null;
+        instance.result = null;
+        instance.step = null;
+        instance.time = null;
+        instance.tmp = null;
+        instance = null;
+    }
+    
     /**
      * Costruttore del modello per il progetto Monitor
      *
@@ -47,6 +67,7 @@ public class RescueModel extends ClipsModel {
     private RescueModel() {
         super();
         console = ClipsConsole.getInstance();
+        MonitorCore.getInstance().registerModel(this);
     }
 
     /**
@@ -54,14 +75,14 @@ public class RescueModel extends ClipsModel {
      *
      *
      */
-    private synchronized void init() {
+    private synchronized void initModel() {
         result = "no";
         time = 0;
         step = 0;
         maxduration = Integer.MAX_VALUE;
         try {
             console.debug("Esecuzione del primo passo al fine di caricare i fatti relativi alla mappa.");
-            core.evaluate("MAIN", "(run 1)"); //Eseguiamo la prima regola create-world1 per far sì che venga eseguita la regola di init della mappa [POCO GENERALE]
+            core.evaluate("MAIN", "(run 1)"); //Eseguiamo la prima regola create-world1 per far sì che venga eseguita la regola di initModel della mappa [POCO GENERALE]
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
 
             console.debug("Inizializzazione del modello (mappa).");
@@ -299,7 +320,7 @@ public class RescueModel extends ClipsModel {
 
     @Override
     protected void setup(){
-        init();
+        initModel();
     }
 
     @Override
@@ -353,5 +374,13 @@ public class RescueModel extends ClipsModel {
 
     public Integer getL_food() {
         return l_food;
+    }
+
+    void setAdvise(String advise) {
+        this.advise = advise;
+    }
+
+    public String getAdvise() {
+        return this.advise;
     }
 }

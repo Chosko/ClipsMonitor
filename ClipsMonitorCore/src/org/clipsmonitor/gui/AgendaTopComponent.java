@@ -41,16 +41,26 @@ import org.openide.util.NbBundle.Messages;
     "HINT_AgendaTopComponent=This is a Agenda window"
 })
 public final class AgendaTopComponent extends TopComponent implements Observer {
-private ClipsModel model;
+    private ClipsModel model;
     private ClipsConsole console;
     
     public AgendaTopComponent() {
         initComponents();
         setName(Bundle.CTL_AgendaTopComponent());
         setToolTipText(Bundle.HINT_AgendaTopComponent());
+        init();
+    }
+    
+    private void init(){
         model = RescueModel.getInstance();
         console = ClipsConsole.getInstance();
         model.addObserver(this);
+    }
+    
+    private void clear(){
+        model = null;
+        console = null;
+        this.jTextPane1.setText("");
     }
 
     /**
@@ -107,12 +117,19 @@ private ClipsModel model;
     
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof ClipsModel){
-            this.updateFacts();
+        if(arg == "actionDone" || arg == "cmd" || arg == "disposeDone" || arg == "setupDone"){
+            this.updateAgenda();
+        }
+        else if(arg == "clearApp"){
+            this.clear();
+        }
+        else if(arg == "startApp"){
+            this.init();
         }
     }
     
-    private void updateFacts(){
+    private void updateAgenda(){
         this.jTextPane1.setText(model.getAgenda());
+        this.jTextPane1.setCaretPosition(jTextPane1.getText().length());
     }
 }

@@ -1,6 +1,8 @@
 package org.clipsmonitor.core;
 
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.clips.ClipsCore;
+import org.clipsmonitor.clips.ClipsModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,7 +16,7 @@ import org.clipsmonitor.clips.ClipsConsole;
  */
 public final class MonitorCore {
     private static MonitorCore instance;
-    private ClipsConsole console;
+    private ClipsModel model;
     
     /**
      * Private constructor (Singleton)
@@ -26,8 +28,7 @@ public final class MonitorCore {
      * recursion when initializing singleton classes
      */
     private void init(){
-        console = ClipsConsole.getInstance();
-        resetApplication();
+        startApplication();
     }
     
     /**
@@ -42,11 +43,32 @@ public final class MonitorCore {
     }
     
     /**
+     * Register the model used in this application
+     */
+    public void registerModel(ClipsModel model){
+        this.model = model;
+    }
+    
+    /**
      * Perform the operations to run at application startup or reset.
      */
     public void resetApplication(){
-        ClipsConsole.getInstance().clear();
-        ClipsConsole.getInstance().setActive(false);
-        console.info("Application started");
+        ClipsConsole.clearInstance();
+        ClipsCore.clearInstance();
+        model.clear();
+        startApplication();
+        model.restart();
+    }
+    
+    /**
+     * Performs the operations needed when the agent has terminated the execution.
+     */
+    public void finished(){
+        model.finished();
+    }
+
+    private void startApplication() {
+        ClipsConsole.getInstance().info("Starting application");
+        ClipsCore.getInstance();
     }
 }

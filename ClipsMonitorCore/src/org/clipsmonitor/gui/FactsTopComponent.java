@@ -48,9 +48,19 @@ public final class FactsTopComponent extends TopComponent implements Observer {
         initComponents();
         setName(Bundle.CTL_FactsTopComponent());
         setToolTipText(Bundle.HINT_FactsTopComponent());
+        init();
+    }
+    
+    private void init(){
         model = RescueModel.getInstance();
         console = ClipsConsole.getInstance();
         model.addObserver(this);
+    }
+    
+    private void clear(){
+        model = null;
+        console = null;
+        this.jTextPane1.setText("");
     }
 
     /**
@@ -107,8 +117,14 @@ public final class FactsTopComponent extends TopComponent implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof ClipsModel){
+        if(arg == "actionDone" || arg == "cmd" || arg == "disposeDone" || arg == "setupDone"){
             this.updateFacts();
+        }
+        else if(arg == "clearApp"){
+            this.clear();
+        }
+        else if(arg == "startApp"){
+            this.init();
         }
     }
     

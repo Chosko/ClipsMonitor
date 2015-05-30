@@ -2,7 +2,6 @@ package org.clipsmonitor.core;
 
 import java.util.Observable;
 import java.util.Observer;
-import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  * Questa classe astratta è la parte di view (in un'architettura MVC) e
@@ -14,8 +13,6 @@ import org.clipsmonitor.clips.ClipsConsole;
  * Varesano Marco, Busso Marco, Cotrino Roberto
  */
 public abstract class MonitorMap extends Observable implements Observer {
-    
-    ClipsConsole console;
     
     @Override
     /**
@@ -33,6 +30,9 @@ public abstract class MonitorMap extends Observable implements Observer {
             onAction();
         } else if (advice.equals("disposeDone")) {
             onDispose();
+        }
+        else if(arg == "clearApp"){
+            this.clear();
         }
     }
 
@@ -60,4 +60,7 @@ public abstract class MonitorMap extends Observable implements Observer {
      *
      */
     protected abstract void onDispose();
+    
+    protected abstract void clear();
+    protected abstract void init();
 }

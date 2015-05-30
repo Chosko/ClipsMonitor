@@ -14,6 +14,7 @@ import java.util.Observer;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.openide.windows.TopComponent;
@@ -25,10 +26,27 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     protected String target;
     protected ClipsConsole console;
     
-    protected void initializeMapTopComponent(){
+    public MapTopComponent(){
+        initComponents();
+        init();
+    }
+    
+    private void init(){
         this.model = RescueModel.getInstance();
         this.model.addObserver(this);
         console = ClipsConsole.getInstance();
+    }
+    
+    private void clear(){
+        this.model = null;
+        RescueModel.clearInstance();
+        this.console = null;
+        this.mapPanel.map = null;
+        this.mapPanel.model = null;
+        this.map = null;
+        this.mapPanel = null;
+        this.containerPanel.removeAll();
+        this.containerPanel.repaint();
     }
     
     /**
@@ -39,19 +57,24 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        containerPanel = new javax.swing.JPanel();
+
+        containerPanel.setLayout(new java.awt.BorderLayout());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(containerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(containerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel containerPanel;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -83,8 +106,57 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
             this.map.addObserver(this);
         }
         else if(arg.equals("repaint")){
-            this.repaint();
+            this.mapPanel.repaint();
         }
+        else if(arg.equals("initializeMap")){
+            this.initializeMap();
+        }
+        else if(arg.equals("advise")){
+            MonitorCore.getInstance().finished();
+            JOptionPane.showMessageDialog(this.containerPanel, model.getAdvise(), "Termine Esecuzione", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else if(arg == "clearApp"){
+            this.clear();
+        }
+        else if(arg == "startApp"){
+            this.init();
+        }
+    }
+    
+    
+    /**
+     * Crea la prima versione della mappa, quella corrispondente all'avvio
+     * dell'ambiente. Inserisce in ogni elemento del grid (mappa) la corretta
+     * immagine.
+     *
+     */
+    private void initializeMap() {
+        String[][] mapString = map.getMap();
+
+        int x = mapString.length;
+        int y = mapString[0].length;
+        int cellDimension = Math.round(map.MAP_DIMENSION / x);
+
+        // bloccata la dimensione massima delle singole immagini
+        if (cellDimension > map.DEFAULT_IMG_SIZE) {
+            cellDimension = map.DEFAULT_IMG_SIZE;
+        }
+
+        mapPanel = new MapPanel(map);
+
+        javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
+        mapPanel.setLayout(mapPanelLayout);
+        mapPanelLayout.setHorizontalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        mapPanelLayout.setVerticalGroup(
+            mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        containerPanel.add(mapPanel, java.awt.BorderLayout.CENTER);
+        this.containerPanel.validate();
     }
     
     protected class MapPanel extends JPanel {

@@ -36,6 +36,12 @@ import java.util.Observable;
  * @author Ruben Caliandro
  */
 public class ClipsConsole extends Observable {
+
+    public static void clearInstance() {
+        instance.clips = null;
+        instance.output = null;
+        instance = null;
+    }
     
     /**
      * The maximum length of the saved output

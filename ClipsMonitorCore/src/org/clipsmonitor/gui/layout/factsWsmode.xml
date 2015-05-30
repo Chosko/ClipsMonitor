@@ -3,13 +3,12 @@
   <kind type="view"/>
   <state type="joined"/>
   <constraints>
-    <path orientation="horizontal" number="60" weight="0.6287425149700598"/>
+    <path orientation="horizontal" number="60" weight="0.7"/>
     <path orientation="vertical" number="80" weight="0.31602373887240354"/>
     <path orientation="horizontal" number="30" weight="0.8"/>
     <path orientation="horizontal" number="0" weight="0.3183673469387755"/>
   </constraints>
   <bounds x="136" y="495" width="546" height="145"/>
   <frame state="0"/>
-    
     <empty-behavior permanent="true"/>
 </mode>

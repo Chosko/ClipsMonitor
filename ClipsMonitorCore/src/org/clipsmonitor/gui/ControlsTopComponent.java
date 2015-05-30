@@ -10,10 +10,8 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
-import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
@@ -47,7 +45,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ControlsTopComponent=Controls Window",
     "HINT_ControlsTopComponent=This is a Controls window"
 })
-public final class ControlsTopComponent extends TopComponent{
+public final class ControlsTopComponent extends TopComponent implements Observer{
     RescueModel model;
     MonitorCore core;
     
@@ -298,12 +296,12 @@ public final class ControlsTopComponent extends TopComponent{
         String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
         model = RescueModel.getInstance();
+        model.addObserver(this);
+        model.registerMap("envMap", new RescueMap());
         core = MonitorCore.getInstance();
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode("START");
         model.execute();
-        RescueMap envMap = new RescueMap();
-        model.registerMap("envMap", envMap);
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
@@ -341,11 +339,6 @@ public final class ControlsTopComponent extends TopComponent{
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
         core.resetApplication();
-        loadDefaultFileButton.setEnabled(true);
-        runButton.setEnabled(false);
-        runOneButton.setEnabled(false);
-        stepButton.setEnabled(false);
-        resetButton.setEnabled(false);
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void stepTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepTextFieldActionPerformed
@@ -477,6 +470,38 @@ public final class ControlsTopComponent extends TopComponent{
             }
         }
         return result;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(arg.equals("finished")){
+            this.runButton.doClick();
+            this.runButton.setEnabled(false);
+            this.runOneButton.setEnabled(false);
+            this.stepButton.setEnabled(false);
+        }
+        else if(arg == "clearApp"){
+            this.clear();
+        }
+        else if(arg == "startApp"){
+            this.init();
+        }
+    }
+
+    private void clear() {
+        this.model = null;
+        this.core = null;
+        loadDefaultFileButton.setEnabled(false);
+        runButton.setEnabled(false);
+        runOneButton.setEnabled(false);
+        stepButton.setEnabled(false);
+        resetButton.setEnabled(false);
+    }
+
+    private void init() {
+        loadDefaultFileButton.setEnabled(true);
+        CLPSelector.setEnabled(true);
+        envsSelector.setEnabled(true);
     }
     
     private class ClpFileFilter extends FileFilter {

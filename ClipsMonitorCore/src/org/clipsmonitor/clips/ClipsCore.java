@@ -24,6 +24,14 @@ import net.sf.clipsrules.jni.FactAddressValue;
  */
 public class ClipsCore {
 
+    public static void clearInstance() {
+        instance.router = null;
+        instance.clips.destroy();
+        instance.clips = null;
+        instance.console = null;
+        instance = null;
+    }
+
     private Environment clips;
     private RouterDialog router;
     private static ClipsCore instance;

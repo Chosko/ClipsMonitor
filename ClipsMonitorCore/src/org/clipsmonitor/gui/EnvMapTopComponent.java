@@ -5,7 +5,6 @@
  */
 package org.clipsmonitor.gui;
 
-import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -39,11 +38,10 @@ import org.openide.util.NbBundle.Messages;
 public final class EnvMapTopComponent extends MapTopComponent {
     
     public EnvMapTopComponent() {
-        initComponents();
+        super();
         setName(Bundle.CTL_EnvMapTopComponent());
         setToolTipText(Bundle.HINT_EnvMapTopComponent());
         this.target = "envMap";
-        initializeMapTopComponent();
     }
 
     /**

@@ -27,10 +27,8 @@ public abstract class ClipsModel extends Observable implements Runnable {
      *
      */
     protected ClipsModel() {
-        executionMode = 0;
         t = new Thread(this);
-        console = ClipsConsole.getInstance();
-        core = ClipsCore.getInstance();
+        init();
     }
 
     /**
@@ -293,12 +291,37 @@ public abstract class ClipsModel extends Observable implements Runnable {
         String result = "";
         try{
             result = core.evaluateOutput("AGENT", command);
-            this.setChanged();
-            this.notifyObservers("cmd");
         }
         catch(CLIPSError ex){
             console.error(ex);
         }
+        this.setChanged();
+        this.notifyObservers("cmd");
         return result;
+    }
+
+    public void finished() {
+        this.setChanged();
+        this.notifyObservers("finished");
+    }
+
+    public void init() {
+        executionMode = 0;
+        console = ClipsConsole.getInstance();
+        core = ClipsCore.getInstance();
+        this.setChanged();
+        this.notifyObservers("startApp");
+    }
+
+    public void clear() {
+        console = null;
+        core = null;
+        this.setChanged();
+        this.notifyObservers("clearApp");
+    }
+
+    public void restart() {
+        this.setChanged();
+        this.notifyObservers("startApp");
     }
 }
