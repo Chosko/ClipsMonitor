@@ -5,6 +5,7 @@ import net.sf.clipsrules.jni.MultifieldValue;
 import net.sf.clipsrules.jni.PrimitiveValue;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -94,6 +95,13 @@ public class ClipsCore {
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
         File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
+
+//        Arrays.sort(str_listOfFiles, new Comparator<File>() {
+//            @Override
+//            public int compare(File o1, File o2) {
+//                return o1.compareTo(o2);
+//            }
+//        });
 
         for (File clpFile : str_listOfFiles) {
             try {
@@ -219,11 +227,17 @@ public class ClipsCore {
         }
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(module, eval);
-        String[][] result = new String[facts.size()][slots.length];
-        for (int i = 0; i < facts.size(); i++) {
-            for (int j = 0; j < slots.length; j++) {
-                result[i][j] = ((FactAddressValue)facts.get(i)).getFactSlot(slots[j]).toString();
+        String[][] result = null;
+        try{
+            result = new String[facts.size()][slots.length];
+            for (int i = 0; i < facts.size(); i++) {
+                for (int j = 0; j < slots.length; j++) {
+                    result[i][j] = ((FactAddressValue)facts.get(i)).getFactSlot(slots[j]).toString();
+                }
             }
+        }
+        catch (Exception ex) {
+            console.error(ex);
         }
         return result;
     }
@@ -251,17 +265,23 @@ public class ClipsCore {
         String focus = fc.toString();
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
-        String[][] result = new String[facts.size()][slots.length];
-        for (int i = 0; i < facts.size(); i++) {
-            for (int j = 0; j < slots.length; j++) {
-                FactAddressValue fact = (FactAddressValue)facts.get(i);
-                PrimitiveValue factSlot = fact.getFactSlot(slots[j]);
-                if (factSlot != null) {
-                    result[i][j] = factSlot.toString();
-                } else {
-                    result[i][j] = "";
+        String[][] result = null;
+        try {
+            result = new String[facts.size()][slots.length];
+            for (int i = 0; i < facts.size(); i++) {
+                for (int j = 0; j < slots.length; j++) {
+                    FactAddressValue fact = (FactAddressValue)facts.get(i);
+                    PrimitiveValue factSlot = fact.getFactSlot(slots[j]);
+                    if (factSlot != null) {
+                        result[i][j] = factSlot.toString();
+                    } else {
+                        result[i][j] = "";
+                    }
                 }
             }
+        }
+        catch (Exception ex) {
+            console.error(ex);
         }
         return result;
     }
@@ -290,10 +310,15 @@ public class ClipsCore {
         String eval = "(find-fact ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
         String[] result = new String[slots.length];
-        if (facts.size() > 0) {
-            for (int j = 0; j < slots.length; j++) {
-                result[j] = ((FactAddressValue)facts.get(0)).getFactSlot(slots[j]).toString();
+        try {
+            if (facts.size() > 0) {
+                for (int j = 0; j < slots.length; j++) {
+                    result[j] = ((FactAddressValue)facts.get(0)).getFactSlot(slots[j]).toString();
+                }
             }
+        }
+        catch (Exception ex){
+            console.error(ex);
         }
         return result;
     }
@@ -314,11 +339,16 @@ public class ClipsCore {
         String eval = "(find-fact ((?f " + template + ")) TRUE)";
         MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
         String result = "";
-        if (facts.size() != 0) {
-            String fatto = facts.get(0).toString();
-            StringTokenizer st = new StringTokenizer(fatto, "<Fact- >");
-            facts = (MultifieldValue)clips.eval("(fact-slot-value " + (new Integer(st.nextToken())) + " implied)");
-            result = facts.get(0).toString();
+        try{
+            if (facts.size() != 0) {
+                String fatto = facts.get(0).toString();
+                StringTokenizer st = new StringTokenizer(fatto, "<Fact- >");
+                facts = (MultifieldValue)clips.eval("(fact-slot-value " + (new Integer(st.nextToken())) + " implied)");
+                result = facts.get(0).toString();
+            }
+        }
+        catch (Exception ex) {
+            console.error(ex);
         }
         return result;
     }
@@ -367,6 +397,17 @@ public class ClipsCore {
         return router.getStdout();
     }
 
+    public String getFocus() {
+        try {
+            PrimitiveValue fc = clips.eval("(get-focus)");
+            return fc.toString();
+        }
+        catch (CLIPSError ex){
+            console.error(ex);
+            return "";
+        }
+    }
+
     /**
      * Inserisce una regola nell'ambiente clips caricato
      *
@@ -378,11 +419,7 @@ public class ClipsCore {
     public boolean defrule(String module, String rule) {
         try{
             PrimitiveValue val = evaluate(module, rule);
-            if (val.toString().equalsIgnoreCase("FALSE")) {
-                return false;
-            } else {
-                return true;
-            }
+            return !val.toString().equalsIgnoreCase("FALSE");
         }
         catch(CLIPSError ex){
             console.error(ex);
@@ -397,7 +434,8 @@ public class ClipsCore {
      * @param dest
      * @throws IOException
      */
-    private static void copyFileUsingFileStreams(File source, File dest) throws IOException {
+    private static void copyFileUsingFileStreams(File source, File dest) {
+        ClipsConsole console = ClipsConsole.getInstance();
         InputStream input = null;
         OutputStream output = null;
         try {
@@ -408,9 +446,17 @@ public class ClipsCore {
             while ((bytesRead = input.read(buf)) > 0) {
                 output.write(buf, 0, bytesRead);
             }
+        } catch (FileNotFoundException ex) {
+            console.error(ex);
+        } catch (IOException ex) {
+            console.error(ex);
         } finally {
-            input.close();
-            output.close();
+            try {
+                input.close();
+                output.close();
+            } catch (IOException ex) {
+                console.error(ex);
+            }
         }
     }
     /*

@@ -19,8 +19,15 @@ public abstract class ClipsModel extends Observable implements Runnable {
 
     protected ClipsCore core;
     private int executionMode;
-    private final Thread t;
     private ClipsConsole console;
+    private boolean started = false;
+    private final Thread t;
+    private int paramMode = 1;
+    public static final int ex_mode_START = 1;
+    public static final int ex_mode_RUN1 = 2;
+    public static final int ex_mode_STEP = 3;
+    public static final int ex_mode_RUN = 4;
+    public static final int ex_mode_RUNN = 5;
     
     /**
      * costruttore del modello.
@@ -40,119 +47,46 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public void run() {
         try {
             while (!hasDone()) {
-                /*
-                 * HO CLICCATO IL TASTO START
-                 */
-                if (executionMode == 1) {
-                    console.debug("Clicked on START BUTTON");
-                    String[] arrayPercept = {"step"};
-                    long run_feedback = 1;
-                    /* Alla pressione del tasto START, il while entra una volta nel ciclo.
-                     *  Esegue una runOne(). Controlla che il fatto init-agent sia dichiarato (il mondo è pronto)
-                     *  Se è così, allora aggiorna l'interfaccia poiché il mondo è pronto. All'uscita dal metodo
-                     *  il thread principale si sospende in attesa di una nuova azione (pressione tasto) che farà la resume.
-                     */
-                    while (run_feedback == 1) {
-                        run_feedback = core.runOne();
-                        String[] arrayInitAgent = {"done"};
-                        String[] initAgent = core.findFact("AGENT", "init-agent", "TRUE", arrayInitAgent);
-                        if (initAgent[0] != null && initAgent[0].equals("yes")) {
-                            action();
-                            this.setChanged();
-                            this.notifyObservers("actionDone");
-                            break;
+                switch (executionMode) {
+                    case ex_mode_STEP:
+                    case ex_mode_RUN:
+                        String[] arrayPercept = {"step"};
+                        String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
+
+                        /* Se lo stato last-perc non esiste, allora lo stato attuale viene impostato a -1
+                         Diversamente viene impostato allo stato di last-perc. Questo viene fatto per poter
+                         completare uno step ""sporcato"" dal click di una runOne e riallinearsi con le azioni
+                         necessarie ad arrivare alla prossima percezione del mondo (conseguente azione).
+                         */
+                        Integer actual = current[0] == null ? -1 : new Integer(current[0]);
+
+                        Integer prec = actual;
+                        /* Lo stato precedente viene inizalizzato al valore dello stato attuale
+                         Fino a che lo stato precedente è uguale allo stato attuale, allora
+                         proseguo (devo arrivare alla prossima percezione, facendo una run.
+                         */
+                        String[] done = {"no"};
+                        while (prec.equals(actual) && done[0].equals("no")) {
+                            core.run(1);
+                            current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
+                            actual = current[0] == null ? -1 : new Integer(current[0]);
+                            done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
                         }
-                        //System.out.println("Eseguo una run one, cstep = " + current_perc  +" last_step = " + last_known_perc +" e step ="+last_perc[0]);
-                    }
+                        break;
+                    case ex_mode_RUNN:
+                        core.run(paramMode);
+                        break;
+                    case ex_mode_START:
+                        started = true;
+                        break;
+                    default:
+
+                }
+                action();
+                this.setChanged();
+                this.notifyObservers("actionDone");
+                if (executionMode != ex_mode_RUN) {
                     this.suspend();
-                } /*
-                 * HO CLICCATO IL TASTO RUN 1
-                 */ else if (executionMode == 2) {
-                    console.debug("Clicked on RUN 1 BUTTON");
-                    core.runOne();
-                    action();
-                    this.setChanged();
-                    this.notifyObservers("actionDone");
-                    this.suspend();
-                } /*
-                 * HO CLICCATO IL TASTO STEP
-                 */ else if (executionMode == 3) {
-                    console.debug("Clicked on STEP BUTTON");
-                    long run_feedback = 1;
-                    String[] arrayPercept = {"step"};
-                    String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                    Integer actual;
-                    Integer prec;
-                    /* Se lo stato last-perc non esiste, allora lo stato attuale viene impostato a -1
-                     Diversamente viene impostato allo stato di last-perc. Questo viene fatto per poter
-                     completare uno step ""sporcato"" dal click di una runOne e riallinearsi con le azioni
-                     necessarie ad arrivare alla prossima percezione del mondo (conseguente azione).
-                     */
-                    if (current[0] == null) {
-                        actual = -1;
-                    } else {
-                        actual = new Integer(current[0]);
-                    }
-                    prec = actual;
-                    /* Lo stato precedente viene inizalizzato al valore dello stato attuale
-                     Fino a che lo stato precedente è uguale allo stato attuale, allora
-                     proseguo (devo arrivare alla prossima percezione, facendo una run.
-                     */
-                    while (prec.equals(actual)) {
-                        run_feedback = core.runOne();
-                        current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                        if (current[0] == null) {
-                            actual = -1;
-                        } else {
-                            actual = new Integer(current[0]);
-                        }
-                    }
-                    //System.out.println("Eseguo uno step, cstep = " + actual  +" last_step = " + prec);
-                    core.runOne();
-                    /* Aggiorno l'interfaccia */
-                    action();
-                    this.setChanged();
-                    this.notifyObservers("actionDone");
-                    // QUESTA SUSPEND E' L'UNICA DIFFERENZA CON IL TASTO START CHE INVECE NON SI SOSPENDE
-                    this.suspend();
-                } /*
-                 * HO CLICCATO IL TASTO RUN
-                 */ else if (executionMode == 4) {
-                    console.debug("Clicked on RUN (infinite)");
-                    long run_feedback = 1;
-                    String[] arrayPercept = {"step"};
-                    String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                    Integer actual;
-                    Integer prec;
-                    /* Se lo stato last-perc non esiste, allora lo stato attuale viene impostato a -1
-                     Diversamente viene impostato allo stato di last-perc. Questo viene fatto per poter
-                     completare uno step ""sporcato"" dal click di una runOne e riallinearsi con le azioni
-                     necessarie ad arrivare alla prossima percezione del mondo (conseguente azione).
-                     */
-                    if (current[0] == null) {
-                        actual = -1;
-                    } else {
-                        actual = new Integer(current[0]);
-                    }
-                    prec = actual;
-                    /* Lo stato precedente viene inizalizzato al valore dello stato attuale
-                     Fino a che lo stato precedente è uguale allo stato attuale, allora
-                     proseguo (devo arrivare alla prossima percezione, facendo una run.
-                     */
-                    while (prec.equals(actual)) {
-                        run_feedback = core.runOne();
-                        current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                        if (current[0] == null) {
-                            actual = -1;
-                        } else {
-                            actual = new Integer(current[0]);
-                        }
-                    }
-                    // Per concludere faccio una runOne() e chiudo l'esecuzione.
-                    core.runOne();
-                    action();
-                    this.setChanged();
-                    this.notifyObservers("actionDone");
                 }
             }
             // Aggiorna le penalità
@@ -182,19 +116,13 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * consecutivamente senza interruzioni, RUNONE per eseguire un passo Clips
      * alla volta (in fase di debug), STEP per eseguire una exec alla volta.
      */
-    public synchronized void setMode(String mode) {
-        if (mode.equals("START")) {
-            this.executionMode = 1;
-        }
-        if (mode.equals("RUNONE")) {
-            this.executionMode = 2;
-        }
-        if (mode.equals("STEP")) {
-            this.executionMode = 3;
-        }
-        if (mode.equals("RUN")) {
-            this.executionMode = 4;
-        }
+    public synchronized void setMode(int mode) {
+        this.executionMode = mode;
+    }
+
+    public synchronized void setMode(int mode, int param) {
+        this.executionMode = mode;
+        this.paramMode = param;
     }
 
     /**
@@ -238,6 +166,10 @@ public abstract class ClipsModel extends Observable implements Runnable {
      */
     public synchronized String getAgenda() {
         return core.getAgenda();
+    }
+
+    public synchronized String getFocus() {
+        return core.getFocus();
     }
 
     /**
@@ -306,7 +238,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     }
 
     public void init() {
-        executionMode = 0;
+        executionMode = ex_mode_START;
         console = ClipsConsole.getInstance();
         core = ClipsCore.getInstance();
         this.setChanged();

@@ -12,6 +12,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
+import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
@@ -300,12 +301,12 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.registerMap("envMap", new RescueMap());
         core = MonitorCore.getInstance();
         model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
-        model.setMode("START");
+        model.setMode(ClipsModel.ex_mode_START);
         model.execute();
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
-        model.setMode("RUNONE");
+        model.setMode(ClipsModel.ex_mode_RUNN, 1);
         model.resume();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
@@ -316,14 +317,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         // Il tasto può essere Run oppure Stop (a seconda di cosa era attivo)
         if (runButton.getText().equals("Run")) {
-            model.setMode("RUN");
+            model.setMode(ClipsModel.ex_mode_RUN);
             model.resume();
             runButton.setText("Stop");
             stepButton.setEnabled(false);
             runOneButton.setEnabled(false);
             resetButton.setEnabled(false);
         } else {
-            model.setMode("STEP");
+            model.setMode(ClipsModel.ex_mode_STEP);
             runButton.setText("Run");
             stepButton.setEnabled(true);
             runOneButton.setEnabled(true);
@@ -332,7 +333,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
-        model.setMode("STEP");
+        model.setMode(ClipsModel.ex_mode_STEP);
         model.resume();
         //model.step();
     }//GEN-LAST:event_stepButtonActionPerformed

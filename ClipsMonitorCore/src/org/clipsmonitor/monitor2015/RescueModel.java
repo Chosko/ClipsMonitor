@@ -17,20 +17,19 @@ public class RescueModel extends ClipsModel {
 
     private String[][] map;
     private String direction;
+    private String mode;
     private int durlastact;
     private Integer time;
     private Integer step;
     private Integer maxduration;
     private String result;
     private int score;
-    private String l_f_waste; // presenza di spazzatura food
-    private String l_d_waste; // presenza di spazzatura drink
-    private Integer l_drink; // quantità di drink contenuta
-    private Integer l_food; //quantità di food contenuta
+    private String loaded; // presenza di un carico
     private ClipsConsole console;
     private static RescueModel instance;
-    private RescueMap tmp;
+    private int row, column;
     private String advise;
+    private RescueMap tmp;
     
     /**
      * Singleton
@@ -43,20 +42,22 @@ public class RescueModel extends ClipsModel {
     }
     
     public static void clearInstance() {
-        instance.advise = null;
-        instance.console = null;
-        instance.core = null;
-        instance.direction = null;
-        instance.l_d_waste = null;
-        instance.l_drink = null;
-        instance.l_f_waste = null;
-        instance.l_food = null;
         instance.map = null;
+        instance.advise = null;
+        instance.direction = null;
+        instance.mode = null;
+        instance.tmp = null;
+        instance.durlastact = 0;
+        instance.time = null;
+        instance.step = null;
         instance.maxduration = null;
         instance.result = null;
-        instance.step = null;
-        instance.time = null;
-        instance.tmp = null;
+        instance.score = 0;
+        instance.loaded = null;
+        instance.console = null;
+        instance.row = 0;
+        instance.column = 0;
+        
         instance = null;
     }
     
@@ -82,12 +83,26 @@ public class RescueModel extends ClipsModel {
         maxduration = Integer.MAX_VALUE;
         try {
             console.debug("Esecuzione del primo passo al fine di caricare i fatti relativi alla mappa.");
-            core.evaluate("MAIN", "(run 1)"); //Eseguiamo la prima regola create-world1 per far sì che venga eseguita la regola di initModel della mappa [POCO GENERALE]
+            
+            /* Eseguiamo un passo fino a quando il fatto init-agent viene dichiarato
+             * con lo slot (done yes): il mondo è pronto.
+             */
+            long run_feedback;
+            String[] initAgent;
+            do {
+                run_feedback = core.run(1);
+                initAgent = core.findFact("AGENT", "init-agent", "TRUE", new String[]{"done"});
+            } while (run_feedback == 1 && (initAgent[0] == null || !initAgent[0].equals("yes")));
+            /* Facciamo ancora un core.run(1) per allinearci al nostro step.
+             * Questo è molto specifico a come funziona il nostro codice.
+             */
+            core.run(1);
+
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
 
             console.debug("Inizializzazione del modello (mappa).");
-            String[] array = {"pos-r", "pos-c", "contains"};
-            String[][] mp = core.findAllFacts("MAIN", "prior-cell", "TRUE", array);
+            String[] array = {"pos-r", "pos-c", "contains", "injured"};
+            String[][] mp = core.findAllFacts("ENV", "real_cell", "TRUE", array);
             int maxr = 0;
             int maxc = 0;
             for (int i = 0; i < mp.length; i++) {
@@ -100,12 +115,15 @@ public class RescueModel extends ClipsModel {
                     maxc = c;
                 }
             }
-            map = new String[maxr][maxc];
-            for (int i = 0; i < mp.length; i++) {
-                int r = new Integer(mp[i][0]);
-                int c = new Integer(mp[i][1]);
-                map[r - 1][c - 1] = mp[i][2];
-                //System.out.println(mp[i][2]);  // COMMENTAMI
+            map = new String[maxr][maxc];//Matrice di max_n_righe x max_n_colonne
+            for (String[] mp1 : mp) {
+                int r = new Integer(mp1[0]);
+                int c = new Integer(mp1[1]);
+                map[r - 1][c - 1] = mp1[2]; //contains
+                //String m = cellFacts[i][3];
+                if (mp1[3].equals("yes")) {
+                    map[r - 1][c - 1] += "_injured";
+                }
             }
             console.debug("Il modello è pronto.");
 
@@ -143,40 +161,66 @@ public class RescueModel extends ClipsModel {
 
         // ######################## FATTI DI TIPO cell ##########################
         console.debug("Aggiornamento modello mappa in corso...");
-        String[] array = {"pos-r", "pos-c", "contains"};
-        String[][] mp;
+        String[] cellArray = {"pos-r", "pos-c", "contains", "injured", "discovered", "checked", "clear"};
+        String[] kcellArray = {"pos-r", "pos-c", "contains"};
 
         //Per ogni cella prendiamo il nuovo valore e lo aggiorniamo
-        mp = core.findAllFacts("ENV", "cell", "TRUE", array);
-        for (String[] mp1 : mp) {
-            int r = new Integer(mp1[0]);
-            int c = new Integer(mp1[1]);
+        String[][] cellFacts = core.findAllFacts("ENV", "cell", "TRUE", cellArray);
+        String[][] kcellFacts = core.findAllFacts("AGENT", "K-cell", "TRUE", kcellArray);
+
+
+        for (String[] fact : cellFacts) {
+            // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
+            int r = new Integer(fact[0]);
+            int c = new Integer(fact[1]);
 
             //caso di default
-            map[r - 1][c - 1] = mp1[2]; //prendiamo il valore
-
-            //System.out.println(map[r - 1][c - 1]);
+            map[r - 1][c - 1] = fact[2]; //prendiamo il valore
+            if (fact[3].equals("yes")) {
+                map[r - 1][c - 1] += "_injured";
+            }
+            if ((fact[2].equals("debris") && (fact[4].equals("yes") || fact[5].equals("yes"))) || (fact[2].equals("empty") && fact[6].equals("yes"))) {
+                map[r - 1][c - 1] += "_informed";
+            }
         }
+
+        for (String[] fact : kcellFacts) {
+            int r = new Integer(fact[0]) - 1;
+            int c = new Integer(fact[1]) - 1;
+            if (fact[2].equals("unknown")) {
+                map[r][c] += "_undiscovered";
+            }
+        }
+
         console.debug("Modello aggiornato.");
 
         // ######################## FATTO agentstatus ##########################
         console.debug("Acquisizione posizione dell'agente...");
-        String[] arrayRobot = {"step", "time", "pos-r", "pos-c", "direction", "l-drink", "l-food", "l_d_waste", "l_f_waste"};
+        String[] arrayRobot = {"step", "time", "pos-r", "pos-c", "direction", "loaded"};
         String[] robot = core.findFact("ENV", "agentstatus", "TRUE", arrayRobot);
         if (robot[0] != null) { //Se hai trovato il fatto
             step = new Integer(robot[0]);
             time = new Integer(robot[1]);
             int r = new Integer(robot[2]);
+            row = r;
             int c = new Integer(robot[3]);
+            column = c;
             direction = robot[4];
-            l_drink = new Integer(robot[5]);
-            l_food = new Integer(robot[6]);
-            l_d_waste = robot[7];
-            l_f_waste = robot[8];
+            loaded = robot[5];
+            mode = loaded.equals("yes") ? "loaded" : "unloaded";
+
+            console.debug("Acquisizione background dell'agente...");
+
+            String[] arrayRobotBackground = {"pos-r", "pos-c", "contains", "injured", "previous", "clear"};
+            String[] robotBackground = core.findFact("ENV", "cell", "and (eq ?f:pos-r " + Integer.toString(r) + ") (eq ?f:pos-c " + Integer.toString(c) + ")", arrayRobotBackground);
 
             //Nel modello abbiamo la stringa agent_background, la cosa verrà interpretata nella View (updateMap())
-            String background = map[r - 1][c - 1];
+            String background = robotBackground[4];
+
             map[r - 1][c - 1] = "agent_" + background;
+            if (robotBackground[5].equals("yes")) {
+                map[r - 1][c - 1] += "_informed";
+            }
         }
         console.debug("Aggiornato lo stato dell'agente.");
 
@@ -184,6 +228,7 @@ public class RescueModel extends ClipsModel {
         console.debug("Acquisizione posizione degli altri agenti...");
         String[] arrayPersons = {"step", "time", "ident", "pos-r", "pos-c", "activity", "move"};
         String[][] persons = core.findAllFacts("ENV", "personstatus", "TRUE", arrayPersons);
+
         if (persons != null) {
             for (String[] person : persons) {
                 if (person[0] != null) {
@@ -191,13 +236,22 @@ public class RescueModel extends ClipsModel {
                     int person_r = new Integer(person[3]);
                     int person_c = new Integer(person[4]);
                     String ident = person[2];
+                    String[] arrayPersonBackground = {"pos-r", "pos-c", "contains", "injured", "previous", "clear"};
+                    String[] personBackground = core.findFact("ENV", "cell", "and (eq ?f:pos-r " + Integer.toString(person_r) + ") (eq ?f:pos-c " + Integer.toString(person_c) + ")", arrayPersonBackground);
                     //Nel modello abbiamo la stringa agent_background_ident, la cosa verrà interpretata nella View (updateMap())
-                    String background = map[person_r - 1][person_c - 1];
+                    String background = personBackground[4];
+                    String oldValue = map[person_r - 1][person_c - 1];
                     map[person_r - 1][person_c - 1] = "person_" + background + "_" + ident;
+                    if (personBackground[5].equals("yes")) {
+                        map[person_r - 1][person_c - 1] += "_informed";
+                    }
+                    if (oldValue.contains("undiscovered")) {
+                        map[person_r - 1][person_c - 1] += "_undiscovered";
+                    }
                 }
             }
         }
-        console.debug("Aggiornato lo stato dell'agente.");
+        console.debug("Aggiornati gli stati degli altri agenti.");
 
         // ######################## FATTO status ##########################
         String[] arrayStatus = {"step", "time", "result"};
@@ -207,38 +261,6 @@ public class RescueModel extends ClipsModel {
             time = new Integer(status[1]);
             result = status[2];
             console.debug("Step: " + step + " Time: " + time + " Result: " + result);
-        }
-
-        // ######################## FATTO tablestatus ##########################
-        String[] tableStatus = {"step", "table-id", "clean"};
-        String[][] tables = core.findAllFacts("ENV", "tablestatus", "TRUE", tableStatus);
-        if (tables != null) {
-            //Per ogni tavolo
-            for (String[] table : tables) {
-
-                if (table[0] != null) { //bisogna fare qualcosa solo se non è pulito
-                    String table_status = table[2];
-                    String table_id = table[1];
-
-                    if (table_status.equals("yes")) {
-                        table_status = "clean";
-                    } else {
-                        table_status = "dirty";
-                    }
-
-                    //Recupera il fatto relativo al tavolo con id table_id
-                    String[] that_table_slots = {"table-id", "pos-r", "pos-c"};
-                    String[] that_table = core.findFact("ENV", "Table", "eq ?f:table-id " + table_id, that_table_slots);
-
-                    //Prendiamo le posizioni
-                    int table_r = new Integer(that_table[1]);
-                    int table_c = new Integer(that_table[2]);
-
-                    map[table_r - 1][table_c - 1] = "Table" + "_" + table_status + "_" + table_id;
-
-                    console.debug("Table-id: " + table_id + " at position (" + table_r + "," + table_c + ") is " + table_status);
-                }
-            }
         }
 
         console.debug("Aggiornato lo stato del mondo.");
@@ -251,8 +273,11 @@ public class RescueModel extends ClipsModel {
      * @return la mappa come matrice di stringhe
      */
     public synchronized String[][] getEnvMap() {
-        // TODO: return a clone of the map
-        return map;
+        String[][] value = map.clone();
+        for (int i = 0; i < map.length; i++) {
+            value[i] = map[i].clone();
+        }
+        return value;
     }
 
     /**
@@ -336,15 +361,8 @@ public class RescueModel extends ClipsModel {
 
     @Override
     protected boolean hasDone() {
-        //System.out.println("=======>Questo è quanto vale result: "+result);
-
-//ritorna true se time==maxduration o se result non e' "no" e quindi e' "disaster" o "done"
-        // CHIEDERE AL PROF: aggiungere un default per result (di valore nil nel metodo creation5)
-        //if (time >= maxduration || (!(result.equalsIgnoreCase("no")) && !(result.equalsIgnoreCase("nil")))) {
-        if (time >= maxduration || !result.equalsIgnoreCase("no")) {
-            return true;
-        }
-        return false;
+        // ritorna true se time>=maxduration o se result non è "no" e quindi è "disaster" o "done"
+        return time >= maxduration || !result.equalsIgnoreCase("no");
     }
 
     @Override
@@ -358,26 +376,23 @@ public class RescueModel extends ClipsModel {
     }
 
     public String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError{
-        return core.findAllFacts(template, conditions, slots);
+        String[][] empty = {};
+        return core != null ? core.findAllFacts(template, conditions, slots) : empty;
     }
 
-    public String getL_f_waste() {
-        return l_f_waste;
+    public String getLoaded() {
+        return loaded;
     }
 
-    public String getL_d_waste() {
-        return l_d_waste;
+    public Integer getRow() {
+        return row;
     }
 
-    public Integer getL_drink() {
-        return l_drink;
+    public Integer getColumn() {
+        return column;
     }
 
-    public Integer getL_food() {
-        return l_food;
-    }
-
-    void setAdvise(String advise) {
+    public void setAdvise(String advise) {
         this.advise = advise;
     }
 
