@@ -92,10 +92,10 @@ public class RescueMap extends MonitorMap implements Observer {
 //        cp_frame.getTimeTextField().setText(time.toString());
 //        cp_frame.getLeftTimeTextField().setText(leftTime.toString());
 //        cp_frame.getStepTextField().setText(step.toString());
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-        }
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException e) {
+//        }
         this.setChanged();
         this.notifyObservers("repaint");
         console.info("Step attuale: " + model.getStep());
@@ -193,37 +193,26 @@ public class RescueMap extends MonitorMap implements Observer {
         //Primo campo: coerente con i file di CLIPS
         //Secondo campo: nome del file (a piacere)
         map_img = new HashMap<String, BufferedImage>();
-        map_img_robot = new HashMap<String, BufferedImage>();
 
         try {
-            map_img.put("Wall", ImageIO.read(new File("img" + File.separator + "wall.jpg")));
-            map_img.put("Empty", ImageIO.read(new File("img" + File.separator + "empty.png")));
-            map_img.put("Seat", ImageIO.read(new File("img" + File.separator + "seat.png")));
-            map_img.put("Table_clean", ImageIO.read(new File("img" + File.separator + "table_clean.png")));
-            map_img.put("Table_dirty", ImageIO.read(new File("img" + File.separator + "table_dirty.png")));
-            map_img.put("TB", ImageIO.read(new File("img" + File.separator + "trash_basket.png")));
-            map_img.put("RB", ImageIO.read(new File("img" + File.separator + "recycle_basket.png")));
-            map_img.put("DD", ImageIO.read(new File("img" + File.separator + "drink_dispenser.png")));
-            map_img.put("FD", ImageIO.read(new File("img" + File.separator + "food_dispenser.png")));
+            map_img.put("wall", ImageIO.read(new File("img" + File.separator + "wall.png")));
+            map_img.put("empty", ImageIO.read(new File("img" + File.separator + "empty.png")));
+            map_img.put("gate", ImageIO.read(new File("img" + File.separator + "gate.png")));
+            map_img.put("outdoor", ImageIO.read(new File("img" + File.separator + "outdoor.png")));
+            map_img.put("debris", ImageIO.read(new File("img" + File.separator + "debris.png")));
+            map_img.put("debris_injured", ImageIO.read(new File("img" + File.separator + "debris_injured.png")));
+            map_img.put("informed", ImageIO.read(new File("img" + File.separator + "informed.png")));
+            map_img.put("undiscovered", ImageIO.read(new File("img" + File.separator + "undiscovered.png")));
 
-            map_img.put("Parking", ImageIO.read(new File("img" + File.separator + "parking.png")));
-
-            //Per l'agente, il primo campo deve essere di tipo agent_<direction>
-            //Dove <direction> è il valore del campo preso da CLIPS.
-            map_img_robot.put("agent_east", ImageIO.read(new File("img" + File.separator + "agent_east.png")));
-            map_img_robot.put("agent_west", ImageIO.read(new File("img" + File.separator + "agent_west.png")));
-            map_img_robot.put("agent_north", ImageIO.read(new File("img" + File.separator + "agent_north.png")));
-            map_img_robot.put("agent_south", ImageIO.read(new File("img" + File.separator + "agent_south.png")));
-
-            //Per gestire le persone. Non vengono sovrapposte, sono vere e proprie celle
-            //Le persone hanno valore correlato nella map: person_<Posizione>_<ident>
-            //Il terzo valore è l'ident della persona (slot del personstatus)
-            //Per poter funzionare, è necessario che vi siano immagini del tipo
-            //<ident>-person_empty.png
-            //Qualora non si trovi tale immagine, ne viene usata una di default
-            //(che ha nome come il secondo campo della mappa)
-            map_img.put("person_Person", ImageIO.read(new File("img" + File.separator + "person_empty.png"))); //Persona in piedi
-            map_img.put("person_Seat", ImageIO.read(new File("img" + File.separator + "person_seat.png"))); //Persona seduta
+            map_img.put("agent_east_unloaded", ImageIO.read(new File("img" + File.separator + "agent_east_empty.png")));
+            map_img.put("agent_west_unloaded", ImageIO.read(new File("img" + File.separator + "agent_west_empty.png")));
+            map_img.put("agent_north_unloaded", ImageIO.read(new File("img" + File.separator + "agent_north_empty.png")));
+            map_img.put("agent_south_unloaded", ImageIO.read(new File("img" + File.separator + "agent_south_empty.png")));
+            map_img.put("agent_east_loaded", ImageIO.read(new File("img" + File.separator + "agent_east_load.png")));
+            map_img.put("agent_west_loaded", ImageIO.read(new File("img" + File.separator + "agent_west_load.png")));
+            map_img.put("agent_north_loaded", ImageIO.read(new File("img" + File.separator + "agent_north_load.png")));
+            map_img.put("agent_south_loaded", ImageIO.read(new File("img" + File.separator + "agent_south_load.png")));
+            map_img.put("person_rescuer", ImageIO.read(new File("img" + File.separator + "person_rescuer.png")));
 
         } catch (IOException e) {
             console.error(e);
