@@ -201,7 +201,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
 
             String[][] mapString = map.getMap();
             Map<String, BufferedImage> map_img = map.getMapImg();
-            Map<String, BufferedImage> map_img_robot = map.getMapImgRobot();
+            Map<String, BufferedImage> map_img_robot = map.getMapImg();
 
             int cellWidth = Math.round((this.getWidth() - 20) / mapString.length);
             int cellHeight = Math.round((this.getHeight() - 20) / mapString[0].length);
@@ -223,9 +223,12 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                     }
                     @SuppressWarnings("UnusedAssignment")
                     String direction = "";
+                    String loaded = "";
+                    String key_agent_map = "";
                     BufferedImage icon;
                     BufferedImage background;
                     BufferedImage robot;
+                    BufferedImage undiscovered;
 
                     // cerca se, nei primi 6 caratteri (se ce ne sono almeno 6), c'è la stringa "agent_", vedere metodo updateMap in MonitorModel.java
                     // Nel modello si ha una stringa del tipo agent_empty se l'agent si trova su una cella empty.
@@ -233,11 +236,12 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                     // ##### SE AGENTE #####
                     if (mapString[i][j].length() >= 6 && mapString[i][j].substring(0, 6).equals("agent_")) {
                         direction = model.getDirection();
+                        loaded= model.getMode();
+                        key_agent_map="agent_"+ direction + "_" + loaded;
                         // ...nel, caso prosegue dal 6° carattere in poi.
 
                         background = map_img.get(mapString[i][j].substring(6, mapString[i][j].length()));
-                        robot = map_img_robot.get("agent_" + direction);
-
+                        robot = map_img_robot.get(key_agent_map);
                         icon = overlapImages(robot, background);
 
                         //Imposta il tooltip
@@ -257,15 +261,16 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                         //Imposta il tooltip
                         //map[i][j].setToolTipText("Client " + person_info[2] + " " + "(" + (i + 1) + ", " + (j + 1) + ")");
 
-                        // ##### SE TAVOLO ####
-                    } else if (mapString[i][j].length() >= 5 && mapString[i][j].substring(0, 5).equals("Table")) {
+                        // ##### SE MACERIE ####
+                    } else if (mapString[i][j].length() >=6 && mapString[i][j].substring(0, 5).equals("debris")) {
                         //Nella forma Table_<status>_<table-id>
                         String map_contains = mapString[i][j];
-                        if (!map_contains.equals("Table")) {
-                            String[] table_info = map_contains.split("_"); //prendiamo i tre campi
-                            icon = map_img.get(table_info[0] + "_" + table_info[1]);
-                        } else {
-                            icon = map_img.get("table_clean");
+                        if(!map_contains.equals("debris")){
+                             icon=map_img.get("debris_injured");
+                        
+                        } else{
+                        
+                            icon=map_img.get("debris");
                         }
 
                         //Imposta il tooltip
@@ -276,6 +281,17 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                         icon = map_img.get(mapString[i][j]);
                         //map[i][j].setToolTipText("(" + (i + 1) + ", " + (j + 1) + ")");
                     }
+                    
+                    /* overlap celle non esplorate
+                    
+                   if(mapString[i][j].contains("undiscovered")){
+                   
+                      undiscovered = map_img.get("undiscovered");
+                      icon=overlapImages(undiscovered,icon);
+                    
+                   }
+                    
+                    */
 
                     g2.drawImage(icon, x0 + cellWidth * j, y0 + cellHeight * (mapString.length - i), cellWidth, cellHeight, this);
 

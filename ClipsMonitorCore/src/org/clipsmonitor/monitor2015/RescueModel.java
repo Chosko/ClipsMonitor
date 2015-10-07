@@ -388,6 +388,12 @@ public class RescueModel extends ClipsModel {
         return row;
     }
 
+    public String getMode() {
+    
+       return mode;
+    
+    }
+    
     public Integer getColumn() {
         return column;
     }

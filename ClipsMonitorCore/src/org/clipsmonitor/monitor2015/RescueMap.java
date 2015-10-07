@@ -203,7 +203,6 @@ public class RescueMap extends MonitorMap implements Observer {
             map_img.put("debris_injured", ImageIO.read(new File("img" + File.separator + "debris_injured.png")));
             map_img.put("informed", ImageIO.read(new File("img" + File.separator + "informed.png")));
             map_img.put("undiscovered", ImageIO.read(new File("img" + File.separator + "undiscovered.png")));
-
             map_img.put("agent_east_unloaded", ImageIO.read(new File("img" + File.separator + "agent_east_empty.png")));
             map_img.put("agent_west_unloaded", ImageIO.read(new File("img" + File.separator + "agent_west_empty.png")));
             map_img.put("agent_north_unloaded", ImageIO.read(new File("img" + File.separator + "agent_north_empty.png")));
@@ -218,6 +217,7 @@ public class RescueMap extends MonitorMap implements Observer {
             console.error(e);
         }
 
+        
         model = RescueModel.getInstance();
         model.addObserver(this);
     }
