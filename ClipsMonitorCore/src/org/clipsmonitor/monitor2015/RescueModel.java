@@ -82,7 +82,7 @@ public class RescueModel extends ClipsModel {
         step = 0;
         maxduration = Integer.MAX_VALUE;
         try {
-            console.debug("Esecuzione del primo passo al fine di caricare i fatti relativi alla mappa.");
+            console.debug("Esecuzione degli step necessari ad aspettare che l'agente sia pronto.");
             
             /* Eseguiamo un passo fino a quando il fatto init-agent viene dichiarato
              * con lo slot (done yes): il mondo è pronto.
