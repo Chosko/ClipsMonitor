@@ -53,7 +53,7 @@ public class RescueMap extends MonitorMap implements Observer {
         //System.out.println("actionDone");
         try {
             updateMap();
-            updateOutput();
+            // updateOutput();
         } catch (IOException ex) {
             console.error(ex);
         }
@@ -113,33 +113,33 @@ public class RescueMap extends MonitorMap implements Observer {
 //        return bi;
 //    }
 
-    protected void updateOutput() {
-        //########################### AGGIORNO LA FINESTRA DEI MESSAGGI DI OUTPUT ############################
-        String[] slots = {"time", "step", "source", "verbosity", "text", "param1", "param2", "param3", "param4", "param5"};
-        try {
-            /**
-             * Ogni fatto viene considerato nella forma: [source] testo (con
-             * parametri corretti).
-             *
-             * È necessario compiere alcune operazioni di processing poiché: 1 -
-             * le virgolette fanno parte della stringa. 2 - i parametri devono
-             * essere sostituiti.
-             */
-            String[][] matriceFatti = model.findAllFacts("printGUI", "TRUE", slots);
+    // protected void updateOutput() {
+    //     //########################### AGGIORNO LA FINESTRA DEI MESSAGGI DI OUTPUT ############################
+    //     String[] slots = {"time", "step", "source", "verbosity", "text", "param1", "param2", "param3", "param4", "param5"};
+    //     try {
+    //         /**
+    //          * Ogni fatto viene considerato nella forma: [source] testo (con
+    //          * parametri corretti).
+    //          *
+    //          * È necessario compiere alcune operazioni di processing poiché: 1 -
+    //          * le virgolette fanno parte della stringa. 2 - i parametri devono
+    //          * essere sostituiti.
+    //          */
+    //         String[][] matriceFatti = model.findAllFacts("printGUI", "TRUE", slots);
 
-            for (String[] fatto : matriceFatti) {
-                int fact_verbosity = Integer.parseInt(fatto[3]); //Consideriamo la verbosità
-                String source = removeFistAndLastChar(fatto[2]);
-                String line = fatto[1] + "\t" + source + "\t" + removeFistAndLastChar(fatto[4]); //prendiamo il testo così com'è
-                //E applichiamo le sostituzioni, appendendo il risultato alla finestra
-                String parameters[] = {fatto[5], fatto[6], fatto[7], fatto[8], fatto[9]};
-                console.clips(source + mapParameters(line, parameters));
-            }
+    //         for (String[] fatto : matriceFatti) {
+    //             int fact_verbosity = Integer.parseInt(fatto[3]); //Consideriamo la verbosità
+    //             String source = removeFistAndLastChar(fatto[2]);
+    //             String line = fatto[1] + "\t" + source + "\t" + removeFistAndLastChar(fatto[4]); //prendiamo il testo così com'è
+    //             //E applichiamo le sostituzioni, appendendo il risultato alla finestra
+    //             String parameters[] = {fatto[5], fatto[6], fatto[7], fatto[8], fatto[9]};
+    //             console.clips(source + mapParameters(line, parameters));
+    //         }
 
-        } catch (Exception ex) {
-            console.error(ex);
-        }
-    }
+    //     } catch (Exception ex) {
+    //         console.error(ex);
+    //     }
+    // }
 
     /**
      * Sostiuisce i parametri nella forma %par<i> con param<i>.

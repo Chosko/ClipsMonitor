@@ -19,9 +19,18 @@
         (slot pos-c)         
         (slot direction)         
         (slot loaded))
+
+; step dell'ultima percezione esaminata
+(deftemplate last-perc (slot step))
     
  ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))   
+
+
+(deffacts initial-fact-agent
+  (last-perc (step -1))
+)
+
 
 (defrule  beginagent1
 

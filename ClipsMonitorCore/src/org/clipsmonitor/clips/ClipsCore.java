@@ -107,7 +107,7 @@ public class ClipsCore {
             try {
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-                if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equals("clp") || extension.equals("txt"))) {
+                if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
                     clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
                 }
@@ -127,7 +127,7 @@ public class ClipsCore {
             try {
                 String fileName = envFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-                if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equals("clp") || extension.equals("txt"))) {
+                if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     File source = envFile;
                     File dest = new File(envFile.getName());
 
