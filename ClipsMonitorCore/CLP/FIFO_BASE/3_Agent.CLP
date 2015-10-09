@@ -39,12 +39,12 @@
 )
 
 
-(defrule  beginagent1
+(defrule  beginagent_kcell_no_injuried
 
     (declare (salience 11))
 
     (status (step 0))
-
+    (not (init-agent (done yes)))
     (not (exec (step 0)))
     (init_cell (pos-r ?r) (pos-c ?c) (contains ?x&outdoor|wall|empty|gate)) 
 
@@ -56,12 +56,12 @@
 
             
 
-(defrule  beginagent2
+(defrule  beginagent_kcell_maybe_injuried
 
     (declare (salience 11))
 
     (status (step 0))
-
+    (not (init-agent (done yes)))
     (not (exec (step 0)))
     (init_cell (pos-r ?r) (pos-c ?c) (contains ?x&debris|unknown)) 
 
@@ -73,12 +73,12 @@
 
 
  
-(defrule  beginagent3
+(defrule  beginagent_position
 
-    (declare (salience 11))
+    (declare (salience 10))
 
     (status (step 0))
-
+    (not (init-agent (done yes)))
     (not (exec (step 0)))
     (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 => 
@@ -87,6 +87,13 @@
                               (init-agent (done yes)))
 )
 
+(defrule go_perception
+  (declare (salience 9))
+  (status (result no))
+  (init-agent (done yes))
+  =>  
+  (focus PERCEPTION)
+)
 
 (defrule ask_act
 
@@ -100,17 +107,13 @@
 
         (modify ?f (result no)))
 
-
-
-
-
 (defrule exec_act
 
     (status (step ?i))
 
     (exec (step ?i))
 
- => (focus MAIN))
+ => (pop-focus))
 
 
 

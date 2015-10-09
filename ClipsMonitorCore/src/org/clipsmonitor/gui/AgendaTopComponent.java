@@ -129,7 +129,7 @@ public final class AgendaTopComponent extends TopComponent implements Observer {
     }
     
     private void updateAgenda(){
-        this.jTextPane1.setText(model.getAgenda());
+        this.jTextPane1.setText(model.getAgenda() + "(module " + model.getFocus() + ")");
         this.jTextPane1.setCaretPosition(jTextPane1.getText().length());
     }
 }

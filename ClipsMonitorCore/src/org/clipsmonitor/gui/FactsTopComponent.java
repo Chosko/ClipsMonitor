@@ -129,7 +129,7 @@ public final class FactsTopComponent extends TopComponent implements Observer {
     }
     
     private void updateFacts(){
-        this.jTextPane1.setText(model.getFactList());
+        this.jTextPane1.setText(model.getFactList() + "(module " + model.getFocus() + ")");
         this.jTextPane1.setCaretPosition(jTextPane1.getText().length());
     }
 }
