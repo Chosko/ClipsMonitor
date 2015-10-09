@@ -22,6 +22,10 @@
 
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step))
+(deftemplate last-perc-vision (slot step))
+(deftemplate last-perc-drill (slot step))
+(deftemplate last-perc-acoustic (slot step))
+
     
  ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))   
@@ -29,6 +33,9 @@
 
 (deffacts initial-fact-agent
   (last-perc (step -1))
+  (last-perc-vision (step -1))
+  (last-perc-acoustic (step -1))
+  (last-perc-drill (step -1))
 )
 
 
@@ -141,9 +148,6 @@
 ;(assert (exec (action inform) (param1 3) (param2 5) (param3 clear) (step 11)))
 ;(assert (exec (action inform) (param1 4) (param2 8) (param3 checked) (step 12)))
 ;(assert (exec (action inform) (param1 5) (param2 6) (param3 clear) (step 13)))
-
-
-
 
 
 ; Una seconda sequenza di azioni potenzialmante fate da un agente più smart

@@ -155,7 +155,7 @@ public class RescueModel extends ClipsModel {
      * Aggiorna la mappa leggendola dal file clips. Lanciato ogni volta che si
      * compie un'azione.
      *
-     * @throws ClipsException
+     * @throws ClipsExceptionF
      */
     private synchronized void updateMap() throws CLIPSError {
 
