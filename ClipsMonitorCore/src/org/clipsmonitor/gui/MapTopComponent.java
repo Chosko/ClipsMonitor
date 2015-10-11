@@ -282,16 +282,20 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                         //map[i][j].setToolTipText("(" + (i + 1) + ", " + (j + 1) + ")");
                     }
                     
-                    /* overlap celle non esplorate
+                     //overlap celle non esplorate
                     
+                   
                    if(mapString[i][j].contains("undiscovered")){
                    
-                      undiscovered = map_img.get("undiscovered");
-                      icon=overlapImages(undiscovered,icon);
-                    
+                      undiscovered = map_img.get("undiscovered");      
+                      String  map_substr =  mapString[i][j].substring(0,mapString[i][j].length()- 13); // recupero il tipo di immagine di background a cui
+                                                                                                    // vado a sovrapporre l'icona di undiscover
+                                                                                                    // escludo il termine "undiscovered" dalla precedente stringa   
+                      icon= map_img.get(map_substr);     
+                      icon= overlapImages(undiscovered,icon);
                    }
+                   
                     
-                    */
 
                     g2.drawImage(icon, x0 + cellWidth * j, y0 + cellHeight * (mapString.length - i), cellWidth, cellHeight, this);
 
