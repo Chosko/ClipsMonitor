@@ -50,8 +50,7 @@
 
 =>
 
-     (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x) (injured no))
-       (init-agent (done yes)))
+     (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x) (injured no)))
 )
 
             
@@ -67,7 +66,7 @@
 
 =>
 
-     (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x) (injured unknown)) (init-agent (done yes)))
+     (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x) (injured unknown)))
 )
 
 
@@ -86,6 +85,9 @@
                               (loaded no))
                               (init-agent (done yes)))
 )
+
+
+
 
 (defrule go_perception
   (declare (salience 9))

@@ -42,6 +42,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ConsoleTopComponent=Console Window",
     "HINT_ConsoleTopComponent=This is a Console window"
 })
+
 public final class ConsoleTopComponent extends TopComponent implements Observer {
     private String text;
     private String currentCmd;

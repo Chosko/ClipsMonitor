@@ -163,12 +163,11 @@ public class RescueModel extends ClipsModel {
         console.debug("Aggiornamento modello mappa in corso...");
         String[] cellArray = {"pos-r", "pos-c", "contains", "injured", "discovered", "checked", "clear"};
         String[] kcellArray = {"pos-r", "pos-c", "contains"};
-        String[] initcellArray = {"pos-r", "pos-c", "contains"};
 
         //Per ogni cella prendiamo il nuovo valore e lo aggiorniamo
         String[][] cellFacts = core.findAllFacts("ENV", "cell", "TRUE", cellArray);
         String[][] kcellFacts = core.findAllFacts("AGENT", "K-cell", "TRUE", kcellArray);
-        String[][] initcellFacts = core.findAllFacts("MAIN","init_cell", "TRUE" ,initcellArray);
+        // String[][] initcellFacts = core.findAllFacts("MAIN","init_cell", "TRUE" ,initcellArray);
 
         for (String[] fact : cellFacts) {
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
@@ -184,26 +183,21 @@ public class RescueModel extends ClipsModel {
                 map[r - 1][c - 1] += "_informed";
             }
             
-            if (fact[2].equals("unknown")) {
+            if (fact[2].equals("unknown") && !map[r][c].contains("_undiscovered")) {
                 map[r][c] += "_undiscovered";
             }
             
         }
-
-        for (String[] fact : initcellFacts) {
-            int r = new Integer(fact[0]) - 1;
-            int c = new Integer(fact[1]) - 1;
-            if (fact[2].equals("unknown")) {
-                map[r][c] += "_undiscovered";
-            }
-        }
+        
+        
         
         for (String[] fact : kcellFacts) {
             int r = new Integer(fact[0]) - 1;
             int c = new Integer(fact[1]) - 1;
-            if (fact[2].equals("unknown")) {
+            if (fact[2].equals("unknown") && !map[r][c].contains("_undiscovered")) {
                 map[r][c] += "_undiscovered";
             }
+            
         }
        
           

@@ -290,10 +290,19 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                       undiscovered = map_img.get("undiscovered");      
                       String  map_substr =  mapString[i][j].substring(0,mapString[i][j].length()- 13); // recupero il tipo di immagine di background a cui
                                                                                                     // vado a sovrapporre l'icona di undiscover
-                                                                                                    // escludo il termine "undiscovered" dalla precedente stringa   
+                      try{                                                                              // escludo il termine "undiscovered" dalla precedente stringa   
                       icon= map_img.get(map_substr);     
                       icon= overlapImages(undiscovered,icon);
-                   }
+                      }
+                      catch(NullPointerException e)
+                      {
+                          
+                          String err = "Overlap failed: " + map_substr + " pos: (" + i + "," + j + ")" ;
+                          JOptionPane.showMessageDialog(null , err);
+                          
+                      }
+                      
+                      }
                    
                     
 
