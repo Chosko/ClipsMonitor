@@ -5,6 +5,10 @@
  */
 package org.clipsmonitor.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,21 +26,6 @@ import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(
-        dtd = "-//org.clipsmonitor.core//Controls//EN",
-        autostore = false
-)
-@TopComponent.Description(
-        preferredID = "ControlsTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-)
-@TopComponent.Registration(mode = "controls", openAtStartup = true)
-@ActionID(category = "Window", id = "org.clipsmonitor.core.ControlsTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ControlsAction",
         preferredID = "ControlsTopComponent"
@@ -46,7 +35,8 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ControlsTopComponent=Controls Window",
     "HINT_ControlsTopComponent=This is a Controls window"
 })
-public final class ControlsTopComponent extends TopComponent implements Observer{
+public final class ControlsTopComponent extends TopComponent implements Observer,
+        KeyListener ,  ActionListener{
     RescueModel model;
     MonitorCore core;
     
@@ -310,6 +300,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.resume();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
+    
     private void runOneButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyReleased
 
     }//GEN-LAST:event_runOneButtonKeyReleased
@@ -503,6 +494,33 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         loadDefaultFileButton.setEnabled(true);
         CLPSelector.setEnabled(true);
         envsSelector.setEnabled(true);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+       if(e.getKeyCode() == KeyEvent.VK_SPACE){
+            model.setMode(ClipsModel.ex_mode_RUNN, 1);
+            model.resume();
+       }
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
     }
     
     private class ClpFileFilter extends FileFilter {

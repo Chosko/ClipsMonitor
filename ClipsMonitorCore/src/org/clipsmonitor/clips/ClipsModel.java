@@ -207,6 +207,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * riprende il thread sospeso tramite il metodo suspend()
      *
      */
+    @SuppressWarnings("CallToThreadStopSuspendOrResumeManager")
     public void resume() {
         t.resume();
     }
@@ -215,6 +216,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * sospende il thread, può essere ripreso con il metodo resume()
      *
      */
+    @SuppressWarnings("CallToThreadStopSuspendOrResumeManager")
     private void suspend() {
         t.suspend();
     }
@@ -256,4 +258,10 @@ public abstract class ClipsModel extends Observable implements Runnable {
         this.setChanged();
         this.notifyObservers("startApp");
     }
+    
+    public int getExecutionMode(){
+    
+        return this.executionMode;
+    }
+            
 }

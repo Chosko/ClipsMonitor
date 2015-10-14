@@ -28,6 +28,7 @@
                                                  person outdoor))
         (slot injured (allowed-values yes no)))
 
+
 (deftemplate cell
         (slot step)
         (slot time) 

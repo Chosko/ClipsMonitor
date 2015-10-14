@@ -6,33 +6,21 @@
 package org.clipsmonitor.gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.text.StyleConstants;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.monitor2015.RescueModel;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
-/**
- * Top component which displays something.
- */
-@ConvertAsProperties(
-        dtd = "-//org.clipsmonitor.gui//Console//EN",
-        autostore = false
-)
-@TopComponent.Description(
-        preferredID = "ConsoleTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
-        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-)
-@TopComponent.Registration(mode = "console", openAtStartup = true)
-@ActionID(category = "Window", id = "org.clipsmonitor.gui.ConsoleTopComponent")
-@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ConsoleAction",
         preferredID = "ConsoleTopComponent"
@@ -43,11 +31,16 @@ import org.openide.util.NbBundle.Messages;
     "HINT_ConsoleTopComponent=This is a Console window"
 })
 
-public final class ConsoleTopComponent extends TopComponent implements Observer {
+public final class ConsoleTopComponent extends TopComponent implements Observer, 
+        KeyListener ,  ActionListener{
     private String text;
     private String currentCmd;
     private ClipsConsole console;
     private ClipsModel model;
+    private LinkedList<String> CmdHistory;
+    private int MaxCmdHistory;
+    private int ActualCmd;
+    private StyleConstants consoleStyle;
     
     public ConsoleTopComponent() {
         initComponents();
@@ -61,7 +54,16 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         console = ClipsConsole.getInstance();
         console.addObserver(this);
         model.addObserver(this);
+        this.CmdHistory = new LinkedList<String>();
+        this.MaxCmdHistory=20;
+        this.ActualCmd=0;
         this.refreshAll();
+    }
+    
+    private void SetStyle(){
+    
+          
+    
     }
     
     private void clear(){
@@ -211,6 +213,15 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
             if(!evt.isControlDown() && !evt.isShiftDown() && evt.getKeyCode() == KeyEvent.VK_ENTER){
                 // Submit command!
                 String cmd = this.currentCmd;
+                
+                // save on CmdHistory
+                if(CmdHistory.size()==this.MaxCmdHistory){
+                    CmdHistory.removeLast();
+                }
+                
+                CmdHistory.addFirst(cmd);
+                this.ActualCmd=0;
+                
                 this.currentCmd = "";
                 this.append("> " + cmd);
                 String res = model.evalComandLine(cmd);
@@ -221,10 +232,90 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         }
     }//GEN-LAST:event_jTextPane1KeyReleased
 
+    
+    @SuppressWarnings("UnusedAssignment")
     private void jTextPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyPressed
+        ListIterator<String> cmd;
+        String JPanelText= this.jTextPane1.getText();
+        String promptString = this.console.getPrompt();
+        int promptStart = JPanelText.lastIndexOf(promptString);
+        int cmdStart = promptStart + promptString.length();
+        String CleanCmd=JPanelText.substring(0, cmdStart);
+        
+        
         if(jTextPane1.isEditable() && isCursorPositionValid()){
-            this.updateCmd();
-        }
+            
+                switch(evt.getKeyCode()){
+                   case KeyEvent.VK_UP :
+                       if(CmdHistory.size()>0){ // se c'è qualche elemento nella CmdHistory
+                          if(ActualCmd>0 && ActualCmd<CmdHistory.size()-1){  // se ci sono più comando e non sono sugli estremi
+                               String textCmd=CmdHistory.get(ActualCmd);
+                               JPanelText= CleanCmd.concat(textCmd);
+                               jTextPane1.setText(JPanelText);
+                               this.setCursorPosition();
+                               ActualCmd++;
+                          }
+                          else{
+                               if(ActualCmd==0){  // primo elemento della command history
+                                  String textCmd=CmdHistory.getFirst();
+                                  JPanelText= CleanCmd.concat(textCmd);
+                                  jTextPane1.setText(JPanelText);
+                                  this.setCursorPosition();
+                                  ActualCmd++;
+                              }
+                              else{ // ultimo elemento della command
+                                  String textCmd=CmdHistory.getLast();
+                                  JPanelText= CleanCmd.concat(textCmd);
+                                  jTextPane1.setText(JPanelText);
+                                  this.setCursorPosition();
+                                  ActualCmd=CmdHistory.size()-2;
+                              }
+                          }
+                       }
+                       else{
+                           JPanelText=CleanCmd.concat(" ");
+                           this.jTextPane1.setText(JPanelText);
+                           this.setCursorPosition();
+                       }
+                       break;
+                   case KeyEvent.VK_DOWN:
+                       if(CmdHistory.size()>0){
+                           if(ActualCmd>0 && ActualCmd<CmdHistory.size()-1){
+                               String textCmd=CmdHistory.get(ActualCmd);
+                               JPanelText= CleanCmd.concat(textCmd);
+                               this.jTextPane1.setText(JPanelText);
+                               this.setCursorPosition();
+                               ActualCmd--;
+
+                          }
+                          else{
+                               if(ActualCmd==0){
+                                  String textCmd=" ";
+                                  JPanelText= CleanCmd.concat(textCmd);
+                                  this.jTextPane1.setText(JPanelText);
+                                  this.setCursorPosition();
+                               }
+                              else{
+                                  String textCmd=CmdHistory.getLast();
+                                  JPanelText= CleanCmd.concat(textCmd);
+                                  this.jTextPane1.setText(JPanelText);  
+                                  this.setCursorPosition();
+                                  ActualCmd--;
+                               }
+                          }
+                       }
+                       else{
+                           JPanelText=CleanCmd.concat(" ");
+                           jTextPane1.setText(JPanelText);
+                           this.setCursorPosition();
+                       }
+                       break;
+                   default :
+                       break;
+                }
+                
+                this.updateCmd();
+           }
     }//GEN-LAST:event_jTextPane1KeyPressed
 
     private void jTextPane1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextPane1FocusGained
@@ -298,6 +389,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         append(s,c,false);
     }
     
+    
     private void append(String s, Color c, boolean bold){
         if(this.text.length() > 0){
             this.text += "\n";
@@ -305,6 +397,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         this.text += s;
         this.updatePane();
     }
+    
     
     private void updatePane(){
         String newText = this.text;
@@ -451,5 +544,27 @@ public final class ConsoleTopComponent extends TopComponent implements Observer 
         warnCheckBox.setEnabled(editable);
         errorCheckBox.setEnabled(editable);
         infoCheckBox.setEnabled(editable);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {        
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+   
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

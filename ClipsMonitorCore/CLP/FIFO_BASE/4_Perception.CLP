@@ -232,13 +232,6 @@
   ; (printout t "percezione acustica" ?percAcoustic)
 )
 
-( defrule begin-kcell-perception
- 
-
- (init-agent (done yes))
- (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
- ?f1 <- (init-cell (pos-r ?r) (pos-c ?c) )
-)
 
 ; (defrule perception-finished
 ;   (declare (salience -1))
