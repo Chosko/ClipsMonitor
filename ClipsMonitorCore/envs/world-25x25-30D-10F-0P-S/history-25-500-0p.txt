@@ -1,0 +1,3 @@
+(maxduration 500)
+
+(initial_agentposition (pos-r 2) (pos-c 13) (direction north))

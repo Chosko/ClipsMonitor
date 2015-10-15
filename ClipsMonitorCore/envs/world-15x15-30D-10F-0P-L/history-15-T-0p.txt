@@ -1,0 +1,4 @@
+(maxduration 900000000000)
+
+(initial_agentposition (pos-r 2) (pos-c 8) (direction north))
+
