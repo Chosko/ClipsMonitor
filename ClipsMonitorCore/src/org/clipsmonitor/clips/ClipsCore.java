@@ -90,10 +90,9 @@ public class ClipsCore {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    public void initialize(String strategyFolder_name, String envsFolder_name) {
-
+    public void initialize(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
-        File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
+        File str_folder = new File(projectDirectory + File.separator + "CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
 //        Arrays.sort(str_listOfFiles, new Comparator<File>() {
@@ -108,7 +107,7 @@ public class ClipsCore {
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
-                    System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
+                    console.debug("Loading in CLIPS the file: " + clpFile.getPath());
                     clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
                 }
             } catch (Exception e) {
@@ -120,7 +119,7 @@ public class ClipsCore {
         clips.addRouter(router);
 
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
-        File env_folder = new File("envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
+        File env_folder = new File(projectDirectory + File.separator + "envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] env_listOfFiles = env_folder.listFiles();
 
         for (File envFile : env_listOfFiles) {
@@ -129,9 +128,9 @@ public class ClipsCore {
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     File source = envFile;
-                    File dest = new File(envFile.getName());
+                    File dest = new File(str_folder.getAbsolutePath() + File.separator + envFile.getName());
 
-                    System.out.println("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
+                    console.debug("Copying the file: " + envFile.getAbsolutePath());
 
                     copyFileUsingFileStreams(source, dest); //Copiamo il file
                     dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione

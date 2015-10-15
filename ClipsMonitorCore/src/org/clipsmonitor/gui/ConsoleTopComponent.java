@@ -21,6 +21,11 @@ import org.clipsmonitor.monitor2015.RescueModel;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
+@TopComponent.Description(
+        preferredID = "ConsoleTopComponent",
+        //iconBase="SET/PATH/TO/ICON/HERE", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ConsoleAction",
         preferredID = "ConsoleTopComponent"
