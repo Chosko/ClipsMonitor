@@ -239,8 +239,8 @@
 ;   (focus REASONING)
 ;   )
 
-; (defrule pop-perception
-;   (declare (salience -2))
-;   =>
-;   (pop-focus)
-; )
+ (defrule pop-perception
+   (declare (salience -2))
+   =>
+   (focus AGENT)
+ )

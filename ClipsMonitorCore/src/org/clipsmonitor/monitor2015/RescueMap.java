@@ -1,13 +1,8 @@
 package org.clipsmonitor.monitor2015;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observer;
-import javax.imageio.ImageIO;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorMap;
 
@@ -28,8 +23,6 @@ public class RescueMap extends MonitorMap implements Observer {
     
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
-    private Map<String, BufferedImage> map_img;
-    private Map<String, BufferedImage> map_img_robot;
     private Dimension dim;
 
     /**
@@ -169,53 +162,18 @@ public class RescueMap extends MonitorMap implements Observer {
         return model.getEnvMap();
     }
 
-    public Map<String, BufferedImage> getMapImg() {
-        return map_img;
-    }
-
-    public Map<String, BufferedImage> getMapImgRobot() {
-        return map_img_robot;
-    }
+    
 
     @Override
     protected void clear() {
         this.console = null;
         this.dim = null;
-        this.map_img = null;
-        this.map_img_robot = null;
+        RescueImages.getInstance().ClearImg();
         this.model = null;
     }
 
     @Override
     protected void init() {
-        console = ClipsConsole.getInstance();
-        
-        //Primo campo: coerente con i file di CLIPS
-        //Secondo campo: nome del file (a piacere)
-        map_img = new HashMap<String, BufferedImage>();
-
-        try {
-            map_img.put("wall", ImageIO.read(new File("img" + File.separator + "wall.png")));
-            map_img.put("empty", ImageIO.read(new File("img" + File.separator + "empty.png")));
-            map_img.put("gate", ImageIO.read(new File("img" + File.separator + "gate.png")));
-            map_img.put("outdoor", ImageIO.read(new File("img" + File.separator + "outdoor.png")));
-            map_img.put("debris", ImageIO.read(new File("img" + File.separator + "debris.png")));
-            map_img.put("debris_injured", ImageIO.read(new File("img" + File.separator + "debris_injured.png")));
-            map_img.put("informed", ImageIO.read(new File("img" + File.separator + "informed.png")));
-            map_img.put("undiscovered", ImageIO.read(new File("img" + File.separator + "undiscovered.png")));
-            map_img.put("agent_east_unloaded", ImageIO.read(new File("img" + File.separator + "agent_east_empty.png")));
-            map_img.put("agent_west_unloaded", ImageIO.read(new File("img" + File.separator + "agent_west_empty.png")));
-            map_img.put("agent_north_unloaded", ImageIO.read(new File("img" + File.separator + "agent_north_empty.png")));
-            map_img.put("agent_south_unloaded", ImageIO.read(new File("img" + File.separator + "agent_south_empty.png")));
-            map_img.put("agent_east_loaded", ImageIO.read(new File("img" + File.separator + "agent_east_load.png")));
-            map_img.put("agent_west_loaded", ImageIO.read(new File("img" + File.separator + "agent_west_load.png")));
-            map_img.put("agent_north_loaded", ImageIO.read(new File("img" + File.separator + "agent_north_load.png")));
-            map_img.put("agent_south_loaded", ImageIO.read(new File("img" + File.separator + "agent_south_load.png")));
-            map_img.put("person_rescuer", ImageIO.read(new File("img" + File.separator + "person_rescuer.png")));
-
-        } catch (IOException e) {
-            console.error(e);
-        }
 
         
         model = RescueModel.getInstance();

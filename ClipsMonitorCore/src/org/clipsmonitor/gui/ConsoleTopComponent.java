@@ -10,16 +10,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.text.StyleConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
+
+
 
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ConsoleAction",
@@ -40,7 +47,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     private LinkedList<String> CmdHistory;
     private int MaxCmdHistory;
     private int ActualCmd;
-    private StyleConstants consoleStyle;
+    private HashMap<String, HighlightPainter > painters ;
     
     public ConsoleTopComponent() {
         initComponents();
@@ -57,13 +64,22 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         this.CmdHistory = new LinkedList<String>();
         this.MaxCmdHistory=20;
         this.ActualCmd=0;
+        SetPaneStyle();
         this.refreshAll();
     }
     
-    private void SetStyle(){
     
-          
+    private void SetPaneStyle(){
     
+        painters = new HashMap<String,HighlightPainter>();
+        
+        painters.put("[ERROR]", new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+        painters.put("[WARN]",  new DefaultHighlighter.DefaultHighlightPainter(Color.orange));
+        painters.put("[INFO]",  new DefaultHighlighter.DefaultHighlightPainter(Color.green));
+        painters.put("[CLIPS]", new DefaultHighlighter.DefaultHighlightPainter(Color.blue));
+        painters.put("[INTERNAL]", new DefaultHighlighter.DefaultHighlightPainter(Color.cyan));
+    
+        
     }
     
     private void clear(){
@@ -203,7 +219,10 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     private void jTextPane1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyTyped
         // Check if last line has been changed before "CLIPS> "
         if(!isCursorPositionValid()){
-            this.updatePane();
+            try {
+                this.updatePane();
+            } catch (BadLocationException ex) {
+            }
         }
     }//GEN-LAST:event_jTextPane1KeyTyped
 
@@ -223,11 +242,22 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                 this.ActualCmd=0;
                 
                 this.currentCmd = "";
-                this.append("> " + cmd);
+                
+                try {
+                    this.append("> " + cmd);
+                } catch (BadLocationException ex) {
+                 
+                }
+                
                 String res = model.evalComandLine(cmd);
                 if(res.length() > 0){
-                    append(res);
+                    try {
+                        this.append(res);
+                    } catch (BadLocationException ex) {
+                     
+                    }
                 }
+                
             }
         }
     }//GEN-LAST:event_jTextPane1KeyReleased
@@ -246,7 +276,8 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         if(jTextPane1.isEditable() && isCursorPositionValid()){
             
                 switch(evt.getKeyCode()){
-                   case KeyEvent.VK_UP :
+                   
+                    case KeyEvent.VK_UP :
                        if(CmdHistory.size()>0){ // se c'è qualche elemento nella CmdHistory
                           if(ActualCmd>0 && ActualCmd<CmdHistory.size()-1){  // se ci sono più comando e non sono sugli estremi
                                String textCmd=CmdHistory.get(ActualCmd);
@@ -278,7 +309,8 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                            this.setCursorPosition();
                        }
                        break;
-                   case KeyEvent.VK_DOWN:
+                   
+                    case KeyEvent.VK_DOWN:
                        if(CmdHistory.size()>0){
                            if(ActualCmd>0 && ActualCmd<CmdHistory.size()-1){
                                String textCmd=CmdHistory.get(ActualCmd);
@@ -310,6 +342,11 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                            this.setCursorPosition();
                        }
                        break;
+                    case KeyEvent.VK_LEFT_PARENTHESIS:
+                        String tmp= jTextPane1.getText();
+                        tmp +=")";
+                        jTextPane1.setText(tmp);
+                        break;
                    default :
                        break;
                 }
@@ -381,16 +418,16 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         // TODO read your settings according to their version
     }
     
-    private void append(String s){
+    private void append(String s) throws BadLocationException {
         append(s, Color.BLACK, false);
     }
     
-    private void append(String s, Color c){
+    private void append(String s, Color c) throws BadLocationException {
         append(s,c,false);
     }
     
     
-    private void append(String s, Color c, boolean bold){
+    private void append(String s, Color c, boolean bold) throws BadLocationException {
         if(this.text.length() > 0){
             this.text += "\n";
         }
@@ -398,8 +435,41 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         this.updatePane();
     }
     
+    private ArrayList<Integer> getOccurancies(String pattern , String text){
     
-    private void updatePane(){
+       
+       ArrayList<Integer> indexMatches = new ArrayList<Integer>();
+       int checkOccur=0;
+       while(checkOccur!=-1){
+         checkOccur=text.indexOf(pattern,checkOccur);
+         
+         if(checkOccur!=-1)
+         {
+           indexMatches.add(checkOccur);
+           checkOccur +=pattern.length();
+         }
+       }
+         
+       return indexMatches;
+    }
+    
+   
+    private void paintPane(String pattern , String text, Highlighter highPane) throws BadLocationException{
+    
+        
+        ArrayList<Integer> indStart=this.getOccurancies(pattern, text);
+        int i = 0;
+        while(i<indStart.size()){
+            int start = indStart.get(i);
+            int end = start + pattern.length();
+            highPane.addHighlight(start, end, painters.get(pattern));
+            i++;
+            }
+        }
+    
+    
+    
+    private void updatePane() throws BadLocationException{
         String newText = this.text;
         if(this.text.length() > 0){
             newText += "\n";
@@ -407,8 +477,21 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         if(console.getActive()){
             newText += console.getPrompt() + currentCmd;
         }
+        
         this.jTextPane1.setText(newText);
         this.setCursorPosition();
+    
+        /*
+        if(newText!=null && newText.length()>0){
+        Highlighter highlighter = jTextPane1.getHighlighter();
+        
+        paintPane("ERROR", newText,highlighter);
+        paintPane("WARN", newText,highlighter);
+        paintPane("INFO", newText,highlighter);
+        paintPane("CLIPS", newText,highlighter);
+        paintPane("INTERNAL", newText,highlighter);
+        }
+        */  
     }
     
     private void refreshAll(){
@@ -419,7 +502,10 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         debugCheckBox.setSelected(console.getLogDebug());
         warnCheckBox.setSelected(console.getLogWarn());
         errorCheckBox.setSelected(console.getLogError());
-        resetText();
+        try { resetText(); }
+        catch (BadLocationException ex) {
+    
+        }
     }
     
     private void setCursorPosition(){
@@ -446,67 +532,140 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
             else if (evt.equals("info on")) {
                 infoCheckBox.setSelected(true);
-                resetText();
+                try {   
+                    resetText();   
+                } 
+                catch (BadLocationException ex) {  
+                
+                }
             }
             else if (evt.equals("info off")){
                 infoCheckBox.setSelected(false);
-                resetText();
-            }
+                try {  
+                    resetText(); 
+                }
+                catch (BadLocationException ex) {       }
+            
+                }
             else if (evt.equals("clips on")) {
                 clipsCheckBox.setSelected(true);
-                resetText();
+                try {   
+                    resetText();  
+                } 
+                catch (BadLocationException ex) {     
+                }
             }
             else if (evt.equals("clips off")){
                 clipsCheckBox.setSelected(false);
-                resetText();
+                try {    resetText();  
+                } catch (BadLocationException ex) {                                    
+                
+                }
             }
             else if (evt.equals("debug on")) {
                 debugCheckBox.setSelected(true);
-                resetText();
+                try {
+                    resetText();                                    
+                } 
+                catch (BadLocationException ex) {
+                
+                }
             }
             else if (evt.equals("debug off")){
                 debugCheckBox.setSelected(false);
-                resetText();
+                try {     
+                    resetText();                
+                } catch (BadLocationException ex) {                     
+                
+                }
             }
             else if (evt.equals("warn on")) {
                 warnCheckBox.setSelected(true);
-                resetText();
+                try {   
+                    resetText();                
+                } catch (BadLocationException ex) {   
+                
+                }
             }
             else if (evt.equals("warn off")){
                 warnCheckBox.setSelected(false);
-                resetText();
+                try {   
+                    resetText();              
+                } catch (BadLocationException ex) {
+                
+                }
             }
             else if (evt.equals("error on")) {
                 errorCheckBox.setSelected(true);
-                resetText();
+                try {  
+                    resetText();  
+                } 
+                catch (BadLocationException ex) { 
+                }
             }
             else if (evt.equals("error off")){
                 errorCheckBox.setSelected(false);
-                resetText();
+                try {  
+                    resetText();  
+                } catch (BadLocationException ex) {   
+                
+                
+                }
             }
             else if(evt.equals("log")){
-                this.append(console.getLastOutputText());
+                try {
+                    this.append(console.getLastOutputText());
+                } catch (BadLocationException ex) {
+                   
+                }
             }
             else if(evt.equals("debug")) {
-                this.append(console.getLastOutputText(), Color.DARK_GRAY);
+                try {
+                    this.append(console.getLastOutputText(), Color.DARK_GRAY);
+                } catch (BadLocationException ex) {
+                   
+                }
             }
             else if(evt.equals("error")){
-                this.append(console.getLastOutputText(), Color.RED, true);
+                try {
+                    this.append(console.getLastOutputText(), Color.RED, true);
+                } catch (BadLocationException ex) {
+                }
             }
             else if(evt.equals("warn")){
-                this.append(console.getLastOutputText(), Color.ORANGE, true);
+                try {
+                    this.append(console.getLastOutputText(), Color.ORANGE, true);
+                } catch (BadLocationException ex) {
+                    
+                }
             }
             else if(evt.equals("info")){
                 String lastOutput = console.getLastOutputText();
-                this.append(lastOutput, Color.BLUE);
+                try {
+                    this.append(lastOutput, Color.BLUE);
+                } catch (BadLocationException ex) {
+                   
+                }
             }
             else if(evt.equals("clips")){
-                this.append(console.getLastOutputText(), Color.GRAY);
+                try {
+                    this.append(console.getLastOutputText(), Color.GRAY);
+                } catch (BadLocationException ex) {
+                   
+                }
             }
             else if(evt.equals("clear")){
-                resetText();
+                try {
+                    resetText();
+                } catch (BadLocationException ex) {
+                   
+                }
             }
-            updatePane();
+            try {
+                updatePane();
+            } catch (BadLocationException ex) {
+              
+            }
         }
         else if(o instanceof ClipsModel){
             if(evt.equals("startApp")){
@@ -526,7 +685,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         this.currentCmd = currentText.substring(cmdStart);
     }
 
-    private void resetText() {
+    private void resetText() throws BadLocationException {
         this.text = console.getFullOutputText();
         updatePane();
     }
@@ -552,19 +711,18 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {        
+    public void keyPressed(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-   
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }
