@@ -224,7 +224,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public String evalComandLine(String command) {
         String result = "";
         try{
-            result = core.evaluateOutput("AGENT", command);
+            result = core.evaluateOutput(null, command);
         }
         catch(CLIPSError ex){
             console.error(ex);

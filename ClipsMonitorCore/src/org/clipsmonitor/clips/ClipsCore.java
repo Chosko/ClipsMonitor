@@ -108,8 +108,10 @@ public class ClipsCore {
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
-                    console.debug("Loading in CLIPS the file: " + clpFile.getPath());
-                    clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
+                    String fs = File.separator;
+                    String path = projectDirectory + fs + "CLP" + fs + strategyFolder_name + fs + fileName;
+                    console.debug("Loading in CLIPS the file: " + path);
+                    clips.load(path); //carica ogni file
                 }
             } catch (Exception e) {
                 console.error(e);
@@ -122,7 +124,7 @@ public class ClipsCore {
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
         File env_folder = new File(projectDirectory + File.separator + "envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] env_listOfFiles = env_folder.listFiles();
-        String destPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath();
+        String destPath = System.getProperty("user.dir");
 
         for (File envFile : env_listOfFiles) {
             try {
@@ -153,6 +155,9 @@ public class ClipsCore {
      * @return un PrimitiveValue che contiene il risultato dell'interrogazione
      */
     public PrimitiveValue evaluate(String module, String eval) throws CLIPSError{
+        if(module == null) {
+            return clips.eval(eval);
+        }
         boolean isModuleOk = true;
         PrimitiveValue fc = clips.eval("(get-focus)");
         String focus = fc.toString();
