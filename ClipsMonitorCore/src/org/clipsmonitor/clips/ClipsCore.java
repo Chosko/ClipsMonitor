@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
+import org.openide.modules.InstalledFileLocator;
 
 /**
  * Questa classe implemente il cuore di connessione con l'ambiente clips,
@@ -121,6 +122,7 @@ public class ClipsCore {
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
         File env_folder = new File(projectDirectory + File.separator + "envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] env_listOfFiles = env_folder.listFiles();
+        String destPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath();
 
         for (File envFile : env_listOfFiles) {
             try {
@@ -128,9 +130,9 @@ public class ClipsCore {
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     File source = envFile;
-                    File dest = new File(str_folder.getAbsolutePath() + File.separator + envFile.getName());
+                    File dest = new File(destPath + File.separator + envFile.getName());
 
-                    console.debug("Copying the file: " + envFile.getAbsolutePath());
+                    console.debug("Copying the file: " + source.getAbsolutePath() + " into " + dest.getAbsolutePath());
 
                     copyFileUsingFileStreams(source, dest); //Copiamo il file
                     dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione

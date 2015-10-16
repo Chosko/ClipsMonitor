@@ -31,13 +31,16 @@ public class RescueMap extends MonitorMap implements Observer {
     private Map<String, BufferedImage> map_img;
     private Map<String, BufferedImage> map_img_robot;
     private Dimension dim;
+    
+    private String projectDirectory;
 
     /**
      * È il costruttore da chiamare nel main per avviare l'intero sistema, apre
      * una nuova finestra con il controller, pronto per caricare il file .clp
      *
      */
-    public RescueMap() {
+    public RescueMap(String projectDirectory) {
+        this.projectDirectory = projectDirectory;
         init();
     }
 
@@ -193,25 +196,26 @@ public class RescueMap extends MonitorMap implements Observer {
         //Primo campo: coerente con i file di CLIPS
         //Secondo campo: nome del file (a piacere)
         map_img = new HashMap<String, BufferedImage>();
-
+        String imgpath = projectDirectory + File.separator + "img" + File.separator;
+                
         try {
-            map_img.put("wall", ImageIO.read(new File("img" + File.separator + "wall.png")));
-            map_img.put("empty", ImageIO.read(new File("img" + File.separator + "empty.png")));
-            map_img.put("gate", ImageIO.read(new File("img" + File.separator + "gate.png")));
-            map_img.put("outdoor", ImageIO.read(new File("img" + File.separator + "outdoor.png")));
-            map_img.put("debris", ImageIO.read(new File("img" + File.separator + "debris.png")));
-            map_img.put("debris_injured", ImageIO.read(new File("img" + File.separator + "debris_injured.png")));
-            map_img.put("informed", ImageIO.read(new File("img" + File.separator + "informed.png")));
-            map_img.put("undiscovered", ImageIO.read(new File("img" + File.separator + "undiscovered.png")));
-            map_img.put("agent_east_unloaded", ImageIO.read(new File("img" + File.separator + "agent_east_empty.png")));
-            map_img.put("agent_west_unloaded", ImageIO.read(new File("img" + File.separator + "agent_west_empty.png")));
-            map_img.put("agent_north_unloaded", ImageIO.read(new File("img" + File.separator + "agent_north_empty.png")));
-            map_img.put("agent_south_unloaded", ImageIO.read(new File("img" + File.separator + "agent_south_empty.png")));
-            map_img.put("agent_east_loaded", ImageIO.read(new File("img" + File.separator + "agent_east_load.png")));
-            map_img.put("agent_west_loaded", ImageIO.read(new File("img" + File.separator + "agent_west_load.png")));
-            map_img.put("agent_north_loaded", ImageIO.read(new File("img" + File.separator + "agent_north_load.png")));
-            map_img.put("agent_south_loaded", ImageIO.read(new File("img" + File.separator + "agent_south_load.png")));
-            map_img.put("person_rescuer", ImageIO.read(new File("img" + File.separator + "person_rescuer.png")));
+            map_img.put("wall", ImageIO.read(new File(imgpath + "wall.png")));
+            map_img.put("empty", ImageIO.read(new File(imgpath + "empty.png")));
+            map_img.put("gate", ImageIO.read(new File(imgpath + "gate.png")));
+            map_img.put("outdoor", ImageIO.read(new File(imgpath + "outdoor.png")));
+            map_img.put("debris", ImageIO.read(new File(imgpath + "debris.png")));
+            map_img.put("debris_injured", ImageIO.read(new File(imgpath + "debris_injured.png")));
+            map_img.put("informed", ImageIO.read(new File(imgpath + "informed.png")));
+            map_img.put("undiscovered", ImageIO.read(new File(imgpath + "undiscovered.png")));
+            map_img.put("agent_east_unloaded", ImageIO.read(new File(imgpath + "agent_east_empty.png")));
+            map_img.put("agent_west_unloaded", ImageIO.read(new File(imgpath + "agent_west_empty.png")));
+            map_img.put("agent_north_unloaded", ImageIO.read(new File(imgpath + "agent_north_empty.png")));
+            map_img.put("agent_south_unloaded", ImageIO.read(new File(imgpath + "agent_south_empty.png")));
+            map_img.put("agent_east_loaded", ImageIO.read(new File(imgpath + "agent_east_load.png")));
+            map_img.put("agent_west_loaded", ImageIO.read(new File(imgpath + "agent_west_load.png")));
+            map_img.put("agent_north_loaded", ImageIO.read(new File(imgpath + "agent_north_load.png")));
+            map_img.put("agent_south_loaded", ImageIO.read(new File(imgpath + "agent_south_load.png")));
+            map_img.put("person_rescuer", ImageIO.read(new File(imgpath + "person_rescuer.png")));
 
         } catch (IOException e) {
             console.error(e);
