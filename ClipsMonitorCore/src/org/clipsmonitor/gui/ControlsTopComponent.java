@@ -20,9 +20,6 @@ import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
-import org.netbeans.api.settings.ConvertAsProperties;
-import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -35,12 +32,17 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ControlsTopComponent=Controls Window",
     "HINT_ControlsTopComponent=This is a Controls window"
 })
+
+
+
 public final class ControlsTopComponent extends TopComponent implements Observer,
         KeyListener ,  ActionListener{
     RescueModel model;
     MonitorCore core;
     
+    @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
+        
         initComponents();
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());
