@@ -24,13 +24,16 @@ public class RescueMap extends MonitorMap implements Observer {
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
     private Dimension dim;
+    
+    private String projectDirectory;
 
     /**
      * È il costruttore da chiamare nel main per avviare l'intero sistema, apre
      * una nuova finestra con il controller, pronto per caricare il file .clp
      *
      */
-    public RescueMap() {
+    public RescueMap(String projectDirectory) {
+        this.projectDirectory = projectDirectory;
         init();
     }
 
@@ -173,9 +176,7 @@ public class RescueMap extends MonitorMap implements Observer {
     }
 
     @Override
-    protected void init() {
-
-        
+    protected void init() {        
         model = RescueModel.getInstance();
         model.addObserver(this);
     }

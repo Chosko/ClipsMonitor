@@ -10,19 +10,36 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
+import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.LifecycleManager;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
+import org.openide.modules.InstalledFileLocator;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
+@TopComponent.Description(
+        preferredID = "ControlsTopComponent",
+        //iconBase="SET/PATH/TO/ICON/HERE", 
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS
+)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ControlsAction",
         preferredID = "ControlsTopComponent"
@@ -39,10 +56,15 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         KeyListener ,  ActionListener{
     RescueModel model;
     MonitorCore core;
+    File projectDirectory;
     
     @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
+<<<<<<< HEAD
         
+=======
+        loadPreferences();
+>>>>>>> extract_project
         initComponents();
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());
@@ -73,6 +95,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         strategyLabel1 = new javax.swing.JLabel();
         envLabel1 = new javax.swing.JLabel();
         envLabel2 = new javax.swing.JLabel();
+        envLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(strategyLabel, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.strategyLabel.text")); // NOI18N
 
@@ -184,19 +208,34 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
         org.openide.awt.Mnemonics.setLocalizedText(envLabel2, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.envLabel2.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(envLabel3, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.envLabel3.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jButton1.text")); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(strategyLabel)
-                    .addComponent(envLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(envsSelector, 0, 55, Short.MAX_VALUE)
-                    .addComponent(CLPSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(strategyLabel)
+                            .addComponent(envLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 18, Short.MAX_VALUE)
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(envsSelector, 0, 55, Short.MAX_VALUE)
+                            .addComponent(CLPSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
+                        .addComponent(envLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -248,7 +287,9 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                     .addComponent(stepButton)
                     .addComponent(stepTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(envLabel2)
-                    .addComponent(resetButton))
+                    .addComponent(resetButton)
+                    .addComponent(envLabel3)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -266,46 +307,27 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void envsSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_envsSelectorActionPerformed
+    private void timeLeftTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLeftTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_envsSelectorActionPerformed
+    }//GEN-LAST:event_timeLeftTextFieldActionPerformed
 
-    private void CLPSelectorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_CLPSelectorItemStateChanged
+    private void timeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CLPSelectorItemStateChanged
+    }//GEN-LAST:event_timeTextFieldActionPerformed
 
-    private void CLPSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLPSelectorActionPerformed
+    private void stepTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CLPSelectorActionPerformed
+    }//GEN-LAST:event_stepTextFieldActionPerformed
 
-    private void loadDefaultFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultFileButtonActionPerformed
-        loadDefaultFileButton.setEnabled(false);
-        runButton.setEnabled(true);
-        runOneButton.setEnabled(true);
-        stepButton.setEnabled(true);
-        resetButton.setEnabled(true);
-        CLPSelector.setEnabled(false);
-        envsSelector.setEnabled(false);
-        String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
-        String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
-        model = RescueModel.getInstance();
-        model.addObserver(this);
-        model.registerMap("envMap", new RescueMap());
-        core = MonitorCore.getInstance();
-        model.startCore(strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
-        model.setMode(ClipsModel.ex_mode_START);
-        model.execute();
-    }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        core.resetApplication();
+    }//GEN-LAST:event_resetButtonActionPerformed
 
-    private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
-        model.setMode(ClipsModel.ex_mode_RUNN, 1);
+    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
+        model.setMode(ClipsModel.ex_mode_STEP);
         model.resume();
-    }//GEN-LAST:event_runOneButtonActionPerformed
-
-    
-    private void runOneButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyReleased
-
-    }//GEN-LAST:event_runOneButtonKeyReleased
+        //model.step();
+    }//GEN-LAST:event_stepButtonActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         // Il tasto può essere Run oppure Stop (a seconda di cosa era attivo)
@@ -325,35 +347,68 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
     }//GEN-LAST:event_runButtonActionPerformed
 
-    private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
-        model.setMode(ClipsModel.ex_mode_STEP);
+    private void runOneButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyReleased
+
+    }//GEN-LAST:event_runOneButtonKeyReleased
+
+    private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
+        model.setMode(ClipsModel.ex_mode_RUNN, 1);
         model.resume();
-        //model.step();
-    }//GEN-LAST:event_stepButtonActionPerformed
+    }//GEN-LAST:event_runOneButtonActionPerformed
 
-    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
-        core.resetApplication();
-    }//GEN-LAST:event_resetButtonActionPerformed
+    private void loadDefaultFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultFileButtonActionPerformed
+        loadDefaultFileButton.setEnabled(false);
+        runButton.setEnabled(true);
+        runOneButton.setEnabled(true);
+        stepButton.setEnabled(true);
+        resetButton.setEnabled(true);
+        CLPSelector.setEnabled(false);
+        envsSelector.setEnabled(false);
+        String strategyFolder_name = CLPSelector.getSelectedItem().toString(); //La strategia scelta
+        String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
+        model = RescueModel.getInstance();
+        model.addObserver(this);
+        model.registerMap("envMap", new RescueMap(projectDirectory.getAbsolutePath()));
+        core = MonitorCore.getInstance();
+        model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
+        model.setMode(ClipsModel.ex_mode_START);
+        model.execute();
+    }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
-    private void stepTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepTextFieldActionPerformed
+    private void CLPSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CLPSelectorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_stepTextFieldActionPerformed
+    }//GEN-LAST:event_CLPSelectorActionPerformed
 
-    private void timeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeTextFieldActionPerformed
+    private void CLPSelectorItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_CLPSelectorItemStateChanged
         // TODO add your handling code here:
-    }//GEN-LAST:event_timeTextFieldActionPerformed
+    }//GEN-LAST:event_CLPSelectorItemStateChanged
 
-    private void timeLeftTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLeftTextFieldActionPerformed
+    private void envsSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_envsSelectorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_timeLeftTextFieldActionPerformed
+    }//GEN-LAST:event_envsSelectorActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        resetProjectDirectory();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    void resetProjectDirectory(){
+        String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + "/preferences.txt";
+        File prefFile = new File(prefPath);
+        if (prefFile.exists() && !prefFile.isDirectory()) {
+            prefFile.delete();
+        }
+        infoBox("Percorso del progetto resettato. Riavvia per settare un nuovo percorso", "Riavvia");
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox CLPSelector;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JLabel envLabel;
     private javax.swing.JLabel envLabel1;
     private javax.swing.JLabel envLabel2;
+    private javax.swing.JLabel envLabel3;
     private javax.swing.JComboBox envsSelector;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton loadDefaultFileButton;
     private javax.swing.JButton resetButton;
     private javax.swing.JButton runButton;
@@ -431,17 +486,23 @@ public final class ControlsTopComponent extends TopComponent implements Observer
      * @return il combobox contenente tutte le strategie disponibili
      */
     private ComboBoxModel loadCLPFolderNames() {
-
-        String path = System.getProperty("user.dir") + File.separator + "CLP";
-        File folder = new File(path);
-        DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
-        File[] listOfFiles = folder.listFiles();
-        for (File file : listOfFiles) {
-            if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
-                result.addElement(file.getName());
+        try{
+            File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "CLP");
+            DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
+            File[] listOfFiles = folder.listFiles();
+            for (File file : listOfFiles) {
+                if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
+                    result.addElement(file.getName());
+                }
             }
+            return result;
         }
-        return result;
+        catch(NullPointerException ex){
+            infoBox("Impossibile trovare la cartella \"CLP\" in " + projectDirectory.getAbsolutePath(), "Errore");
+            resetProjectDirectory();
+            LifecycleManager.getDefault().exit();
+            return null;
+        }
     }
 
     /**
@@ -453,17 +514,23 @@ public final class ControlsTopComponent extends TopComponent implements Observer
      * @return Il modello per far sì che venga costruita il selector.
      */
     private ComboBoxModel loadEnvsFolderNames() {
-
-        String path = System.getProperty("user.dir") + File.separator + "envs";
-        File folder = new File(path);
-        DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
-        File[] listOfFiles = folder.listFiles();
-        for (File file : listOfFiles) {
-            if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
-                result.addElement(file.getName());
+        try {
+            File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "envs");
+            DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
+            File[] listOfFiles = folder.listFiles();
+            for (File file : listOfFiles) {
+                if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
+                    result.addElement(file.getName());
+                }
             }
+            return result;
         }
-        return result;
+        catch(NullPointerException ex){
+            infoBox("Impossibile trovare la cartella \"envs\" in " + projectDirectory.getAbsolutePath(), "Errore");
+            resetProjectDirectory();
+            LifecycleManager.getDefault().exit();
+            return null;
+        }
     }
 
     @Override
@@ -523,6 +590,54 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     
+    }
+
+    private void loadPreferences() {
+        /* ------- Find the preferences file ------- */
+        String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + File.separator + "preferences.txt";
+        File prefFile = new File(prefPath);
+        boolean dirFound = false;
+        if(prefFile.exists() && !prefFile.isDirectory()) {
+            try{
+                String pref = Files.readAllLines(prefFile.toPath()).get(0);
+                File dir = new File(pref);
+                if(dir.exists() && dir.isDirectory()){
+                    dirFound = true;
+                    this.projectDirectory = dir;
+                }
+            }
+            catch(IOException ex){
+                infoBox("Impossibile caricare le preferenze dell'utente", "Errore");
+                LifecycleManager.getDefault().exit();
+            }
+        }
+        /* ------- Preferences file does not exist ------- */
+        if(!dirFound){
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle("Seleziona la cartella del progetto CLIPS");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                this.projectDirectory = chooser.getSelectedFile();
+                try {
+                    FileWriter fileWriter = new FileWriter(prefFile);
+                    fileWriter.write(this.projectDirectory.getAbsolutePath());
+                    fileWriter.flush();
+                    fileWriter.close();
+                }
+                catch(IOException ex){
+                    infoBox(ex.getMessage(), "Errore");
+                    LifecycleManager.getDefault().exit();                    
+                }
+            } else {
+                LifecycleManager.getDefault().exit();
+            }
+        }
+    }
+    
+    public static void infoBox(String infoMessage, String titleBar) {
+        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
     
     private class ClpFileFilter extends FileFilter {

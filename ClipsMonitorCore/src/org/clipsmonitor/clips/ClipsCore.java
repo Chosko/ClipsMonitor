@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
+import org.openide.modules.InstalledFileLocator;
 
 /**
  * Questa classe implemente il cuore di connessione con l'ambiente clips,
@@ -90,10 +91,9 @@ public class ClipsCore {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    public void initialize(String strategyFolder_name, String envsFolder_name) {
-
+    public void initialize(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
-        File str_folder = new File("CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
+        File str_folder = new File(projectDirectory + File.separator + "CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
 //        Arrays.sort(str_listOfFiles, new Comparator<File>() {
@@ -108,8 +108,10 @@ public class ClipsCore {
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
-                    System.out.println("Loading in CLIPS the file: CLP" + File.separator + strategyFolder_name + File.separator + fileName);
-                    clips.load("CLP" + File.separator + strategyFolder_name + File.separator + fileName); //carica ogni file
+                    String fs = File.separator;
+                    String path = projectDirectory + fs + "CLP" + fs + strategyFolder_name + fs + fileName;
+                    console.debug("Loading in CLIPS the file: " + path);
+                    clips.load(path); //carica ogni file
                 }
             } catch (Exception e) {
                 console.error(e);
@@ -120,8 +122,9 @@ public class ClipsCore {
         clips.addRouter(router);
 
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
-        File env_folder = new File("envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
+        File env_folder = new File(projectDirectory + File.separator + "envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] env_listOfFiles = env_folder.listFiles();
+        String destPath = System.getProperty("user.dir");
 
         for (File envFile : env_listOfFiles) {
             try {
@@ -129,9 +132,9 @@ public class ClipsCore {
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     File source = envFile;
-                    File dest = new File(envFile.getName());
+                    File dest = new File(destPath + File.separator + envFile.getName());
 
-                    System.out.println("Copying the file: envs" + File.separator + envsFolder_name + File.separator + fileName);
+                    console.debug("Copying the file: " + source.getAbsolutePath() + " into " + dest.getAbsolutePath());
 
                     copyFileUsingFileStreams(source, dest); //Copiamo il file
                     dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
@@ -152,6 +155,9 @@ public class ClipsCore {
      * @return un PrimitiveValue che contiene il risultato dell'interrogazione
      */
     public PrimitiveValue evaluate(String module, String eval) throws CLIPSError{
+        if(module == null) {
+            return clips.eval(eval);
+        }
         boolean isModuleOk = true;
         PrimitiveValue fc = clips.eval("(get-focus)");
         String focus = fc.toString();

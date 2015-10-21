@@ -133,9 +133,9 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    public void startCore(String strategyFolder_name, String envsFolder_name) {
+    public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
         /*inizializza l'ambiente clips caricando i vari file*/
-        core.initialize(strategyFolder_name, envsFolder_name);
+        core.initialize(projectDirectory, strategyFolder_name, envsFolder_name);
         console.debug("Clips Environment created and ready to run");
         /*effettua una reset di clips dopo aver caricato i file e
          carica le info iniziali dei file clips, per poi terminare la fase di setup*/
@@ -224,7 +224,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public String evalComandLine(String command) {
         String result = "";
         try{
-            result = core.evaluateOutput("AGENT", command);
+            result = core.evaluateOutput(null, command);
         }
         catch(CLIPSError ex){
             console.error(ex);
