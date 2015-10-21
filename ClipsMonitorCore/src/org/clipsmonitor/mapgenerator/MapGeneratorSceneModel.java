@@ -58,15 +58,15 @@ public class MapGeneratorSceneModel {
         this.MapHeight=0;
         this.CellHeight=0;
         this.CellWidth=0;
-        this.defaultagentposition= new int [2];
-        this.defaultagentposition[0]=5;
-        this.defaultagentposition[1]=8;
-        this.agentposition= new int [2];
-        this.agentposition[0]=5;
-        this.agentposition[1]=8;
         this.direction="north";
         this.maxduration=100;
-        //carico tutte le image in ram
+        this.defaultagentposition= new int [2];
+        this.defaultagentposition[0]=3;
+        this.defaultagentposition[1]=2 ;
+        this.agentposition= new int [2];
+        this.agentposition[0]=this.defaultagentposition[0];
+        this.agentposition[1]=this.defaultagentposition[1];
+//carico tutte le image in ram
         this.loadImages();
         
     }
@@ -79,10 +79,16 @@ public class MapGeneratorSceneModel {
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
         //genero la scena della dimensione specificata
-        this.resize(NumCellX, NumCellY);
-        //inizializzo la scena con i valori di default e cioè con i muri su tutto il bordo della scena
-        this.initScene(scene);
         
+        this.defaultagentposition[0]=NumCellX/2;
+        this.defaultagentposition[1]=NumCellY -2 ;
+        this.agentposition[0]=this.defaultagentposition[0];
+        this.agentposition[1]=this.defaultagentposition[1];
+        
+        this.resize(NumCellX, NumCellY);
+        
+//inizializzo la scena con i valori di default e cioè con i muri su tutto il bordo della scena
+        this.initScene(scene);
     
     }
 
@@ -162,7 +168,12 @@ public class MapGeneratorSceneModel {
             this.CellHeight = this.CellWidth;
         }
 
-        
+        // aggiorno la posizione dell'agent in base alla nuova dimensione della griglia
+        this.defaultagentposition[0]=NumCellX/2;
+        this.defaultagentposition[1]=NumCellY -2 ;
+        this.agentposition[0]=this.defaultagentposition[0];
+        this.agentposition[1]=this.defaultagentposition[1];
+
         //inizializzo la nuova scena per farsi che abbia i muri sul perimetro
         initScene(new_scene);
         
@@ -175,6 +186,7 @@ public class MapGeneratorSceneModel {
             } 
         }
         scene = new_scene;
+    
     }
 
     /*
@@ -196,6 +208,8 @@ public class MapGeneratorSceneModel {
             }
         }
         
+        
+        
         scene[this.agentposition[0]][this.agentposition[1]]="agent_" + direction + "_unloaded";
     }
     
@@ -203,6 +217,15 @@ public class MapGeneratorSceneModel {
 
     public String exportHistory() {
         String history = "";
+        
+        history +="(maxduration " + this.maxduration + ") \n\n";
+        
+        // posizione iniziale dell'agente
+        history +="(initial_agentposition ( pos-r " + this.agentposition[0] + ")";
+        history +="( pos-c " + this.agentposition[1] + ")";
+        history +="(direction " + this.direction + ")) \n\n";
+                
+        // posizione iniziale dei person rescuer
         int count = 1;
         for (int i = 0; i < scene.length; i++) {
             for (int j = 0; j < scene[i].length; j++) {
@@ -213,6 +236,7 @@ public class MapGeneratorSceneModel {
                     history += "\t(activity out)\n)\n";
                     count++;
                 }
+                
             }
         }
         return history;
@@ -225,7 +249,7 @@ public class MapGeneratorSceneModel {
     
     public String exportScene() {
         
-        String map = "(maxduration" + this.maxduration +")\n";
+        String map ="";
         //variabili per impostare la posizione delle componenti
                
         String s = "";
@@ -239,16 +263,24 @@ public class MapGeneratorSceneModel {
                         + "(injured yes))\n";
                 }
                 else{
-                s += "(real-cell (pos-r " + (scene[i].length - j) + ") (pos-c " + (i + 1) + ") (contains " + scene[i][j] + ")"
+                  
+                  if(scene[i][j].contains("agent")){
+                      s+="(real-cell (pos-r " + (scene[i].length - j) + ") (pos-c " + (i + 1) + ") (contains empty)"
                         + "(injured no))\n";
+                  }
+                  else{
+                    s += "(real-cell (pos-r " + (scene[i].length - j) + ") (pos-c " + (i + 1) + ") (contains " + scene[i][j] + ")"
+                      + "(injured no))\n";
+                    }
+                
                 }
+                
+                
              }
             
         }
 
         //costuisco la string da salvare sul file
-        //1. Posizione del agente all'inizio - Parking
-        map += "\n(initial_agentposition (pos-r " + this.agentposition[0]+1  + ") (pos-c " + this.agentposition[1]+1 + ") (direction" + this.direction + "))\n";
                 
         //concateno con la definizione delle celle;
         map += "\n" + s;
@@ -355,6 +387,10 @@ public class MapGeneratorSceneModel {
         this.MapWidth = MapWidth;
     }
     
+    public void setMaxDuration(int max_dur){
+    
+        this.maxduration=max_dur;
+    }
     
     public String[][] getScene(){
     

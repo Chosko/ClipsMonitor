@@ -3,7 +3,6 @@ package org.clipsmonitor.mapgenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.gui.MapGeneratorTopComponent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,39 +44,37 @@ public class MapGeneratorLoader {
         String sceneFile = mapModel.exportScene();
         //richiamo l'export della history il quale mi dará una stringa con tutto il codice clips corrispondente
         String historyFile = mapModel.exportHistory();
+        String dirpath="";
+        String parentpath="";
+        
         try{
-            String dirpath = file.getParent();
-        }
-        catch(Exception er){
-            
-            er.printStackTrace();
-        }
-        /*
-        try {
-            
-            if () { // creazione nuovo file
+            dirpath = file.getName();
+            parentpath=file.getParent();
+             // creazione nuovo file
                 
                 //scrivo il file della mappa
-                Files.write(Paths.get(text), sceneFile.getBytes());
-                console.info("File creato \n" + Paths.get(text));
+                Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt"), sceneFile.getBytes());
+                console.info("File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt"));
 
                 if (historyFile.length() > 0) //scrivo il file della history solo se sono
                 {                               //sono state aggiunte persone alla scena
-                    Files.write(Paths.get(text), historyFile.getBytes());
-                    console.info("File creato \n" + Paths.get(text));
+                    Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt"), historyFile.getBytes());
+                    console.info("File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt"));
                 }
                 //scrivo il file json con la mappa scritta
-                this.salva_info_mappa(text);
-                console.info("File creato \n" + Paths.get(text + "/InfoMappa.json"));
+                this.salva_info_mappa(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json");
+                console.info("File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json"));
 
-            } else {
-                console.error("Inserire un nome valido");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(MapGeneratorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
+            
+               // console.error("Inserire un nome valido");
+            
         }
-
-        */
+        catch(Exception err){
+            err.printStackTrace();
+        }
+        
+                    
+       
     }
     
     public boolean salva_info_mappa(String nome) throws JSONException {
@@ -105,7 +101,7 @@ public class MapGeneratorLoader {
             }
             info.put("celle", ArrayCell);
             //salvo le informazioni in un file JSON della mappa
-            Files.write(Paths.get(nome + "/InfoMappa.json"), info.toString().getBytes());
+            Files.write(Paths.get(nome), info.toString().getBytes());
         } catch (IOException ex) {
             Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -167,4 +163,33 @@ public class MapGeneratorLoader {
         }
     }
 
+    
+  class Filename {
+    
+    private String fullPath;
+    private char pathSeparator, extensionSeparator;
+
+    public Filename(String str, char sep, char ext) {
+      fullPath = str;
+      pathSeparator = sep;
+      extensionSeparator = ext;
+    }
+
+    public String extension() {
+      int dot = fullPath.lastIndexOf(extensionSeparator);
+      return fullPath.substring(dot + 1);
+    }
+
+    public String filename() { // gets filename without extension
+      int dot = fullPath.lastIndexOf(extensionSeparator);
+      int sep = fullPath.lastIndexOf(pathSeparator);
+      return fullPath.substring(sep + 1, dot);
+    }
+
+    public String path() {
+      int sep = fullPath.lastIndexOf(pathSeparator);
+      return fullPath.substring(0, sep);
+    }
+}
+    
 }

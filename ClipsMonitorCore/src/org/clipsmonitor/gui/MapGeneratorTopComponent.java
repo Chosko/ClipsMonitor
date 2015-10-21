@@ -14,9 +14,7 @@ import java.io.File;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.mapgenerator.MapGeneratorLoader;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -40,6 +38,7 @@ import org.openide.util.Exceptions;
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
+
 @TopComponent.Registration(mode = "map", openAtStartup = false)
 @ActionID(category = "Window", id = "org.clipsmonitor.gui.MapGeneratorTopComponent")
 @ActionReference(path = "Menu/Window" /*, position = 333 */)
@@ -89,13 +88,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         save.setCurrentDirectory(new File("./"));
         //save_fc.setFileFilter(new CLIPSFilter());
-        save.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        
+        /*
         FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("txt files (*.txt)", "txt");
         FileNameExtensionFilter clpFilter = new FileNameExtensionFilter("Clips files (*.clp)", "clp");
+        
         // add filters
         save.addChoosableFileFilter(txtFilter);
         save.addChoosableFileFilter(clpFilter);
         save.setFileFilter(txtFilter);
+        */
     }
     
     
@@ -108,6 +111,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
+        jTextField1 = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         PreviewMap = new javax.swing.JPanel(){
 
@@ -135,6 +139,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         YLabel = new javax.swing.JLabel();
         Icons = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        MaxDur = new javax.swing.JTextField();
+        MaxDuration = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -147,6 +153,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        jTextField1.setText(org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jTextField1.text")); // NOI18N
+
         PreviewMap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 PreviewMapMouseClicked(evt);
@@ -157,7 +165,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         PreviewMap.setLayout(PreviewMapLayout);
         PreviewMapLayout.setHorizontalGroup(
             PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 311, Short.MAX_VALUE)
+            .addGap(0, 313, Short.MAX_VALUE)
         );
         PreviewMapLayout.setVerticalGroup(
             PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,6 +232,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel1.text")); // NOI18N
 
+        MaxDur.setText(org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MaxDur.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(MaxDuration, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MaxDuration.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -231,38 +243,43 @@ public final class MapGeneratorTopComponent extends TopComponent {
             .addComponent(InsertionOptionComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(DimensionLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(DimensionLabel)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(XButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(XLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(53, 53, 53)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(YLabel)
+                                .addComponent(YButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(41, 41, 41)
+                            .addComponent(jLabel1))
+                        .addComponent(RefreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(XButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(XLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(11, 11, 11)))
-                        .addGap(53, 53, 53)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(YLabel)
-                            .addComponent(YButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addComponent(jLabel1))
-                    .addComponent(RefreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(17, 17, 17)
+                        .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(SaveButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LoadButton)
-                .addContainerGap(20, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(SaveButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(LoadButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(MaxDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(MaxDur, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(DimensionLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,19 +289,23 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(XLabel)
                     .addComponent(YLabel))
-                .addGap(18, 18, 18)
+                .addGap(40, 40, 40)
                 .addComponent(RefreshButton)
                 .addGap(34, 34, 34)
                 .addComponent(jLabel1)
                 .addGap(10, 10, 10)
                 .addComponent(InsertionOptionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(MaxDur, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MaxDuration))
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(SaveButton)
                     .addComponent(LoadButton))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -352,12 +373,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
         try {
             int num_row = Integer.parseInt(this.XButton.getText());
             int num_col = Integer.parseInt(this.YButton.getText());
-            if (num_row > 0 && num_col > 0) {
+            int max_dur = Integer.parseInt(this.MaxDur.getText());
+            if (num_row >= 5 && num_col >= 5 && max_dur>0) {
 
-                updateMap(num_row,num_col);
+                updateMap(num_row,num_col,max_dur);
             }
-        } catch (NumberFormatException e) {
-            console.error("Formato numero richiesto: interi positivi");
+            else{
+                console.error("Input non valido: Verificare che la griglia sia almeno di dimensione 5x5 ");
+            }
+        } catch (NumberFormatException err) {
+            console.error("Input non valido: Verificare che i valori siano interi \n" );
+            err.printStackTrace();
         }
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
@@ -430,6 +456,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JLabel Icons;
     private javax.swing.JComboBox InsertionOptionComboBox;
     private javax.swing.JButton LoadButton;
+    private javax.swing.JTextField MaxDur;
+    private javax.swing.JLabel MaxDuration;
     private javax.swing.JPanel PreviewMap;
     private javax.swing.JButton RefreshButton;
     private javax.swing.JButton SaveButton;
@@ -441,6 +469,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -504,10 +533,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
         
     }
     
-    void updateMap(int x, int y) {
+    void updateMap(int x, int y,int max) {
         model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
         model.resize(x,y);
         model.initModelMap(x, y, PreviewMap.getWidth(),PreviewMap.getHeight());
+        model.setMaxDuration(max);
         PreviewMap.repaint();
     }
     
