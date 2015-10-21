@@ -23,15 +23,27 @@ import javax.swing.text.Highlighter.HighlightPainter;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.monitor2015.RescueModel;
+import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.awt.ActionID;
+import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Top component which displays something.
+ */
+@ConvertAsProperties(
+        dtd = "-//org.clipsmonitor.gui//Console//EN",
+        autostore = false
+)
 @TopComponent.Description(
         preferredID = "ConsoleTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
-
+@TopComponent.Registration(mode = "console", openAtStartup = true)
+@ActionID(category = "Window", id = "org.clipsmonitor.gui.ConsoleTopComponent")
+@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ConsoleAction",
         preferredID = "ConsoleTopComponent"

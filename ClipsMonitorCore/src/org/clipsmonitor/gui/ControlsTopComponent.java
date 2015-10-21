@@ -37,11 +37,21 @@ import org.openide.modules.InstalledFileLocator;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
+/**
+ * Top component which displays something.
+ */
+@ConvertAsProperties(
+        dtd = "-//org.clipsmonitor.core//Controls//EN",
+        autostore = false
+)
 @TopComponent.Description(
         preferredID = "ControlsTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
+@TopComponent.Registration(mode = "controls", openAtStartup = true)
+@ActionID(category = "Window", id = "org.clipsmonitor.core.ControlsTopComponent")
+@ActionReference(path = "Menu/Window" /*, position = 333 */)
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ControlsAction",
         preferredID = "ControlsTopComponent"
