@@ -37,6 +37,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         this.model = RescueModel.getInstance();
         this.model.addObserver(this);
         console = ClipsConsole.getInstance();
+        images = RescueImages.getInstance();
     }
     
     private void clear(){

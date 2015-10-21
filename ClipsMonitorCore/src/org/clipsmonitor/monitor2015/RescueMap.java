@@ -179,5 +179,6 @@ public class RescueMap extends MonitorMap implements Observer {
     protected void init() {        
         model = RescueModel.getInstance();
         model.addObserver(this);
+        console = ClipsConsole.getInstance();
     }
 }

@@ -106,8 +106,8 @@ public class MapGeneratorSceneModel {
         this.MapWidth = MapWidth;
         this.MapHeight = MapHeight;
         //calcolo la larghezza delle celle
-        CellWidth = (MapWidth * perc / 100) / NumCellX;
-        CellHeight = (MapHeight * perc / 100) / NumCellY;
+        CellWidth = (MapWidth - 20) / NumCellX;
+        CellHeight = (MapHeight - 20) / NumCellY;
 
         //verifico chi delle due dimensioni é minore e setto quella maggiore uguale a quella minore per rendere le celle quadrate
         if (CellWidth > CellHeight) {
@@ -149,14 +149,12 @@ public class MapGeneratorSceneModel {
     public void resize(int NumCellX, int NumCellY) {
         //creo una scena con la nuova dimensione
         String[][] new_scene = new String[NumCellX][NumCellY];
-        //percentuale che la scena al massimo o sulle x o sulle y può occupare
-        perc = 90;
         //salvo il numero di celle sulle x e sulle y
         this.NumCellX = NumCellX;
         this.NumCellY = NumCellY;
         //calcolo la larghezza delle celle
-        this.CellWidth = (this.MapWidth * perc / 100) / NumCellX;
-        this.CellHeight = (this.MapHeight * perc / 100) / NumCellY;
+        this.CellWidth = (this.MapWidth - 20) / NumCellX;
+        this.CellHeight = (this.MapHeight - 20) / NumCellY;
 
         if (this.CellWidth > this.CellHeight) {
             this.CellWidth = this.CellHeight;

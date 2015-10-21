@@ -25,6 +25,8 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
+import org.clipsmonitor.mapgenerator.MapGeneratorSceneModel;
+import org.clipsmonitor.monitor2015.RescueImages;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -61,6 +63,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
         loadPreferences();
+        RescueImages.getInstance().loadImages(projectDirectory.getAbsolutePath());
         initComponents();
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());

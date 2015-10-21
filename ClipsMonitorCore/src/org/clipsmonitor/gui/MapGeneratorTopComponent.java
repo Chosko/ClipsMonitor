@@ -107,18 +107,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        InsertionOptionComboBox = new javax.swing.JComboBox<String>();
-        SaveButton = new javax.swing.JButton();
-        LoadButton = new javax.swing.JButton();
-        XButton = new javax.swing.JTextField();
-        YButton = new javax.swing.JTextField();
-        DimensionLabel = new javax.swing.JLabel();
-        InsertLabel = new javax.swing.JLabel();
-        RefreshButton = new javax.swing.JButton();
-        XLabel = new javax.swing.JLabel();
-        YLabel = new javax.swing.JLabel();
-        Icons = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         PreviewMap = new javax.swing.JPanel(){
 
             @Override
@@ -133,6 +123,46 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
 
         };
+        jPanel1 = new javax.swing.JPanel();
+        InsertionOptionComboBox = new javax.swing.JComboBox<String>();
+        SaveButton = new javax.swing.JButton();
+        LoadButton = new javax.swing.JButton();
+        XButton = new javax.swing.JTextField();
+        YButton = new javax.swing.JTextField();
+        DimensionLabel = new javax.swing.JLabel();
+        RefreshButton = new javax.swing.JButton();
+        XLabel = new javax.swing.JLabel();
+        YLabel = new javax.swing.JLabel();
+        Icons = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        PreviewMap.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PreviewMapMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PreviewMapLayout = new javax.swing.GroupLayout(PreviewMap);
+        PreviewMap.setLayout(PreviewMapLayout);
+        PreviewMapLayout.setHorizontalGroup(
+            PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 311, Short.MAX_VALUE)
+        );
+        PreviewMapLayout.setVerticalGroup(
+            PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         InsertionOptionComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         InsertionOptionComboBox.addContainerListener(new java.awt.event.ContainerAdapter() {
@@ -179,8 +209,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(DimensionLabel, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.DimensionLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(InsertLabel, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.InsertLabel.text")); // NOI18N
-
         org.openide.awt.Mnemonics.setLocalizedText(RefreshButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.RefreshButton.text")); // NOI18N
         RefreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,54 +222,47 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(Icons, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.Icons.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel1.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(InsertionOptionComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(146, 146, 146)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(DimensionLabel)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(XButton)
+                            .addComponent(XButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(XLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(11, 11, 11)))
                         .addGap(53, 53, 53)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(YLabel)
-                                .addGap(28, 28, 28))
-                            .addComponent(YButton))))
-                .addContainerGap(101, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(YLabel)
+                            .addComponent(YButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(SaveButton)
-                        .addGap(42, 42, 42)
-                        .addComponent(LoadButton)
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(RefreshButton)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(InsertLabel)
-                                    .addGap(26, 26, 26)))
-                            .addGap(117, 117, 117))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(109, 109, 109))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(InsertionOptionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(35, 35, 35)))))
+                        .addGap(41, 41, 41)
+                        .addComponent(jLabel1))
+                    .addComponent(RefreshButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(SaveButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LoadButton)
+                .addContainerGap(20, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(15, Short.MAX_VALUE)
                 .addComponent(DimensionLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,52 +274,47 @@ public final class MapGeneratorTopComponent extends TopComponent {
                     .addComponent(YLabel))
                 .addGap(18, 18, 18)
                 .addComponent(RefreshButton)
-                .addGap(27, 27, 27)
-                .addComponent(InsertLabel)
-                .addGap(37, 37, 37)
+                .addGap(34, 34, 34)
+                .addComponent(jLabel1)
+                .addGap(10, 10, 10)
                 .addComponent(InsertionOptionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(35, 35, 35)
                 .addComponent(Icons, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(SaveButton)
                     .addComponent(LoadButton))
-                .addContainerGap(311, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        PreviewMap.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                PreviewMapMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout PreviewMapLayout = new javax.swing.GroupLayout(PreviewMap);
-        PreviewMap.setLayout(PreviewMapLayout);
-        PreviewMapLayout.setHorizontalGroup(
-            PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 530, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(PreviewMap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
-        PreviewMapLayout.setVerticalGroup(
-            PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 521, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(PreviewMap, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(385, Short.MAX_VALUE)
-                .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -309,21 +325,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
     */
     
     
-    private void XButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XButtonActionPerformed
-        
-    }//GEN-LAST:event_XButtonActionPerformed
-
-    private void InsertionOptionComboBoxComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxComponentAdded
-        // TODO add your handling code 
-    }//GEN-LAST:event_InsertionOptionComboBoxComponentAdded
-
-    private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
-        
-        setState(InsertionOptionComboBox.getSelectedItem().toString());
-        this.updateLabel(state);
-        Icons.repaint();
-    }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
-
     // PreviewMap MouseClick
     
     private void PreviewMapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreviewMapMouseClicked
@@ -343,7 +344,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }//GEN-LAST:event_PreviewMapMouseClicked
 
     private void RefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshButtonActionPerformed
-       
+
         //controllo che l'input sia intero
         //leggo le nuove dimensioni della scena e le comunico al metodo
         //resizeScene che si preoccuperà di ridimensionare la matrice mantenendo
@@ -352,7 +353,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             int num_row = Integer.parseInt(this.XButton.getText());
             int num_col = Integer.parseInt(this.YButton.getText());
             if (num_row > 0 && num_col > 0) {
-               
+
                 updateMap(num_row,num_col);
             }
         } catch (NumberFormatException e) {
@@ -360,9 +361,41 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
-    private void InsertionOptionComboBoxComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxComponentRemoved
-        // TODO add your handling code here:
-    }//GEN-LAST:event_InsertionOptionComboBoxComponentRemoved
+    private void XButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XButtonActionPerformed
+
+    }//GEN-LAST:event_XButtonActionPerformed
+
+    private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
+
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fc.getSelectedFile();
+                loader.load_mappa(file);
+                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
+                PreviewMap.repaint();
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+            }
+
+        }
+    }//GEN-LAST:event_LoadButtonActionPerformed
+
+    private void LoadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoadButtonMouseClicked
+
+        int returnVal = fc.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fc.getSelectedFile();
+                loader.load_mappa(file);
+                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
+                PreviewMap.repaint();
+            } catch (Exception ex) {
+                Exceptions.printStackTrace(ex);
+            }
+
+        }
+    }//GEN-LAST:event_LoadButtonMouseClicked
 
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         int retrival = save.showSaveDialog(this);
@@ -375,44 +408,26 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_SaveButtonActionPerformed
 
-    private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
-        
-        int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = fc.getSelectedFile();
-                loader.load_mappa(file);
-                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
-                PreviewMap.repaint();
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            
-        }
-    }//GEN-LAST:event_LoadButtonActionPerformed
+    private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
 
-    private void LoadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoadButtonMouseClicked
-        
-        int returnVal = fc.showOpenDialog(this);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                File file = fc.getSelectedFile();
-                loader.load_mappa(file);
-                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
-                PreviewMap.repaint();
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            
-        }
-    }//GEN-LAST:event_LoadButtonMouseClicked
+        setState(InsertionOptionComboBox.getSelectedItem().toString());
+        this.updateLabel(state);
+        Icons.repaint();
+    }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
+
+    private void InsertionOptionComboBoxComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxComponentRemoved
+        // TODO add your handling code here:
+    }//GEN-LAST:event_InsertionOptionComboBoxComponentRemoved
+
+    private void InsertionOptionComboBoxComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxComponentAdded
+        // TODO add your handling code
+    }//GEN-LAST:event_InsertionOptionComboBoxComponentAdded
 
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel DimensionLabel;
     private javax.swing.JLabel Icons;
-    private javax.swing.JLabel InsertLabel;
     private javax.swing.JComboBox InsertionOptionComboBox;
     private javax.swing.JButton LoadButton;
     private javax.swing.JPanel PreviewMap;
@@ -422,7 +437,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JLabel XLabel;
     private javax.swing.JTextField YButton;
     private javax.swing.JLabel YLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
