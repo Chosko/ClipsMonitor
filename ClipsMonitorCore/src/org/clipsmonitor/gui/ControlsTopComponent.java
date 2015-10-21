@@ -60,11 +60,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     
     @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
-<<<<<<< HEAD
-        
-=======
         loadPreferences();
->>>>>>> extract_project
         initComponents();
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());
