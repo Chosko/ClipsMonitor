@@ -54,24 +54,21 @@ public class RescueImages {
 
     public void loadImages(String path){
         try {
-            map_img.put("wall", ImageIO.read(new File(path + File.separator + "img" + File.separator + "wall.png")));
-            map_img.put("empty", ImageIO.read(new File(path + File.separator + "img" + File.separator + "empty.png")));
-            map_img.put("gate", ImageIO.read(new File(path + File.separator + "img" + File.separator + "gate.png")));
-            map_img.put("outdoor", ImageIO.read(new File(path + File.separator + "img" + File.separator + "outdoor.png")));
-            map_img.put("debris", ImageIO.read(new File(path + File.separator + "img" + File.separator + "debris.png")));
-            map_img.put("debris_injured", ImageIO.read(new File(path + File.separator + "img" + File.separator + "debris_injured.png")));
-            map_img.put("informed", ImageIO.read(new File(path + File.separator + "img" + File.separator + "informed.png")));
-            map_img.put("undiscovered", ImageIO.read(new File(path + File.separator + "img" + File.separator + "undiscovered.png")));
-            map_img.put("agent_east_unloaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_east_unloaded.png")));
-            map_img.put("agent_west_unloaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_west_unloaded.png")));
-            map_img.put("agent_north_unloaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_north_unloaded.png")));
-            map_img.put("agent_south_unloaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_south_unloaded.png")));
-            map_img.put("agent_east_loaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_east_loaded.png")));
-            map_img.put("agent_west_loaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_west_loaded.png")));
-            map_img.put("agent_north_loaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_north_loaded.png")));
-            map_img.put("agent_south_loaded", ImageIO.read(new File(path + File.separator + "img" + File.separator + "agent_south_loaded.png")));
-            map_img.put("person_rescuer", ImageIO.read(new File(path + File.separator + "img" + File.separator + "person_rescuer.png")));
-
+            
+            File img_dir = new File(path + File.separator + "img");
+            
+            File [] imgs = img_dir.listFiles();
+            
+            for(File img : imgs)
+            {
+            
+                String file_name = img.getName(); // recupero il nome dell'immagine
+                int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
+                String img_name = file_name.substring(0,dot_position); 
+                map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
+            }
+            
+                    
         } catch (IOException e) {
             console.error(e);
         }
