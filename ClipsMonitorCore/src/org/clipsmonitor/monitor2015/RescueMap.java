@@ -39,7 +39,6 @@ public class RescueMap extends MonitorMap implements Observer {
     public RescueMap(String projectDirectory) {
         this.projectDirectory = projectDirectory;
         init();
-        images = RescueImages.getInstance();
     }
 
     @Override
@@ -106,6 +105,7 @@ public class RescueMap extends MonitorMap implements Observer {
     
     
     public BufferedImage[][] makeIconMatrix(String[][] mapString){
+        images = RescueImages.getInstance();
         
         if(mapString==null){
             return null;
@@ -250,15 +250,16 @@ public class RescueMap extends MonitorMap implements Observer {
     protected void clear() {
         this.console = null;
         this.dim = null;
-        RescueImages.getInstance().ClearImg();
         this.model = null;
+        this.images = null;
     }
 
     @Override
-    protected void init() {        
+    protected void init() {
         model = RescueModel.getInstance();
         model.addObserver(this);
         console = ClipsConsole.getInstance();
+        images = RescueImages.getInstance();
     }
 }
 

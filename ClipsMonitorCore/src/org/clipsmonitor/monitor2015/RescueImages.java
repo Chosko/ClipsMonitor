@@ -68,9 +68,9 @@ public class RescueImages {
             }
 
 
-} catch (IOException e) {
-console.error(e);
-}
+        } catch (IOException e) {
+        console.error(e);
+        }
     }
     
     
@@ -93,6 +93,6 @@ console.error(e);
     public void ClearImg(){
         this.ClearMapImage();
         this.ClearMapImageRobot();
-    } 
+    }
    
 }
