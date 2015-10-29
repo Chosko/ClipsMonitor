@@ -6,28 +6,22 @@ import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
 
 /**
- * L'implementazione della classe ClipsModel specifica per il progetto Waitor
- * 2013/2014. L'oggetto fondamentale è il map, una matrice che in ogni elemento
+ * L'implementazione della classe ClipsModel specifica per il progetto Rescue 2014/2015. 
+ * L'oggetto fondamentale è il map, una matrice che in ogni elemento
  * contiene la stringa corrispondente al contenuto.
  *
  * @author Violanti Luca, Varesano Marco, Busso Marco, Cotrino Roberto
  * @edit by Enrico Mensa, Matteo Madeddu, Davide Dell'Anna
  */
+
 public class RescueModel extends ClipsModel {
 
-    private String[][] map;
+    
     private String direction;
     private String mode;
-    private int durlastact;
-    private Integer time;
-    private Integer step;
-    private Integer maxduration;
-    private String result;
-    private int score;
     private String loaded; // presenza di un carico
     private ClipsConsole console;
     private static RescueModel instance;
-    private int row, column;
     private String advise;
     private RescueMap tmp;
     
@@ -182,11 +176,7 @@ public class RescueModel extends ClipsModel {
             if ((fact[2].equals("debris") && (fact[4].equals("yes") || fact[5].equals("yes"))) || (fact[2].equals("empty") && fact[6].equals("yes"))) {
                 map[r - 1][c - 1] += "_informed";
             }
-            
-            if (fact[2].equals("unknown") && !map[r][c].contains("_undiscovered")) {
-                map[r][c] += "_undiscovered";
-            }
-            
+           
         }
         
         
@@ -194,7 +184,7 @@ public class RescueModel extends ClipsModel {
         for (String[] fact : kcellFacts) {
             int r = new Integer(fact[0]) - 1;
             int c = new Integer(fact[1]) - 1;
-            if (fact[2].equals("unknown") && !map[r][c].contains("_undiscovered")) {
+            if (fact[2].equals("unknown")) {
                 map[r][c] += "_undiscovered";
             }
             
@@ -294,64 +284,7 @@ public class RescueModel extends ClipsModel {
      *
      * @return up, down, left, right
      */
-    public synchronized String getDirection() {
-        return direction;
-    }
-
-    /**
-     * metodo per ottenere il punteggio dell'agente totalizzato a seguito delle
-     * sue azioni
-     *
-     * @return il punteggio come intero
-     */
-    public synchronized int getScore() {
-        return score;
-    }
-
-    /**
-     * metodo per ottenere il motivo della terminazione dell'ambiente
-     *
-     * @return disaster, done
-     */
-    public synchronized String getResult() {
-        return result;
-    }
-
-    /**
-     * metodo da chiamare per ottenere il turno attuale
-     *
-     * @return il turno attuale come intero
-     */
-    public synchronized int getTime() {
-        return time;
-    }
-
-    /**
-     * metodo da chiamare per ottenere il turno attuale
-     *
-     * @return il turno attuale come intero
-     */
-    public synchronized int getStep() {
-        return step;
-    }
-
-    /**
-     * metodo per ottenere il tempo massimo a disposizione dell'agente
-     *
-     * @return il tempo massimo come intero
-     */
-    public synchronized int getMaxDuration() {
-        return maxduration;
-    }
-
-    /**
-     * metodo per ottenere il campo dur-last-act
-     *
-     * @return il tempo massimo come intero
-     */
-    public synchronized int getDurLastAct() {
-        return durlastact;
-    }
+    
 
     @Override
     protected void setup(){
@@ -413,5 +346,9 @@ public class RescueModel extends ClipsModel {
 
     public String getAdvise() {
         return this.advise;
+    }
+    
+        public synchronized String getDirection() {
+        return direction;
     }
 }

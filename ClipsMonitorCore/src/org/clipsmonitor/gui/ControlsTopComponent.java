@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.ComboBoxModel;
@@ -25,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
-import org.clipsmonitor.mapgenerator.MapGeneratorSceneModel;
 import org.clipsmonitor.monitor2015.RescueImages;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
@@ -61,6 +58,7 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ControlsTopComponent=Controls Window",
     "HINT_ControlsTopComponent=This is a Controls window"
 })
+
 
 
 
@@ -191,6 +189,11 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                 stepTextFieldActionPerformed(evt);
             }
         });
+        stepTextField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                stepTextFieldPropertyChange(evt);
+            }
+        });
 
         timeTextField.setEditable(false);
         timeTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -237,7 +240,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(strategyLabel)
                             .addComponent(envLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 18, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(envsSelector, 0, 55, Short.MAX_VALUE)
                             .addComponent(CLPSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -316,6 +319,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /*
+       I|O event managment functions 
+    */
+    
     private void timeLeftTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLeftTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_timeLeftTextFieldActionPerformed
@@ -347,12 +354,13 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             stepButton.setEnabled(false);
             runOneButton.setEnabled(false);
             resetButton.setEnabled(false);
-        } else {
-            model.setMode(ClipsModel.ex_mode_STEP);
-            runButton.setText("Run");
-            stepButton.setEnabled(true);
-            runOneButton.setEnabled(true);
-            resetButton.setEnabled(true);
+        } else
+         {
+                model.setMode(ClipsModel.ex_mode_STOP);
+                runButton.setText("Run");
+                stepButton.setEnabled(true);
+                runOneButton.setEnabled(true);
+                resetButton.setEnabled(true);
         }
     }//GEN-LAST:event_runButtonActionPerformed
 
@@ -399,6 +407,13 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         resetProjectDirectory();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void stepTextFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_stepTextFieldPropertyChange
+        
+        Object new_val = evt.getNewValue();
+        String step= new_val.toString();
+        //stepTextField.setText(step);
+    }//GEN-LAST:event_stepTextFieldPropertyChange
 
     void resetProjectDirectory(){
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + "/preferences.txt";
@@ -601,6 +616,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     
     }
 
+    
+    
     private void loadPreferences() {
         /* ------- Find the preferences file ------- */
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + File.separator + "preferences.txt";
@@ -644,6 +661,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             }
         }
     }
+    
     
     public static void infoBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);

@@ -15,7 +15,7 @@ import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  *
- * @author theacid 
+ * @author Marco Corona 
  */
 public class RescueImages {
     
@@ -54,24 +54,23 @@ public class RescueImages {
 
     public void loadImages(String path){
         try {
-            
             File img_dir = new File(path + File.separator + "img");
-            
+
             File [] imgs = img_dir.listFiles();
-            
+
             for(File img : imgs)
             {
-            
+
                 String file_name = img.getName(); // recupero il nome dell'immagine
                 int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
-                String img_name = file_name.substring(0,dot_position); 
+                String img_name = file_name.substring(0,dot_position);
                 map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
             }
-            
-                    
-        } catch (IOException e) {
-            console.error(e);
-        }
+
+
+} catch (IOException e) {
+console.error(e);
+}
     }
     
     

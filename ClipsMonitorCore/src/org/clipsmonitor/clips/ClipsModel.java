@@ -28,10 +28,23 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public static final int ex_mode_STEP = 3;
     public static final int ex_mode_RUN = 4;
     public static final int ex_mode_RUNN = 5;
+    public static final int ex_mode_STOP = 6;
+    
+    
+    //  variabili di esecuzione del modello
+    
+    protected Integer time;
+    protected Integer step;
+    protected Integer maxduration;
+    protected String result;
+    protected String[][] map;
+    protected int row, column;
+    protected int score;
+    protected int durlastact;
+    
     
     /**
      * costruttore del modello.
-     *
      */
     protected ClipsModel() {
         t = new Thread(this);
@@ -45,31 +58,47 @@ public abstract class ClipsModel extends Observable implements Runnable {
      */
     @Override
     public void run() {
+        
+        String[] arrayPercept = {"step"};
+        String[] current;
+        Integer actual;
+        Integer prec;
+        String[] done = {"no"};;
+        
         try {
+            
+            
             while (!hasDone()) {
+                
                 switch (executionMode) {
-                    case ex_mode_STEP:
+                    
+                    
+                    case ex_mode_STEP: 
+                        
+                        
                     case ex_mode_RUN:
-                        String[] arrayPercept = {"step"};
-                        String[] current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
+                       
+                        current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
 
                         /* Se lo stato last-perc non esiste, allora lo stato attuale viene impostato a -1
                          Diversamente viene impostato allo stato di last-perc. Questo viene fatto per poter
                          completare uno step ""sporcato"" dal click di una runOne e riallinearsi con le azioni
                          necessarie ad arrivare alla prossima percezione del mondo (conseguente azione).
                          */
-                        Integer actual = current[0] == null ? -1 : new Integer(current[0]);
-
-                        Integer prec = actual;
+                        actual = current[0] == null ? -1 : new Integer(current[0]);
+                        this.step=actual;
+                        prec = actual;
+                        
                         /* Lo stato precedente viene inizalizzato al valore dello stato attuale
                          Fino a che lo stato precedente è uguale allo stato attuale, allora
                          proseguo (devo arrivare alla prossima percezione, facendo una run.
                          */
-                        String[] done = {"no"};
                         while (prec.equals(actual) && done[0].equals("no")) {
                             core.run(1);
                             current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
                             actual = current[0] == null ? -1 : new Integer(current[0]);
+                            this.step=actual;
+                            
                             done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
                         }
                         break;
@@ -79,12 +108,20 @@ public abstract class ClipsModel extends Observable implements Runnable {
                     case ex_mode_START:
                         started = true;
                         break;
+                    case ex_mode_STOP:
+                        
+                        break;
                     default:
 
                 }
                 action();
                 this.setChanged();
                 this.notifyObservers("actionDone");
+                
+                /* 
+                    solo in fase di run non si richiede la suspend 
+                
+                */
                 if (executionMode != ex_mode_RUN) {
                     this.suspend();
                 }
@@ -133,6 +170,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
+    
     public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
         /*inizializza l'ambiente clips caricando i vari file*/
         core.initialize(projectDirectory, strategyFolder_name, envsFolder_name);
@@ -220,7 +258,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     private void suspend() {
         t.suspend();
     }
-
+ 
     public String evalComandLine(String command) {
         String result = "";
         try{
@@ -263,5 +301,64 @@ public abstract class ClipsModel extends Observable implements Runnable {
     
         return this.executionMode;
     }
-            
+
+    
+
+
+    /**
+     * metodo per ottenere il punteggio dell'agente totalizzato a seguito delle
+     * sue azioni
+     *
+     * @return il punteggio come intero
+     */
+    public synchronized int getScore() {
+        return score;
+    }
+
+    /**
+     * metodo per ottenere il motivo della terminazione dell'ambiente
+     *
+     * @return disaster, done
+     */
+    public synchronized String getResult() {
+        return result;
+    }
+
+    /**
+     * metodo da chiamare per ottenere il turno attuale
+     *
+     * @return il turno attuale come intero
+     */
+    public synchronized int getTime() {
+        return time;
+    }
+
+    /**
+     * metodo da chiamare per ottenere il turno attuale
+     *
+     * @return il turno attuale come intero
+     */
+    public synchronized int getStep() {
+        return step;
+    }
+
+    /**
+     * metodo per ottenere il tempo massimo a disposizione dell'agente
+     *
+     * @return il tempo massimo come intero
+     */
+    public synchronized int getMaxDuration() {
+        return maxduration;
+    }
+
+    /**
+     * metodo per ottenere il campo dur-last-act
+     *
+     * @return il tempo massimo come intero
+     */
+    public synchronized int getDurLastAct() {
+        return durlastact;
+    }
+    
+ 
 }

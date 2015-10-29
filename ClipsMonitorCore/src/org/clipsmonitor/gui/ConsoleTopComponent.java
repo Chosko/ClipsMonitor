@@ -10,15 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Stack;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
@@ -249,6 +248,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                 // Submit command!
                 String cmd = this.currentCmd;
                 
+                
                 // save on CmdHistory
                 if(CmdHistory.size()==this.MaxCmdHistory){
                     CmdHistory.removeLast();
@@ -265,14 +265,23 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                  
                 }
                 
-                String res = model.evalComandLine(cmd);
-                if(res.length() > 0){
-                    try {
-                        this.append(res);
-                    } catch (BadLocationException ex) {
-                     
+                boolean check = this.parenthesisChecker(cmd);
+                if(check){
+                
+                    String res = model.evalComandLine(cmd);
+                    if(res.length() > 0){
+                        try {
+                            this.append(res);
+                        } catch (BadLocationException ex) {
+
+                        }
                     }
                 }
+                else{
+                
+                console.error("Parenthesis checker fallito");
+                }
+                
                 
             }
         }
@@ -451,37 +460,8 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         this.updatePane();
     }
     
-    private ArrayList<Integer> getOccurancies(String pattern , String text){
     
-       
-       ArrayList<Integer> indexMatches = new ArrayList<Integer>();
-       int checkOccur=0;
-       while(checkOccur!=-1){
-         checkOccur=text.indexOf(pattern,checkOccur);
-         
-         if(checkOccur!=-1)
-         {
-           indexMatches.add(checkOccur);
-           checkOccur +=pattern.length();
-         }
-       }
-         
-       return indexMatches;
-    }
     
-   
-    private void paintPane(String pattern , String text, Highlighter highPane) throws BadLocationException{
-    
-        
-        ArrayList<Integer> indStart=this.getOccurancies(pattern, text);
-        int i = 0;
-        while(i<indStart.size()){
-            int start = indStart.get(i);
-            int end = start + pattern.length();
-            highPane.addHighlight(start, end, painters.get(pattern));
-            i++;
-            }
-        }
     
     
     
@@ -741,4 +721,96 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    
+    /*
+        Utility
+    */
+    
+    /*
+    
+    private ArrayList<Integer> getOccurancies(String pattern , String text){
+    
+       
+       ArrayList<Integer> indexMatches = new ArrayList<Integer>();
+       int checkOccur=0;
+       while(checkOccur!=-1){
+         checkOccur=text.indexOf(pattern,checkOccur);
+         
+         if(checkOccur!=-1)
+         {
+           indexMatches.add(checkOccur);
+           checkOccur +=pattern.length();
+         }
+       }
+         
+       return indexMatches;
+    }
+    
+   
+    
+    
+    private void paintPane(String pattern , String text, Highlighter highPane) throws BadLocationException{
+    
+        
+        ArrayList<Integer> indStart=this.getOccurancies(pattern, text);
+        int i = 0;
+        while(i<indStart.size()){
+            int start = indStart.get(i);
+            int end = start + pattern.length();
+            highPane.addHighlight(start, end, painters.get(pattern));
+            i++;
+            }
+        }
+    
+    */
+    
+    
+    // controllo sulla corretta chiusura delle parentesi
+    
+    private boolean parenthesisChecker(String cmd){
+    
+        Stack<Character> par_stack = new Stack<Character>();
+        char c ;
+        
+        // una stringa valida deve almeno avere la coppia di parentesi quindi stringa di
+        // dimensione >=2
+        
+        if(cmd.length()==1){ 
+             
+            return false;
+        }
+        else{
+            c=cmd.charAt(0);
+            
+            // i comandi clips devono necessariamente iniziare con il simbolo (
+            if(c!='('){
+                return false;
+            }
+
+             // controllo il resto della stringa per la corretta sintassi
+            for (int i=0 ; i<cmd.length();i++){
+
+                c=cmd.charAt(i);
+                
+                if(c=='('){
+                    par_stack.push(c);
+                }
+                if(c==')'){
+
+                    if(par_stack.empty()){
+                         return false;  // numero di parentisi chiusa maggiore di quelle aperte
+                    }
+                    else{
+                        if(par_stack.peek()=='('){
+                            par_stack.pop();
+                        }
+                        else{ 
+                          return false;
+                        } 
+                     }
+                }
+            }
+            return par_stack.empty();
+       }
+  }
 }
