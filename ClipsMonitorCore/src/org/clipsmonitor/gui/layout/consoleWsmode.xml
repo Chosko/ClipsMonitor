@@ -3,8 +3,8 @@
   <kind type="view"/>
   <state type="joined"/>
   <constraints>
-    <path orientation="horizontal" number="20" weight="0.31838235294117645"/>
-    <path orientation="vertical" number="23" weight="0.5371024734982333"/>
+    <path orientation="horizontal" number="20" weight="0.20913107511045656"/>
+    <path orientation="vertical" number="23" weight="0.7602739726027398"/>
   </constraints>
   <bounds x="0" y="0" width="0" height="0"/>
   <frame state="0"/>
