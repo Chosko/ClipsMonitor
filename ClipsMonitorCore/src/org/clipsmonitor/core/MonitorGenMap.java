@@ -379,5 +379,12 @@ public abstract class MonitorGenMap {
     
     public abstract boolean UpdateCell(int x, int y, String state);
     
+    /*
+        Esegue l'init del generatore, viene eseguito a livello di classe derivata
+        specifica per il progetto 
+    */
+    
+    public abstract void init();
+    
     
 }
