@@ -63,7 +63,6 @@ import org.openide.util.NbBundle.Messages;
 
 
 
-
 public final class ControlsTopComponent extends TopComponent implements Observer,
         KeyListener ,  ActionListener{
     RescueModel model;
@@ -80,6 +79,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         putClientProperty(TopComponent.PROP_MAXIMIZATION_DISABLED, Boolean.TRUE);
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

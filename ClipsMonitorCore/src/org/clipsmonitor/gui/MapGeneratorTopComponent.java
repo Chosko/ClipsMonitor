@@ -8,7 +8,6 @@ package org.clipsmonitor.gui;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import org.clipsmonitor.mapgenerator.ComboBoxRenderer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
@@ -16,13 +15,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.mapgenerator.MapGeneratorLoader;
+import org.clipsmonitor.monitor2015.RescueGenMap;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
-import org.clipsmonitor.mapgenerator.MapGeneratorSceneModel;
 import org.json.JSONException;
 import org.openide.util.Exceptions;
 
@@ -58,13 +56,12 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     
     // Var Declaration
-    private   MapGeneratorSceneModel model;
+    private RescueGenMap model;
     private String state;
     private HashMap<String,BufferedImage> icons;
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
-    private MapGeneratorLoader loader;
     
     
     
@@ -72,7 +69,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         initComponents();
         setName(Bundle.CTL_MapGeneratorTopComponent());
         setToolTipText(Bundle.HINT_MapGeneratorTopComponent());
-        model = MapGeneratorSceneModel.getInstance();
+        model = RescueGenMap.getInstance();
         int x =Integer.parseInt(this.XButton.getText());
         int y =Integer.parseInt(this.YButton.getText());
         icons= model.getImages();
@@ -80,7 +77,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
         this.state=this.InsertionOptionComboBox.getSelectedItem().toString();
         model.initModelMap(x, y, PreviewMap.getWidth(), PreviewMap.getHeight());
         console= ClipsConsole.getInstance();
-        loader = new MapGeneratorLoader();
         fc = new JFileChooser();
         save = new JFileChooser();
         fc.setCurrentDirectory(new File("./"));
@@ -540,6 +536,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
      Ridisegna la mappa di generazione in base alla nuova dimensione della griglia e imposta la nuova
      max duration
     */
+    
+    
     
     void updateMap(int x, int y,int max) {
         model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
