@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.ComboBoxModel;
@@ -410,8 +412,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
     private void stepTextFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_stepTextFieldPropertyChange
         
-        Object new_val = evt.getNewValue();
-        String step= new_val.toString();
+        //Object new_val = evt.getNewValue();
+        //String step= new_val.toString();
         //stepTextField.setText(step);
     }//GEN-LAST:event_stepTextFieldPropertyChange
 
@@ -514,6 +516,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "CLP");
             DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
             File[] listOfFiles = folder.listFiles();
+            
+            Arrays.sort(listOfFiles, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            
             for (File file : listOfFiles) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     result.addElement(file.getName());
@@ -542,6 +552,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "envs");
             DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
             File[] listOfFiles = folder.listFiles();
+            
+            Arrays.sort(listOfFiles, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            
             for (File file : listOfFiles) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     result.addElement(file.getName());
