@@ -5,6 +5,7 @@
  */
 package org.clipsmonitor.gui;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -129,7 +130,12 @@ public final class FocusTopComponent extends TopComponent implements Observer {
     }
     
     private void updateFocusStack(){
-//        this.jTextPane1.setText(model.getFocusStack() + "(module " + model.getFocus() + ")");
-//        this.jTextPane1.setCaretPosition(jTextPane1.getText().length());
+        String[] focusStack = model.getFocusStack();
+        String focusString = "";
+        for (int i=focusStack.length-1; i>=0; i--) {
+            focusString += focusStack[i] + "\n";
+        }
+        this.jTextPane1.setText(focusString);
+        this.jTextPane1.setCaretPosition(0);
     }
 }

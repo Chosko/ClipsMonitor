@@ -434,13 +434,13 @@ public class ClipsCore {
     
         Stack<String> FocusStack=new Stack<String>();
         ArrayList<String> stack = new ArrayList<String>();
-        String [] modules = null;
+        String [] modules;
         try{
             PrimitiveValue fc=clips.eval("(get-focus)");
             while(!fc.toString().contains("FALSE")){
-                FocusStack.push(fc.toString());
+                 FocusStack.push(fc.toString());
                 clips.eval("(pop-focus)");
-                fc = clips.eval("get-focus");
+                 fc = clips.eval("(get-focus)");
             }
             
             while(!FocusStack.empty()){
@@ -449,9 +449,9 @@ public class ClipsCore {
                 stack.add(module);               
                 clips.eval("(focus " + module + ")");
             }
-            
-           modules=stack.toArray(modules);
-           return modules;
+            modules = new String[stack.size()];
+            stack.toArray(modules);
+            return modules;
         }
         catch(CLIPSError ex){
             console.error(ex);
