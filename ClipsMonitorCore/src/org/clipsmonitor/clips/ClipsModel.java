@@ -13,8 +13,9 @@ import net.sf.clipsrules.jni.CLIPSError;
  *
  * @author Piovesan Luca, Verdoja Francesco Edited by: @author Violanti Luca,
  * Varesano Marco, Busso Marco, Cotrino Roberto, Enrico Mensa, Matteo Madeddu,
- * Davide Dell'Anna
+ * Davide Dell'Anna, Ruben Caliandro, Marco Corona
  */
+
 public abstract class ClipsModel extends Observable implements Runnable {
 
     protected ClipsCore core;
@@ -214,12 +215,10 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public synchronized String getFocus() {
         return core.getFocus();
     }
-    
-    
+
     public synchronized String[] getFocusStack(){
         return core.getFocusStack();
     }
-    
     
     /**
      * riprende il thread sospeso tramite il metodo suspend()
@@ -281,8 +280,6 @@ public abstract class ClipsModel extends Observable implements Runnable {
     
         return this.executionMode;
     }
-
-    
 
 
     /**
@@ -360,7 +357,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     // PARTE ASTRATTA
     
     
-       /**
+      /**
      * Inizializza l'intero ambiente. Questo metodo viene invocato una sola
      * volta all'inizio dell'applicazione.
      *

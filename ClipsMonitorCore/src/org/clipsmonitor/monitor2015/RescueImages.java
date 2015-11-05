@@ -8,20 +8,18 @@ package org.clipsmonitor.monitor2015;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorImages;
 
 /**
  *
  * @author Marco Corona 
  */
-public class RescueImages {
+public class RescueImages extends MonitorImages{
     
     private static RescueImages instance;
-    private Map<String, BufferedImage> map_img;
-    private Map<String, BufferedImage> map_img_robot;
     private ClipsConsole console;
     
     public static RescueImages getInstance(){
@@ -43,16 +41,25 @@ public class RescueImages {
      * Initialize the instance. Used in a separate function to avoid infinite
      * recursion when initializing singleton classes
      */
-    private void init(){
-        
-        console = ClipsConsole.getInstance();
-        
-        //Primo campo: coerente con i file di CLIPS
-        //Secondo campo: nome del file (a piacere)
-        map_img = new HashMap<String, BufferedImage>();
+    
+    
+    
+    public Map<String, BufferedImage> getMapImg() {
+        return map_img;
     }
 
-    public void loadImages(String path){
+    public Map<String, BufferedImage> getMapImgRobot() {
+        return map_img_robot;
+    }
+
+    
+    public void ClearImg(){
+        this.ClearMapImage();
+        this.ClearMapImageRobot();
+    }
+
+    @Override
+    public void loadImages(String path) {
         try {
             File img_dir = new File(path + File.separator + "img");
 
@@ -71,28 +78,6 @@ public class RescueImages {
         } catch (IOException e) {
         console.error(e);
         }
-    }
-    
-    
-    public Map<String, BufferedImage> getMapImg() {
-        return map_img;
-    }
-
-    public Map<String, BufferedImage> getMapImgRobot() {
-        return map_img_robot;
-    }
-
-    private void ClearMapImage(){
-        this.map_img=null;
-    }
-    
-    private void ClearMapImageRobot(){
-        this.map_img_robot=null;
-    }
-    
-    public void ClearImg(){
-        this.ClearMapImage();
-        this.ClearMapImageRobot();
     }
    
 }

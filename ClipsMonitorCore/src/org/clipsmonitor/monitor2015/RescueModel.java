@@ -4,6 +4,13 @@ import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Checked;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Clear;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Contains;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Discovered;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Injured;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.PosC;
+import static org.clipsmonitor.monitor2015.RescueModel.cellslots.PosR;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Rescue 2014/2015. 
@@ -24,6 +31,13 @@ public class RescueModel extends ClipsModel {
     private static RescueModel instance;
     private String advise;
     private RescueMap tmp;
+    
+    
+    /*costanti enumerative intere per un uso più immediato delle posizioni all'interno 
+     degli array che definiscono i fatti di tipo (real-cell)*/
+    
+    
+    
     
     /**
      * Singleton
@@ -147,8 +161,30 @@ public class RescueModel extends ClipsModel {
         return rmap;
     }
 
+    protected enum cellslots{
+    
+        PosC (0),
+        PosR (1),
+        Contains(2),
+        Injured (3),
+        Discovered (4),
+        Checked (5), 
+        Clear(6);
+        
+        
+        private final int slot;
+        
+        cellslots(int num){
+            this.slot=num;
+        }
+    
+        int slot(){
+            return slot;
+        }
+    }
+    
     /**
-     * Aggiorna la mappa leggendola dal file clips. Lanciato ogni volta che si
+     * Aggiorna la mappa leggendola dal motore clips. Lanciato ogni volta che si
      * compie un'azione.
      *
      * @throws ClipsExceptionF
@@ -164,30 +200,48 @@ public class RescueModel extends ClipsModel {
         //Per ogni cella prendiamo il nuovo valore e lo aggiorniamo
         String[][] cellFacts = core.findAllFacts("ENV", "cell", "TRUE", cellArray);
         String[][] kcellFacts = core.findAllFacts("AGENT", "K-cell", "TRUE", kcellArray);
-        // String[][] initcellFacts = core.findAllFacts("MAIN","init_cell", "TRUE" ,initcellArray);
+        
 
         for (String[] fact : cellFacts) {
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
-            int r = new Integer(fact[0]);
-            int c = new Integer(fact[1]);
+            int r = new Integer(fact[PosC.slot()]);
+            int c = new Integer(fact[PosR.slot()]);
 
-            //caso di default
-            map[r - 1][c - 1] = fact[2]; //prendiamo il valore
-            if (fact[3].equals("yes")) {
+            //caso di default preleviamo il valore dello slot contains e lo applichiamo alla mappa
+            map[r - 1][c - 1] = fact[Contains.slot()];  
+            
+            // controlla se lo slot injured sia impostato a yes
+            
+            if (fact[Injured.slot()].equals("yes")) {
                 map[r - 1][c - 1] += "_injured";
             }
-            if ((fact[2].equals("debris") && (fact[4].equals("yes") || fact[5].equals("yes"))) || (fact[2].equals("empty") && fact[6].equals("yes"))) {
+            /*
+                Aggiorno la mappa in modo da valutare le celle di cui il robot ha fatto già precedentemente
+                l'inform: i casi in cui avviene sono :
+                 - se la cella contiene debris allora o vale che l'ho scoperta ma non ci sono feriti
+                   oppure ci sono feriti e l'ho controllata
+                 - se la cella non contiene nulla e ho detto che risulta clear
+            */
+            
+            if ((fact[Contains.slot()].equals("debris") && 
+                 (fact[Discovered.slot()].equals("yes") || 
+                  fact[Checked.slot()].equals("yes"))) || 
+                  (fact[Contains.slot()].equals("empty") && fact[Clear.slot()].equals("yes"))) {
                 map[r - 1][c - 1] += "_informed";
             }
            
         }
         
+        /*
+            prendo tutti i fatti di tipo kcell e valuto se esistono celle contenenti nello slot
+            unknown 
+        */
         
         
         for (String[] fact : kcellFacts) {
-            int r = new Integer(fact[0]) - 1;
-            int c = new Integer(fact[1]) - 1;
-            if (fact[2].equals("unknown")) {
+            int r = new Integer(fact[PosC.slot()]) - 1;
+            int c = new Integer(fact[PosR.slot()]) - 1;
+            if (fact[Contains.slot()].equals("unknown")) {
                 map[r][c] += "_undiscovered";
             }
             
@@ -216,7 +270,8 @@ public class RescueModel extends ClipsModel {
             String[] arrayRobotBackground = {"pos-r", "pos-c", "contains", "injured", "previous", "clear"};
             String[] robotBackground = core.findFact("ENV", "cell", "and (eq ?f:pos-r " + Integer.toString(r) + ") (eq ?f:pos-c " + Integer.toString(c) + ")", arrayRobotBackground);
 
-            //Nel modello abbiamo la stringa agent_background, la cosa verrà interpretata nella View (updateMap())
+            //Nel modello abbiamo la stringa agent_background, la quale verrà interpretata nella View (updateMap())
+            
             String background = robotBackground[4];
 
             map[r - 1][c - 1] = "agent_" + background;
@@ -234,7 +289,7 @@ public class RescueModel extends ClipsModel {
         if (persons != null) {
             for (String[] person : persons) {
                 if (person[0] != null) {
-                    //Se hai trovato il fatto
+                    //Se hai trovato il fatto 
                     int person_r = new Integer(person[3]);
                     int person_c = new Integer(person[4]);
                     String ident = person[2];

@@ -14,6 +14,8 @@ import org.clipsmonitor.monitor2015.RescueImages;
  *
  * @author Tobia Giani, Alessandro Basile, Marco Corona
  */
+
+
 public class MapGeneratorSceneModel {
 
     private static MapGeneratorSceneModel instance;
@@ -99,7 +101,8 @@ public class MapGeneratorSceneModel {
     */
     
     public void loadImages() {
-        HashMap<String,BufferedImage> mapicons = (HashMap<String,BufferedImage>) RescueImages.getInstance().getMapImg();
+        HashMap<String,BufferedImage> mapicons;
+        mapicons = (HashMap<String,BufferedImage>) RescueImages.getInstance().getMapImg();
         this.images = mapicons;
         Set<String> keys = images.keySet();
         setKeyMap= keys.toArray(new String[keys.size()]);
@@ -116,7 +119,8 @@ public class MapGeneratorSceneModel {
         CellWidth = (MapWidth - 20) / NumCellX;
         CellHeight = (MapHeight - 20) / NumCellY;
 
-        //verifico chi delle due dimensioni é minore e setto quella maggiore uguale a quella minore per rendere le celle quadrate
+        //verifico chi delle due dimensioni é minore e setto quella maggiore uguale a quella minore 
+        // per rendere le celle quadrate
         if (CellWidth > CellHeight) {
             CellWidth = CellHeight;
         } else {
@@ -310,9 +314,9 @@ public class MapGeneratorSceneModel {
     }
     
     /*
-    Metodo per l'aggiornamento consistente delle celle
-    @param x ,y : possibile in riga e colonna della cella da modificare
-    @param state : nuovo stato da inserire
+    * Metodo per l'aggiornamento consistente delle celle
+    *  @param x ,y : possibile in riga e colonna della cella da modificare
+    *  @param state : nuovo stato da inserire
     */
    
     public boolean UpdateCell(int x, int y, String state) {

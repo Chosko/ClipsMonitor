@@ -49,8 +49,8 @@ public abstract class MonitorMap extends Observable implements Observer {
         * @param background
         * @return
         */
-       
         public BufferedImage overlapImages(BufferedImage object, BufferedImage background) {
+
            BufferedImage combined;
            Graphics g;
            // crea una nuova immagine, la dimensione è quella più grande tra le 2 img

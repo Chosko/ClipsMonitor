@@ -8,7 +8,6 @@ import java.util.Observer;
 import javax.swing.JOptionPane;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorMap;
-import org.clipsmonitor.gui.MapUtility;
 
 /**
  * L'implementazione della classe ClipsView specifica per il progetto Monitor
@@ -50,10 +49,8 @@ public class RescueMap extends MonitorMap implements Observer {
 
     @Override
     protected void onAction() {
-        //System.out.println("actionDone");
         try {
             updateMap();
-            // updateOutput();
         } catch (IOException ex) {
             console.error(ex);
         }
@@ -86,13 +83,6 @@ public class RescueMap extends MonitorMap implements Observer {
      *
      */
     private void updateMap() throws IOException {
-//        Integer step = model.getStep();
-//        Integer time = model.getTime();
-//        Integer leftTime = model.getMaxDuration() - model.getTime();
-//        cp_frame.getTimeTextField().setText(time.toString());
-//        cp_frame.getLeftTimeTextField().setText(leftTime.toString());
-//        cp_frame.getStepTextField().setText(step.toString());
-//        }
         this.setChanged();
         this.notifyObservers("repaint");
         console.info("Step attuale: " + model.getStep());
@@ -101,7 +91,8 @@ public class RescueMap extends MonitorMap implements Observer {
     
     
     
-    
+   
+    @Override
     public BufferedImage[][] makeIconMatrix(String[][] mapString){
         images = RescueImages.getInstance();
         
@@ -138,7 +129,7 @@ public class RescueMap extends MonitorMap implements Observer {
 
                     
 
-                    // cerca se, nei primi 6 caratteri (se ce ne sono almeno 6), c'è la stringa "agent_", vedere metodo updateMap in MonitorModel.java
+                    // cerca se c'è la stringa "agent_", vedere metodo updateMap in MonitorModel.java
                     // Nel modello si ha una stringa del tipo agent_empty se l'agent si trova su una cella empty.
                     // In modo da inserire l'icona del robot sopra la cella in cui si trova (le due immagini vengono sovrapposte)
                     
@@ -149,11 +140,9 @@ public class RescueMap extends MonitorMap implements Observer {
                             direction = model.getDirection();
                             loaded= model.getMode();
                             key_agent_map="agent_"+ direction + "_" + loaded;
-                            // ...nel, caso prosegue dal 6° carattere in poi.
-
                             background = map_img.get(mapString[i][j].substring(6, mapString[i][j].length()));
                             robot = map_img_robot.get(key_agent_map);
-                            iconMatrix[i][j] = MapUtility.overlapImages(robot, background);
+                            iconMatrix[i][j] = overlapImages(robot, background);
                         
                     }
                     
@@ -176,7 +165,7 @@ public class RescueMap extends MonitorMap implements Observer {
           
                         // ##### ALTRIMENTI ####
                         // Era una cella che non aveva bisogno di sovrapposizioni e non è una persona
-                    } 
+                    }  
                     
                     // ##### ALTRO #######
                     else {
@@ -195,7 +184,7 @@ public class RescueMap extends MonitorMap implements Observer {
                                                                                                       // vado a sovrapporre l'iconMatrix[i][j]a di undiscover
                         try{                                                                              // escludo il termine "undiscovered" dalla precedente stringa   
                         iconMatrix[i][j]= map_img.get(map_substr);     
-                        iconMatrix[i][j]= MapUtility.overlapImages(undiscovered,iconMatrix[i][j]);
+                        iconMatrix[i][j]= overlapImages(undiscovered,iconMatrix[i][j]);
                         }
                         catch(NullPointerException e){
 
@@ -213,31 +202,8 @@ public class RescueMap extends MonitorMap implements Observer {
         
     }
     
-
-    /**
-     * Sostiuisce i parametri nella forma %par<i> con param<i>.
-     *
-     * @param text
-     * @param parameters
-     * @return
-     */
-    protected String mapParameters(String text, String[] parameters) {
-        for (int i = 1; i <= parameters.length; i++) {
-            text = text.replace("%p" + i, parameters[i - 1]);
-        }
-        return text;
-    }
-
-    /**
-     * Rimuove il primo e l'ultimo carattere di una stringa. Nel nostro caso le
-     * virgolette di un text.
-     *
-     * @return
-     */
-    protected String removeFistAndLastChar(String text) {
-        return text.substring(1).replace(text.substring(text.length() - 1), "");
-    }
-
+    
+    
     public String[][] getMap() {
         return model.getEnvMap();
     }
@@ -259,9 +225,40 @@ public class RescueMap extends MonitorMap implements Observer {
         console = ClipsConsole.getInstance();
         images = RescueImages.getInstance();
     }
+
+   
 }
 
 
+
+
+
+
+
+/*
+     * Sostiuisce i parametri nella forma %par<i> con param<i>.
+     *
+     * @param text
+     * @param parameters
+     * @return
+     /
+    protected String mapParameters(String text, String[] parameters) {
+        for (int i = 1; i <= parameters.length; i++) {
+            text = text.replace("%p" + i, parameters[i - 1]);
+        }
+        return text;
+    }
+    
+    
+    /**
+     * Rimuove il primo e l'ultimo carattere di una stringa. Nel nostro caso le
+     * virgolette di un text.
+     *
+     * @return
+     /
+    protected String removeFistAndLastChar(String text) {
+        return text.substring(1).replace(text.substring(text.length() - 1), "");
+    }
     
 //    private BufferedImage imageIcon2Buffered(ImageIcon tempicon) {
 //        BufferedImage bi = new BufferedImage(

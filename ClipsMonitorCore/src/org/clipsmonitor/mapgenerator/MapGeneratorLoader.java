@@ -21,8 +21,9 @@ import org.json.simple.parser.ParseException;
 /**
  * Classe per il salvataggio e la lettura delle mappe in JSON
  *
- * @author Alessandro Basile, Tobia Giani
- */ 
+ * @author Alessandro Basile, Tobia Giani, Marco Corona
+ */
+
 public class MapGeneratorLoader {
 
     
@@ -163,6 +164,4 @@ public class MapGeneratorLoader {
         }
     }
 
-    
-    
 }

@@ -8,7 +8,6 @@ package org.clipsmonitor.gui;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
@@ -160,6 +159,8 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         containerPanel.add(mapPanel, java.awt.BorderLayout.CENTER);
         this.containerPanel.validate();
     }
+    
+    
     
     protected class MapPanel extends JPanel {
         RescueModel model;
