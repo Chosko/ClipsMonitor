@@ -1,5 +1,7 @@
 package org.clipsmonitor.core;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,6 +25,7 @@ public abstract class MonitorMap extends Observable implements Observer {
      *
      */
     public void update(Observable o, Object arg) {
+        
         String advice = (String) arg;
         if (advice.equals("setupDone")) {
             onSetup();
@@ -35,6 +38,34 @@ public abstract class MonitorMap extends Observable implements Observer {
             this.clear();
         }
     }
+    
+    
+     
+    /**
+        * Restituisce l'immagine che è la sovrapposizione fra object e background.
+        * La dimensione è quella dell'immagine più piccola
+        *
+        * @param object
+        * @param background
+        * @return
+        */
+       
+        public BufferedImage overlapImages(BufferedImage object, BufferedImage background) {
+           BufferedImage combined;
+           Graphics g;
+           // crea una nuova immagine, la dimensione è quella più grande tra le 2 img
+           int w = Math.max(background.getWidth(), object.getWidth());
+           int h = Math.max(background.getHeight(), object.getHeight());
+           combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+           // SOVRAPPONE le immagini, preservando i canali alpha per le trasparenze (figo eh?)
+           g = combined.getGraphics();
+           g.drawImage(background, 0, 0, null);
+           g.drawImage(object, 0, 0, null);
+
+           return combined;
+       }
+    
 
     /**
      * In questo metodo devono essere inseriti gli aggiornamenti
@@ -62,5 +93,17 @@ public abstract class MonitorMap extends Observable implements Observer {
     protected abstract void onDispose();
     
     protected abstract void clear();
+    
+    
     protected abstract void init();
+    
+    /*
+       Questo metodo permette la realizzazione della matrice di icone con cui riempire
+       la mappa a seconda dei valori contenuti dalla mappa stessa.
+       Viene invocato ad ogni richiesta di repaint della mappa 
+    */
+    
+    protected abstract BufferedImage[][] makeIconMatrix(String[][] mapString);
+    
+    
 }
