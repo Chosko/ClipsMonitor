@@ -16,7 +16,6 @@ import org.clipsmonitor.monitor2015.RescueImages;
  * modificarla. Inoltre permette la possibilità di salvare e caricare le mappe per poter essere poi
  * successiviamente utilizzate dal simulatore
  *
- *
  * @author Tobia Giani, Alessandro Basile, Marco Corona
  */
 

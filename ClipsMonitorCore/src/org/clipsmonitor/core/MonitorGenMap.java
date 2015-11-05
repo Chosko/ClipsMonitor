@@ -302,8 +302,6 @@ public abstract class MonitorGenMap {
     public void load_scene(File jsonFile) throws ParseException {
         //creo una nuova istanza di scena
        
-        
-        this.init();
        
         try {
             //converto il file in un oggetto JSON
