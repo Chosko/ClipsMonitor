@@ -399,8 +399,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = fc.getSelectedFile();
-                loader.load_mappa(file);
-                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
+                model.load_scene(file);
+                
                 PreviewMap.repaint();
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
@@ -415,7 +415,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = fc.getSelectedFile();
-                loader.load_mappa(file);
+                model.load_scene(file);
                 //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
                 PreviewMap.repaint();
             } catch (Exception ex) {
@@ -429,7 +429,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         int retrival = save.showSaveDialog(this);
         if (retrival == JFileChooser.APPROVE_OPTION) {
             try {
-                loader.exportScene(save.getSelectedFile());
+               String output = model.exportScene(save.getSelectedFile());
+               console.info(output);
             } catch (JSONException ex) {
                 Exceptions.printStackTrace(ex);
             }
