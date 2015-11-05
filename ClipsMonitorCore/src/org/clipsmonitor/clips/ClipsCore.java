@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
@@ -96,12 +98,12 @@ public class ClipsCore {
         File str_folder = new File(projectDirectory + File.separator + "CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
 
-//        Arrays.sort(str_listOfFiles, new Comparator<File>() {
-//            @Override
-//            public int compare(File o1, File o2) {
-//                return o1.compareTo(o2);
-//            }
-//        });
+        Arrays.sort(str_listOfFiles, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                return o1.compareTo(o2);
+            }
+        });
 
         for (File clpFile : str_listOfFiles) {
             try {
@@ -132,7 +134,18 @@ public class ClipsCore {
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
                     File source = envFile;
-                    File dest = new File(destPath + File.separator + envFile.getName());
+                    String sourceName = source.getName();
+                    String destName;
+                    if(sourceName.startsWith("RealMap")){
+                        destName = "RealMap.txt";
+                    }
+                    else if(sourceName.startsWith("history")){
+                        destName = "history.txt";
+                    } 
+                    else{
+                        destName = sourceName;
+                    }
+                    File dest = new File(destPath + File.separator + destName);
 
                     console.debug("Copying the file: " + source.getAbsolutePath() + " into " + dest.getAbsolutePath());
 
