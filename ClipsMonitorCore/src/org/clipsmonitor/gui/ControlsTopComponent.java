@@ -571,6 +571,16 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         else if(arg == "startApp"){
             this.init();
         }
+        else if(arg == "repaint"){
+        
+            Integer step = model.getStep();
+            Integer time = model.getTime();
+            Integer leftTime = model.getMaxDuration() - model.getTime();
+            this.getTimeTextField().setText(time.toString());
+            this.getLeftTimeTextField().setText(leftTime.toString());
+            this.getStepTextField().setText(step.toString());
+           
+        }
     }
 
     private void clear() {

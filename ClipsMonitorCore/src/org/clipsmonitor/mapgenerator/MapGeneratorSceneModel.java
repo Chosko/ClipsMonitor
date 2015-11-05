@@ -9,10 +9,10 @@ import java.util.Set;
 import org.clipsmonitor.monitor2015.RescueImages;
 
 /*
- * Classe che definisce il concetto di scena con tutti i metodi per accedervi e
+ * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
  * modificarla
  *
- * @author Tobia Giani, Alessandro Basile
+ * @author Tobia Giani, Alessandro Basile, Marco Corona
  */
 public class MapGeneratorSceneModel {
 
@@ -66,7 +66,8 @@ public class MapGeneratorSceneModel {
         this.agentposition= new int [2];
         this.agentposition[0]=this.defaultagentposition[0];
         this.agentposition[1]=this.defaultagentposition[1];
-//carico tutte le image in ram
+        
+        //carico tutte le image in ram
         this.loadImages();
         
     }

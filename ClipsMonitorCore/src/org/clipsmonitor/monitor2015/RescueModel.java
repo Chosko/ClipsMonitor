@@ -50,8 +50,7 @@ public class RescueModel extends ClipsModel {
         instance.loaded = null;
         instance.console = null;
         instance.row = 0;
-        instance.column = 0;
-        
+        instance.column = 0;    
         instance = null;
     }
     
@@ -67,10 +66,9 @@ public class RescueModel extends ClipsModel {
 
     /**
      * Inizializza il modello in base al contenuto del file clips caricato.
-     *
-     *
      */
-    private synchronized void initModel() {
+    @Override
+    protected synchronized void initModel() {
         result = "no";
         time = 0;
         step = 0;
@@ -133,11 +131,15 @@ public class RescueModel extends ClipsModel {
      * @param target
      * @param map 
      */
+    
+    
     public void registerMap(String target, RescueMap map){
         this.tmp = map;
         this.setChanged();
         this.notifyObservers(target);
     }
+    
+    
     
     public RescueMap getMapToRegister(){
         RescueMap rmap = tmp;
@@ -151,7 +153,8 @@ public class RescueModel extends ClipsModel {
      *
      * @throws ClipsExceptionF
      */
-    private synchronized void updateMap() throws CLIPSError {
+    @Override
+    protected synchronized void updateMap() throws CLIPSError {
 
         // ######################## FATTI DI TIPO cell ##########################
         console.debug("Aggiornamento modello mappa in corso...");
@@ -326,9 +329,7 @@ public class RescueModel extends ClipsModel {
         return loaded;
     }
 
-    public Integer getRow() {
-        return row;
-    }
+
 
     public String getMode() {
     
@@ -336,9 +337,7 @@ public class RescueModel extends ClipsModel {
     
     }
     
-    public Integer getColumn() {
-        return column;
-    }
+
 
     public void setAdvise(String advise) {
         this.advise = advise;
@@ -348,7 +347,9 @@ public class RescueModel extends ClipsModel {
         return this.advise;
     }
     
-        public synchronized String getDirection() {
+    public synchronized String getDirection() {
         return direction;
     }
+
+
 }

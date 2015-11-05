@@ -92,15 +92,13 @@ public class RescueMap extends MonitorMap implements Observer {
 //        cp_frame.getTimeTextField().setText(time.toString());
 //        cp_frame.getLeftTimeTextField().setText(leftTime.toString());
 //        cp_frame.getStepTextField().setText(step.toString());
-//        try {
-//            Thread.sleep(200);
-//        } catch (InterruptedException e) {
 //        }
         this.setChanged();
         this.notifyObservers("repaint");
         console.info("Step attuale: " + model.getStep());
     }
 
+    
     
     
     

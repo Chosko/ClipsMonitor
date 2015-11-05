@@ -56,6 +56,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
      * vedere il metodo execute().
      *
      */
+    
     @Override
     public void run() {
         
@@ -137,6 +138,8 @@ public abstract class ClipsModel extends Observable implements Runnable {
         }
     }
 
+    
+    
     /**
      * Esegue l'ambiente su un nuovo thread. Meglio a livello di prestazioni
      * rispetto al metodo run() perchè sfrutta il multithread.
@@ -157,6 +160,8 @@ public abstract class ClipsModel extends Observable implements Runnable {
         this.executionMode = mode;
     }
 
+    
+    
     public synchronized void setMode(int mode, int param) {
         this.executionMode = mode;
         this.paramMode = param;
@@ -209,38 +214,8 @@ public abstract class ClipsModel extends Observable implements Runnable {
     public synchronized String getFocus() {
         return core.getFocus();
     }
-
-    /**
-     * Inizializza l'intero ambiente. Questo metodo viene invocato una sola
-     * volta all'inizio dell'applicazione.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void setup();
-
-    /**
-     * Fa avanzare l'ambiente di un turno. Viene invocato ciclicamente finche'
-     * hasDone == false.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void action();
-
-    /**
-     * Indica se l'ambiente ha finito la naturale esecuzione.
-     *
-     * @return true se l'esecuzione dell'ambiente e' terminata, false altrimenti
-     */
-    protected abstract boolean hasDone();
-
-    /**
-     * Pone fine all'ambiente costruendo i risultati e le statistiche finali.
-     * Eseguita un'unica volta dopo che hasDone == true.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void dispose();
-
+    
+    
     /**
      * riprende il thread sospeso tramite il metodo suspend()
      *
@@ -360,5 +335,76 @@ public abstract class ClipsModel extends Observable implements Runnable {
         return durlastact;
     }
     
- 
+    /*metodo per ottenere la riga in cui si trova il robot
+     @return il valore della riga intero
+    */
+    
+    public synchronized Integer getRow() {
+        return row;
+    }
+    
+    /*metodo per ottenere la colonna in cui si trova il robot
+     @return il valore della colonna intero
+    */
+    
+    public synchronized Integer getColumn() {
+        return column;
+    }
+    
+    
+    // PARTE ASTRATTA
+    
+    
+       /**
+     * Inizializza l'intero ambiente. Questo metodo viene invocato una sola
+     * volta all'inizio dell'applicazione.
+     *
+     * @throws ClipsException
+     */
+    protected abstract void setup();
+
+    /**
+     * Fa avanzare l'ambiente di un turno. Viene invocato ciclicamente finche'
+     * hasDone == false.
+     *
+     * @throws ClipsException
+     */
+    protected abstract void action();
+
+    /**
+     * Indica se l'ambiente ha finito la naturale esecuzione.
+     *
+     * @return true se l'esecuzione dell'ambiente e' terminata, false altrimenti
+     */
+    protected abstract boolean hasDone();
+
+    /**
+     * Pone fine all'ambiente costruendo i risultati e le statistiche finali.
+     * Eseguita un'unica volta dopo che hasDone == true.
+     *
+     * @throws ClipsException
+     */
+    protected abstract void dispose();
+
+   /*
+     Metodo per l'inizializzazione del modello in base al contenuto dei file
+     clips caricati 
+    */
+    
+    protected abstract void initModel();
+    
+    /*
+     Esegue l'aggiornamento della matrice di stringhe che descrive le celle 
+     dell'ambiente, in base alla valutazione dei fatti prodotti dal motore di
+    Clips 
+    */
+    
+    protected abstract void updateMap() throws CLIPSError;
+    
+    /*
+     Registra la classe che dovrà effettuare l'ovveride dei metodi e la notifica
+     alla classe di MapTopComponent per la sua visualizzazione
+    */
+    
+   //  protected abstract <ProjectMap extends MonitorMap> void registerMap(String target,ProjectMap map);
 }
