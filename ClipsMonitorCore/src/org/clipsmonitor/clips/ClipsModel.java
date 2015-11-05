@@ -216,6 +216,11 @@ public abstract class ClipsModel extends Observable implements Runnable {
     }
     
     
+    public synchronized String[] getFocusStack(){
+        return core.getFocusStack();
+    }
+    
+    
     /**
      * riprende il thread sospeso tramite il metodo suspend()
      *

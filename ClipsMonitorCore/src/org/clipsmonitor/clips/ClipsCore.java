@@ -10,6 +10,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
@@ -413,7 +416,41 @@ public class ClipsCore {
             return "";
         }
     }
+    
+    
+    public String[] getFocusStack(){
+    
+        Stack<String> FocusStack=new Stack<String>();
+        ArrayList<String> stack = new ArrayList<String>();
+        String [] modules = null;
+        try{
+            PrimitiveValue fc=clips.eval("(get-focus)");
+            while(!fc.toString().contains("FALSE")){
+                FocusStack.push(fc.toString());
+                clips.eval("(pop-focus)");
+                fc = clips.eval("get-focus");
+            }
+            
+            while(!FocusStack.empty()){
+                
+                String module = FocusStack.pop();
+                stack.add(module);               
+                clips.eval("(focus " + module + ")");
+            }
+            
+           modules=stack.toArray(modules);
+           return modules;
+        }
+        catch(CLIPSError ex){
+            console.error(ex);
+            return null;
+        
+        }
+        
+    
+    }
 
+    
     /**
      * Inserisce una regola nell'ambiente clips caricato
      *

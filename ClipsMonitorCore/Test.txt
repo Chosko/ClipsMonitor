@@ -1,0 +1,114 @@
+; nel seguito viene riportata una semplice sequenza di comandi che dovrebbe
+
+; servire a verificare il comportamento del modulo ENV nel dominio descritto 
+
+; nel file precedente
+
+
+
+(exec (action forward) (step 0))
+
+
+
+(exec (action forward) (step 1))
+(exec (action inform) (param1 3) (param2 4) (param3 discover) (step 2))
+(exec (action inform) (param1 4) (param2 4) (param3 checked)(step 3))
+
+(exec (action load_debris) (step  4) (param1 4) (param2 4))
+
+(exec (action unload_debris) (step  5) (param1 3) (param2 5))
+(exec (action turnleft) (step 6))
+
+(exec (action forward) (step 7))
+
+(exec (action drill) (step 8) (param1 3) (param2 4))
+
+
+(exec (action inform) (param1 3) (param2 4) (param3 discover) (step 9))
+(exec (action inform) (param1 4) (param2 4) (param3 clear) (step 10))
+(exec (action inform) (param1 3) (param2 5) (param3 clear) (step 11))
+(exec (action inform) (param1 4) (param2 8) (param3 checked) (step 12))
+(exec (action inform) (param1 5) (param2 6) (param3 clear) (step 13))
+
+
+; Una seconda sequenza di azioni potenzialmante fate da un agente più smart
+
+
+
+;(exec (action forward) (step 0))
+
+;(exec (action inform) (param1 3) (param2 4) (param3 discover) (step 1))
+
+;(exec (action forward) (step 2))
+;(exec (action inform) (param1 4) (param2 4) (param3 checked)(step 3))
+
+;(exec (action load_debris) (step  4) (param1 4) (param2 4))
+;(exec (action turnleft) (step 5))
+;(exec (action forward) (step 6)) 
+
+
+
+;( exec (action forward) (step 7))
+;( exec (action unload_debris) (step  8) (param1 3) (param2 3))
+;( exec (action turnright) (step 9))
+
+;( exec (action forward) (step 10))
+;( exec (action forward) (step 11))
+
+;( exec (action inform) (param1 6) (param2 2) (param3 checked) (step 12))
+;( exec (action inform) (param1 7) (param2 3) (param3 checked) (step 13))
+
+;( exec (action load_debris) (step  14) (param1 6) (param2 2))
+;( exec (action turnleft) (step 15))
+;( exec (action forward) (step 16))
+;( exec (action inform) (param1 7) (param2 2) (param3 checked) (step 17))
+;( exec (action unload_debris) (step  18) (param1 6) (param2 1))
+
+
+;( exec (action turnleft) (step 19))
+;( exec (action turnleft) (step 20))
+;( exec (action forward) (step 21)) 
+;( exec (action turnright) (step 22))
+
+;( exec (action forward) (step 23))
+;( exec (action forward) (step 24))
+;( exec (action turnleft) (step 25))
+;( exec (action forward) (step 26))
+;( exec (action forward) (step 27))
+;( exec (action forward) (step 28))
+;( exec (action turnleft) (step 29))
+;( exec (action forward) (step 30))
+;( exec (action forward) (step 31))
+;( exec (action inform) (param1 6) (param2 7) (param3 discover) (step 32))
+;( exec (action forward) (step 33))
+;( exec (action turnright) (step 34))
+;( exec (action forward) (step 35))
+;( exec (action drill) (step 36) (param1 7) (param2 8))
+;( exec (action inform) (param1 7) (param2 8) (param3 discover) (step 37))
+
+
+
+;( exec (action turnleft) (step 38))
+;( exec (action forward) (step 39))
+;( exec (action turnright) (step 40))
+;( exec (action forward) (step 41))
+;( exec (action drill) (step 42) (param1 8) (param2 9))
+;( exec (action inform) (param1 8) (param2 9) (param3 discover) (step 43))
+
+;( exec (action turnleft) (step 44))
+;( exec (action load_debris) (step  45) (param1 9) (param2 8))
+;( exec (action forward) (step 46))
+;( exec (action inform) (param1 9) (param2 9) (param3 checked) (step 47))
+;( exec (action unload_debris) (step  48) (param1 10) (param2 8))
+;( exec (action turnleft) (step 49))
+;( exec (action forward) (step 50))
+
+;( exec (action done) (step 51))
+
+
+
+;( exec (action inform) (param1 3) (param2 4) (param3 discover) (step 9))
+;( exec (action inform) (param1 4) (param2 4) (param3 clear) (step 10))
+;( exec (action inform) (param1 3) (param2 5) (param3 clear) (step 11))
+;( exec (action inform) (param1 4) (param2 8) (param3 checked) (step 12))
+;( exec (action inform) (param1 5) (param2 6) (param3 clear) (step 13))
