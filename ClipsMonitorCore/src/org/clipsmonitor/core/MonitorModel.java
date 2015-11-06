@@ -40,7 +40,6 @@ public abstract class MonitorModel extends Observable implements Runnable {
     protected Integer step;
     protected Integer maxduration;
     protected String result;
-    protected String[][] map;
     protected int row, column;
     protected int score;
     protected int durlastact;
@@ -357,25 +356,20 @@ public abstract class MonitorModel extends Observable implements Runnable {
         return column;
     }
     
+    protected void setup(){
+        initModel();
+    }
+
+    protected void action() {
+        try{
+            updateModel();
+        }
+        catch (CLIPSError ex){
+            console.error(ex);
+        }
+    }
     
     // PARTE ASTRATTA
-    
-    
-      /**
-     * Inizializza l'intero ambiente. Questo metodo viene invocato una sola
-     * volta all'inizio dell'applicazione.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void setup();
-
-    /**
-     * Fa avanzare l'ambiente di un turno. Viene invocato ciclicamente finche'
-     * hasDone == false.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void action();
 
     /**
      * Indica se l'ambiente ha finito la naturale esecuzione.

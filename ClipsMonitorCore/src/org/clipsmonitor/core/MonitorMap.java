@@ -2,8 +2,11 @@ package org.clipsmonitor.core;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import net.sf.clipsrules.jni.CLIPSError;
+import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  * Questa classe astratta è la parte di view (in un'architettura MVC) e
@@ -12,7 +15,7 @@ import java.util.Observer;
  * mantenimento dell'interfaccia grafica specifica per ogni progetto.
  *
  * @author Piovesan Luca, Verdoja Francesco Edited by: @author Violanti Luca,
- * Varesano Marco, Busso Marco, Cotrino Roberto
+ * Varesano Marco, Busso Marco, Cotrino Roberto, Ruben Caliandro
  */
 public abstract class MonitorMap extends Observable implements Observer {
     public final int MAP_DIMENSION = 550;
@@ -31,8 +34,6 @@ public abstract class MonitorMap extends Observable implements Observer {
         String advice = (String) arg;
         if (advice.equals("setupDone")) {
             onSetup();
-        } else if (advice.equals("actionDone")) {
-            onAction();
         } else if (advice.equals("disposeDone")) {
             onDispose();
         }
@@ -41,51 +42,37 @@ public abstract class MonitorMap extends Observable implements Observer {
         }
     }
     
-    
+    protected void onSetup() {
+        this.setChanged();
+        this.notifyObservers("initializeMap");
+        ClipsConsole.getInstance().info("Setup completato");
+    }
      
     /**
-        * Restituisce l'immagine che è la sovrapposizione fra object e background.
-        * La dimensione è quella dell'immagine più piccola
-        *
-        * @param object
-        * @param background
-        * @return
-        */
-        public BufferedImage overlapImages(BufferedImage object, BufferedImage background) {
+    * Restituisce l'immagine che è la sovrapposizione fra object e background.
+    * La dimensione è quella dell'immagine più piccola
+    *
+    * @param object
+    * @param background
+    * @return
+    */
+    public BufferedImage overlapImages(BufferedImage object, BufferedImage background) {
 
-           BufferedImage combined;
-           Graphics g;
-           // crea una nuova immagine, la dimensione è quella più grande tra le 2 img
-           int w = Math.max(background.getWidth(), object.getWidth());
-           int h = Math.max(background.getHeight(), object.getHeight());
-           combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+       BufferedImage combined;
+       Graphics g;
+       // crea una nuova immagine, la dimensione è quella più grande tra le 2 img
+       int w = Math.max(background.getWidth(), object.getWidth());
+       int h = Math.max(background.getHeight(), object.getHeight());
+       combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
-           // SOVRAPPONE le immagini, preservando i canali alpha per le trasparenze (figo eh?)
-           g = combined.getGraphics();
-           g.drawImage(background, 0, 0, null);
-           g.drawImage(object, 0, 0, null);
+       // SOVRAPPONE le immagini, preservando i canali alpha per le trasparenze (figo eh?)
+       g = combined.getGraphics();
+       g.drawImage(background, 0, 0, null);
+       g.drawImage(object, 0, 0, null);
 
-           return combined;
-       }
+       return combined;
+    }
     
-
-    /**
-     * In questo metodo devono essere inseriti gli aggiornamenti
-     * dell'interfaccia da svolgersi quando è finita la fase di setup del model,
-     * verrà invocato una volta sola.
-     *
-     */
-    protected abstract void onSetup();
-
-    /**
-     * In questo metodo devono essere inseriti gli aggiornamenti
-     * dell'interfaccia da svolgersi quando è finita una delle fasi di action
-     * del model, verrà quindi invocato più volte, finchè l'ambiente non ha
-     * finito.
-     *
-     */
-    protected abstract void onAction();
-
     /**
      * In questo metodo devono essere inseriti gli aggiornamenti
      * dell'interfaccia da svolgersi quando è finita la fase di dispose del
@@ -98,6 +85,10 @@ public abstract class MonitorMap extends Observable implements Observer {
     
     
     protected abstract void init();
+    
+    public abstract void initMap() throws CLIPSError;
+    
+    public abstract void updateMap() throws CLIPSError;
     
     public abstract int[] getSize();
     

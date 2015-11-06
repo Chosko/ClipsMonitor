@@ -355,12 +355,15 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
+        disableButtons();
         model.setMode(MonitorModel.ex_mode_STEP);
         model.resume();
         //model.step();
+        enableButtons();
     }//GEN-LAST:event_stepButtonActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
+        disableButtons();
         // Il tasto può essere Run oppure Stop (a seconda di cosa era attivo)
         if (runButton.getText().equals("Run")) {
             model.setMode(MonitorModel.ex_mode_RUN);
@@ -377,6 +380,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                 runOneButton.setEnabled(true);
                 resetButton.setEnabled(true);
         }
+        enableButtons();
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void runOneButtonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyReleased
@@ -384,8 +388,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyReleased
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
+        disableButtons();
         model.setMode(MonitorModel.ex_mode_RUNN, 1);
         model.resume();
+        enableButtons();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
 
@@ -403,7 +409,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model = RescueModel.getInstance();
         model.addObserver(this);
         model.registerMap("envMap", new RescueMap(projectDirectory.getAbsolutePath()));
-        model.registerMap("agentMap", new RescueMap(projectDirectory.getAbsolutePath()));
+        //model.registerMap("agentMap", new RescueMap(projectDirectory.getAbsolutePath()));
         core = MonitorCore.getInstance();
         model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode(MonitorModel.ex_mode_START);
@@ -438,8 +444,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyPressed
 
     private void runOneButtonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyTyped
-        model.setMode(MonitorModel.ex_mode_RUNN, 1);
-        model.resume();                                          
+
     }//GEN-LAST:event_runOneButtonKeyTyped
 
     private void setShortcut() {
@@ -645,13 +650,23 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
     }
 
+    private void enableButtons(){
+        this.runButton.setEnabled(true);
+        this.runOneButton.setEnabled(true);
+        this.stepButton.setEnabled(true);
+    }
+
+    private void disableButtons(){
+        this.runButton.setEnabled(false);
+        this.runOneButton.setEnabled(false);
+        this.stepButton.setEnabled(false);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         if(arg.equals("finished")){
             this.runButton.doClick();
-            this.runButton.setEnabled(false);
-            this.runOneButton.setEnabled(false);
-            this.stepButton.setEnabled(false);
+            disableButtons();
         }
         else if(arg == "clearApp"){
             this.clear();
@@ -675,10 +690,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         this.model = null;
         this.core = null;
         loadDefaultFileButton.setEnabled(false);
-        runButton.setEnabled(false);
-        runOneButton.setEnabled(false);
-        stepButton.setEnabled(false);
         resetButton.setEnabled(false);
+        disableButtons();
     }
 
     private void init() {

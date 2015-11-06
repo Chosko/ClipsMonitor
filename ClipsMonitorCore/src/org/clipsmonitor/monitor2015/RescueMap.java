@@ -6,22 +6,27 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Observer;
 import javax.swing.JOptionPane;
+import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.clips.ClipsCore;
 import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.core.MonitorMap;
+import org.clipsmonitor.monitor2015.RescueModel.Cellslots;
 
 /**
  * L'implementazione della classe ClipsView specifica per il progetto Monitor
  * 2012/2013
  *
  * @author Violanti Luca, Varesano Marco, Busso Marco, Cotrino Roberto Edited
- * by: Enrico Mensa, Matteo Madeddu, Davide Dell'Anna
+ * by: Enrico Mensa, Matteo Madeddu, Davide Dell'Anna, Ruben Caliandro
  */
 public class RescueMap extends MonitorMap implements Observer {
 
     private RescueModel model;
     protected MonitorImages images;
     private ClipsConsole console;
+    private ClipsCore core;
+    private String[][] map;
     
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
@@ -37,22 +42,6 @@ public class RescueMap extends MonitorMap implements Observer {
     public RescueMap(String projectDirectory) {
         this.projectDirectory = projectDirectory;
         init();
-    }
-
-    @Override
-    protected void onSetup() {
-        this.setChanged();
-        this.notifyObservers("initializeMap");
-        console.info("Setup completato");
-    }
-
-    @Override
-    protected void onAction() {
-        try {
-            updateMap();
-        } catch (IOException ex) {
-            console.error(ex);
-        }
     }
 
     @Override
@@ -74,29 +63,144 @@ public class RescueMap extends MonitorMap implements Observer {
         this.setChanged();
         this.notifyObservers("advise");
     }
-
+    
+    @Override
+    public void initMap() throws CLIPSError {
+        console.debug("Inizializzazione del modello (mappa).");
+        String[] array = {"pos-r", "pos-c", "contains", "injured"};
+        String[][] mp = core.findAllFacts("ENV", "real_cell", "TRUE", array);
+        int maxr = 0;
+        int maxc = 0;
+        for (int i = 0; i < mp.length; i++) {
+            int r = new Integer(mp[i][0]);
+            int c = new Integer(mp[i][1]);
+            if (r > maxr) {
+                maxr = r;
+            }
+            if (c > maxc) {
+                maxc = c;
+            }
+        }
+        map = new String[maxr][maxc];//Matrice di max_n_righe x max_n_colonne
+        for (String[] mp1 : mp) {
+            int r = new Integer(mp1[0]);
+            int c = new Integer(mp1[1]);
+            map[r - 1][c - 1] = mp1[2]; //contains
+            //String m = cellFacts[i][3];
+            if (mp1[3].equals("yes")) {
+                map[r - 1][c - 1] += "_injured";
+            }
+        }
+    }
+    
     /**
      * Aggiorna la mappa visualizzata nell'interfaccia per farla allineare alla
      * versione nel modello.
      *
      */
-    private void updateMap() throws IOException {
-        this.setChanged();
-        this.notifyObservers("repaint");
+    @Override
+    public void updateMap() throws CLIPSError {
+        console.debug("Aggiornamento mappa reale in corso...");
+        
+        String[] cellArray = {"pos-r", "pos-c", "contains", "injured", "discovered", "checked", "clear"};
+        String[][] cellFacts = core.findAllFacts("ENV", "cell", "TRUE", cellArray);
+
+        for (String[] fact : cellFacts) {
+            // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
+            int r = new Integer(fact[Cellslots.POSC.slot()]);
+            int c = new Integer(fact[Cellslots.POSR.slot()]);
+
+            //caso di default preleviamo il valore dello slot contains e lo applichiamo alla mappa
+            map[r - 1][c - 1] = fact[Cellslots.CONTAINS.slot()];  
+            
+            // controlla se lo slot injured sia impostato a yes
+            
+            if (fact[Cellslots.INJURIED.slot()].equals("yes")) {
+                map[r - 1][c - 1] += "_injured";
+            }
+            /*
+                Aggiorno la mappa in modo da valutare le celle di cui il robot ha fatto già precedentemente
+                l'inform: i casi in cui avviene sono :
+                 - se la cella contiene debris allora o vale che l'ho scoperta ma non ci sono feriti
+                   oppure ci sono feriti e l'ho controllata
+                 - se la cella non contiene nulla e ho detto che risulta clear
+            */
+            
+            if ((fact[Cellslots.CONTAINS.slot()].equals("debris") && 
+                 (fact[Cellslots.DISCOVERED.slot()].equals("yes") || 
+                  fact[Cellslots.CHECKED.slot()].equals("yes"))) || 
+                  (fact[Cellslots.CONTAINS.slot()].equals("empty") && fact[Cellslots.CLEAR.slot()].equals("yes"))) {
+                map[r - 1][c - 1] += "_informed";
+            }
+           
+        }
+
+        console.debug("Acquisizione posizione dell'agente...");
+        String[] arrayRobot = {"step", "time", "pos-r", "pos-c", "direction", "loaded"};
+        String[] robot = core.findFact("ENV", "agentstatus", "TRUE", arrayRobot);
+        if (robot[0] != null) { //Se hai trovato il fatto
+            int r = new Integer(robot[2]);
+            int c = new Integer(robot[3]);
+
+            console.debug("Acquisizione background dell'agente...");
+
+            String[] arrayRobotBackground = {"pos-r", "pos-c", "contains", "injured", "previous", "clear"};
+            String[] robotBackground = core.findFact("ENV", "cell", "and (eq ?f:pos-r " + Integer.toString(r) + ") (eq ?f:pos-c " + Integer.toString(c) + ")", arrayRobotBackground);
+
+            //Nel modello abbiamo la stringa agent_background, la quale verrà interpretata nella View (updateMap())
+            
+            String background = robotBackground[4];
+
+            map[r - 1][c - 1] = "agent_" + background;
+            if (robotBackground[5].equals("yes")) {
+                map[r - 1][c - 1] += "_informed";
+            }
+        }
+        console.debug("Aggiornata la posizione dell'agente.");
+
+        // ######################## FATTI personstatus ##########################
+        console.debug("Acquisizione posizione degli altri agenti...");
+        String[] arrayPersons = {"step", "time", "ident", "pos-r", "pos-c", "activity", "move"};
+        String[][] persons = core.findAllFacts("ENV", "personstatus", "TRUE", arrayPersons);
+
+        if (persons != null) {
+            for (String[] person : persons) {
+                if (person[0] != null) {
+                    //Se hai trovato il fatto 
+                    int person_r = new Integer(person[3]);
+                    int person_c = new Integer(person[4]);
+                    String ident = person[2];
+                    String[] arrayPersonBackground = {"pos-r", "pos-c", "contains", "injured", "previous", "clear"};
+                    String[] personBackground = core.findFact("ENV", "cell", "and (eq ?f:pos-r " + Integer.toString(person_r) + ") (eq ?f:pos-c " + Integer.toString(person_c) + ")", arrayPersonBackground);
+                    //Nel modello abbiamo la stringa agent_background_ident, la cosa verrà interpretata nella View (updateMap())
+                    String background = personBackground[4];
+                    String oldValue = map[person_r - 1][person_c - 1];
+                    map[person_r - 1][person_c - 1] = "person_" + background + "_" + ident;
+                    if (personBackground[5].equals("yes")) {
+                        map[person_r - 1][person_c - 1] += "_informed";
+                    }
+                    if (oldValue.contains("undiscovered")) {
+                        map[person_r - 1][person_c - 1] += "_undiscovered";
+                    }
+                }
+            }
+        }
+        console.debug("Aggiornati gli stati degli altri agenti.");
+
+        
     }
     
     @Override
     public BufferedImage[][] getIconMatrix(){
-        String[][] mapString = model.getEnvMap();
         images = MonitorImages.getInstance();
         
-        if(mapString==null){
+        if(map==null){
             return null;
         }
     
         Map<String, BufferedImage> map_img = images.getMapImg();
         Map<String, BufferedImage> map_img_robot = images.getMapImg();
-        BufferedImage[][] iconMatrix = new BufferedImage[mapString.length][mapString[0].length];
+        BufferedImage[][] iconMatrix = new BufferedImage[map.length][map[0].length];
     
         /*
             casi possibili per le icone :
@@ -109,9 +213,9 @@ public class RescueMap extends MonitorMap implements Observer {
             
         */
         
-        for (int i=mapString.length-1;i>=0;i--){
+        for (int i=map.length-1;i>=0;i--){
   
-                for (int j = 0; j < mapString[0].length; j++) {
+                for (int j = 0; j < map[0].length; j++) {
                     
                     @SuppressWarnings("UnusedAssignment")
                     String direction = "";
@@ -130,11 +234,11 @@ public class RescueMap extends MonitorMap implements Observer {
                     // ##### SE AGENTE #####
                     
                     
-                    if ( mapString[i][j].contains("agent_")) {
+                    if ( map[i][j].contains("agent_")) {
                             direction = model.getDirection();
                             loaded= model.getMode();
                             key_agent_map="agent_"+ direction + "_" + loaded;
-                            background = map_img.get(mapString[i][j].substring(6, mapString[i][j].length()));
+                            background = map_img.get(map[i][j].substring(6, map[i][j].length()));
                             robot = map_img_robot.get(key_agent_map);
                             iconMatrix[i][j] = overlapImages(robot, background);
                         
@@ -142,14 +246,14 @@ public class RescueMap extends MonitorMap implements Observer {
                     
                     // ##### SE PERSONA #####
                     
-                    else if ( mapString[i][j].equals("person_rescuer")) {
+                    else if ( map[i][j].equals("person_rescuer")) {
                             iconMatrix[i][j]=map_img.get("person_rescuer");
                     }
                     
                     // ##### SE MACERIE ####
-                    else if (mapString[i][j].contains("debris")) {
+                    else if (map[i][j].contains("debris")) {
                         
-                        if(!mapString[i][j].equals("debris")){
+                        if(!map[i][j].equals("debris")){
                              iconMatrix[i][j]=map_img.get("debris_injured");
                         } 
                         else{
@@ -164,17 +268,17 @@ public class RescueMap extends MonitorMap implements Observer {
                     // ##### ALTRO #######
                     else {
                         
-                        iconMatrix[i][j] = map_img.get(mapString[i][j]);
+                        iconMatrix[i][j] = map_img.get(map[i][j]);
                         
                     }
                     
                      //overlap celle non esplorate
                     
                    
-                   if(mapString[i][j].contains("undiscovered")){
+                   if(map[i][j].contains("undiscovered")){
                    
                         undiscovered = map_img.get("undiscovered");      
-                        String  map_substr =  mapString[i][j].substring(0,mapString[i][j].length()- 13); // recupero il tipo di immagine di background a cui
+                        String  map_substr =  map[i][j].substring(0,map[i][j].length()- 13); // recupero il tipo di immagine di background a cui
                                                                                                       // vado a sovrapporre l'iconMatrix[i][j]a di undiscover
                         try{                                                                              // escludo il termine "undiscovered" dalla precedente stringa   
                         iconMatrix[i][j]= map_img.get(map_substr);     
@@ -199,14 +303,13 @@ public class RescueMap extends MonitorMap implements Observer {
     @Override
     public int[] getSize() {
         int[] size = null;
-        String[][] mapString = model.getEnvMap();
-        if(mapString == null || mapString.length == 0 || mapString[0].length == 0){
+        if(map == null || map.length == 0 || map[0].length == 0){
             return null;
         }
         else{
             size = new int[2];
-            size[0] = mapString.length;
-            size[1] = mapString[0].length;
+            size[0] = map.length;
+            size[1] = map[0].length;
         }
         return size;
     }
@@ -217,6 +320,7 @@ public class RescueMap extends MonitorMap implements Observer {
         this.dim = null;
         this.model = null;
         this.images = null;
+        this.core = null;
     }
 
     @Override
@@ -225,6 +329,7 @@ public class RescueMap extends MonitorMap implements Observer {
         model.addObserver(this);
         console = ClipsConsole.getInstance();
         images = MonitorImages.getInstance();
+        core = ClipsCore.getInstance();
     }
 
    
