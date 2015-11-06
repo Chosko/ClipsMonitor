@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Observer;
 import javax.swing.JOptionPane;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.core.MonitorMap;
 
 /**
@@ -19,7 +20,7 @@ import org.clipsmonitor.core.MonitorMap;
 public class RescueMap extends MonitorMap implements Observer {
 
     private RescueModel model;
-    protected RescueImages images;
+    protected MonitorImages images;
     private ClipsConsole console;
     public final int MAP_DIMENSION = 550;
     public final int DEFAULT_IMG_SIZE = 85;
@@ -94,7 +95,7 @@ public class RescueMap extends MonitorMap implements Observer {
    
     @Override
     public BufferedImage[][] makeIconMatrix(String[][] mapString){
-        images = RescueImages.getInstance();
+        images = MonitorImages.getInstance();
         
         if(mapString==null){
             return null;
@@ -223,7 +224,7 @@ public class RescueMap extends MonitorMap implements Observer {
         model = RescueModel.getInstance();
         model.addObserver(this);
         console = ClipsConsole.getInstance();
-        images = RescueImages.getInstance();
+        images = MonitorImages.getInstance();
     }
 
    

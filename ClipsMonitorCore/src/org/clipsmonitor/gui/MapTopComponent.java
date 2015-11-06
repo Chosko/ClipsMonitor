@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorCore;
-import org.clipsmonitor.monitor2015.RescueImages;
+import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.monitor2015.RescueMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.openide.windows.TopComponent;
@@ -22,7 +22,7 @@ import org.openide.windows.TopComponent;
 public abstract class MapTopComponent extends TopComponent implements Observer {
     private MapPanel mapPanel;
     protected RescueModel model;
-    protected RescueImages images;
+    protected MonitorImages images;
     protected RescueMap map;
     protected String target;
     protected ClipsConsole console;

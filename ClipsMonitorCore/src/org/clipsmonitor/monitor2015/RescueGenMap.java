@@ -9,7 +9,7 @@ import org.clipsmonitor.core.MonitorGenMap;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Set;
-import org.clipsmonitor.monitor2015.RescueImages;
+import org.clipsmonitor.core.MonitorImages;
 
 /*
  * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
@@ -76,7 +76,7 @@ public class RescueGenMap extends MonitorGenMap {
     
     public void loadImages() {
         HashMap<String,BufferedImage> mapicons;
-        mapicons = (HashMap<String,BufferedImage>) RescueImages.getInstance().getMapImg();
+        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
         this.images = mapicons;
         Set<String> keys = images.keySet();
         setKeyMap= keys.toArray(new String[keys.size()]);

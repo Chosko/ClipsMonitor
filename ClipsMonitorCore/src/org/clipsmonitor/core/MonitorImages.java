@@ -6,8 +6,11 @@
 package org.clipsmonitor.core;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import org.clipsmonitor.clips.ClipsConsole;
 
 /**
@@ -16,44 +19,66 @@ import org.clipsmonitor.clips.ClipsConsole;
  * 
  * 
  */
-public abstract class MonitorImages {
+public class MonitorImages {
     
-    protected Map<String, BufferedImage> map_img;
-    protected Map<String, BufferedImage> map_img_robot;
-    protected ClipsConsole console;
-   
+    private static MonitorImages instance;
+
+    private Map<String, BufferedImage> map_img;
+    private Map<String, BufferedImage> map_img_robot;
+    private ClipsConsole console;
  
     public int DEFAULT_IMG_SIZE;
     public int MAP_DIMENSION;
     
 
+    /**
+     * Private constructor (Singleton)
+     */
+    private MonitorImages(){}
+
+    public static MonitorImages getInstance(){
+        if(instance == null){
+            instance = new MonitorImages();
+            instance.init();
+        }
+        return instance;
+    }
   
-    protected void init(){
-        
+    /**
+     * Initialize the instance. Used in a separate function to avoid infinite
+     * recursion when initializing singleton classes
+     */
+    private void init(){
         console = ClipsConsole.getInstance();
-        
-        //Primo campo: coerente con i file di CLIPS
-        //Secondo campo: nome del file (a piacere)
         map_img = new HashMap<String, BufferedImage>();
-        map_img_robot = new HashMap<String, BufferedImage>();
     }
 
-    
-   protected abstract void loadImages(String path);
+    public Map<String, BufferedImage> getMapImg() {
+        return map_img;
+    }
 
-   
-   protected void ClearMapImage(){
+    public void ClearImg(){
         this.map_img=null;
-    }
-    
-    protected void ClearMapImageRobot(){
         this.map_img_robot=null;
     }
     
-    public void ClearImg(){
-        this.ClearMapImage();
-        this.ClearMapImageRobot();
-    } 
+    public void loadImages(String path) {
+        try {
+            File img_dir = new File(path + File.separator + "img");
 
-    
+            File [] imgs = img_dir.listFiles();
+
+            for(File img : imgs)
+            {
+
+                String file_name = img.getName(); // recupero il nome dell'immagine
+                int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
+                String img_name = file_name.substring(0,dot_position);
+                map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
+            }
+
+        } catch (IOException e) {
+            console.error(e);
+        }
+    }
 }
