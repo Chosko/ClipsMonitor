@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorImages;
-import org.clipsmonitor.monitor2015.RescueMap;
+import org.clipsmonitor.core.MonitorMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.openide.windows.TopComponent;
 
@@ -23,7 +23,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     private MapPanel mapPanel;
     protected RescueModel model;
     protected MonitorImages images;
-    protected RescueMap map;
+    protected MonitorMap map;
     protected String target;
     protected ClipsConsole console;
     
@@ -103,7 +103,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     public void update(Observable o, Object arg) {
         if(arg.equals(this.target)){
             console.debug("Target map " + arg);
-            this.map = model.getMapToRegister();
+            this.map = model.getMapToRegister(this.target);
             this.map.addObserver(this);
         }
         else if(arg.equals("repaint")){
@@ -132,10 +132,10 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
      *
      */
     private void initializeMap() {
-        String[][] mapString = map.getMap();
+        int[] mapSize = map.getSize();
 
-        int x = mapString.length;
-        int y = mapString[0].length;
+        int x = mapSize[0];
+        int y = mapSize[1];
         int cellDimension = Math.round(map.MAP_DIMENSION / x);
 
         // bloccata la dimensione massima delle singole immagini
@@ -164,9 +164,9 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     
     protected class MapPanel extends JPanel {
         RescueModel model;
-        RescueMap map;
+        MonitorMap map;
         
-        public MapPanel(RescueMap map) {
+        public MapPanel(MonitorMap map) {
             
             super();
             model = RescueModel.getInstance();
@@ -180,12 +180,13 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
-
-            String[][] mapString = map.getMap();
             
+            int[] mapSize = map.getSize();
+            int mapWidth = mapSize[0];
+            int mapHeight = mapSize[1];
 
-            int cellWidth = Math.round((this.getWidth() - 20) / mapString.length);
-            int cellHeight = Math.round((this.getHeight() - 20) / mapString[0].length);
+            int cellWidth = Math.round((this.getWidth() - 20) / mapWidth);
+            int cellHeight = Math.round((this.getHeight() - 20) / mapHeight);
 
             if (cellWidth > cellHeight) {
                 cellWidth = cellHeight;
@@ -193,21 +194,21 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                 cellHeight = cellWidth;
             }
 
-            int x0 = (this.getWidth() - cellWidth * mapString.length) / 2;
-            int y0 = (this.getHeight() - 30 - cellHeight * mapString[0].length) / 2;
+            int x0 = (this.getWidth() - cellWidth * mapWidth) / 2;
+            int y0 = (this.getHeight() - 30 - cellHeight * mapHeight) / 2;
             
             // genero la mappa di icone da disegnare
             
-            BufferedImage[][] iconMatrix = map.makeIconMatrix(mapString);
+            BufferedImage[][] iconMatrix = map.getIconMatrix();
 
-            for (int i = mapString.length - 1; i >= 0; i--) {
+            for (int i = mapWidth - 1; i >= 0; i--) {
                 
                 // calcolo la posizione dei marker per le righe (i)
                 int xiMarker = x0 - cellWidth ;
-                int yiMarker = y0 + cellHeight / 2 + cellHeight * (mapString.length - i);
+                int yiMarker = y0 + cellHeight / 2 + cellHeight * (mapWidth - i);
                 g2.drawString((i + 1) + "",xiMarker , yiMarker );
                 
-                for (int j = 0; j < mapString[0].length; j++) {
+                for (int j = 0; j < mapHeight; j++) {
                     if (i == 0) {
                         
                         // calcolo la posizione dei marker per le colonne (j)
@@ -217,7 +218,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
                     }
                 
                     int xIconPos = x0 + cellWidth * j;
-                    int yIconPos = y0 + cellHeight * (mapString.length - i);
+                    int yIconPos = y0 + cellHeight * (mapWidth - i);
                     
                     g2.drawImage(iconMatrix[i][j],xIconPos , yIconPos, cellWidth, cellHeight, this);
 

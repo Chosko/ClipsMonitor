@@ -1,9 +1,12 @@
 package org.clipsmonitor.monitor2015;
 
+import java.util.HashMap;
+import java.util.Map;
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
+import org.clipsmonitor.core.MonitorMap;
 import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Checked;
 import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Clear;
 import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Contains;
@@ -30,7 +33,7 @@ public class RescueModel extends ClipsModel {
     private ClipsConsole console;
     private static RescueModel instance;
     private String advise;
-    private RescueMap tmp;
+    private Map<String, MonitorMap> maps;
     
     
     /*costanti enumerative intere per un uso più immediato delle posizioni all'interno 
@@ -54,7 +57,7 @@ public class RescueModel extends ClipsModel {
         instance.advise = null;
         instance.direction = null;
         instance.mode = null;
-        instance.tmp = null;
+        instance.maps = null;
         instance.durlastact = 0;
         instance.time = null;
         instance.step = null;
@@ -76,6 +79,7 @@ public class RescueModel extends ClipsModel {
         super();
         console = ClipsConsole.getInstance();
         MonitorCore.getInstance().registerModel(this);
+        maps = new HashMap<String, MonitorMap>();
     }
 
     /**
@@ -147,18 +151,16 @@ public class RescueModel extends ClipsModel {
      */
     
     
-    public void registerMap(String target, RescueMap map){
-        this.tmp = map;
+    public void registerMap(String target, MonitorMap map){
+        maps.put(target, map);
         this.setChanged();
         this.notifyObservers(target);
     }
     
     
     
-    public RescueMap getMapToRegister(){
-        RescueMap rmap = tmp;
-        this.tmp = null;
-        return rmap;
+    public MonitorMap getMapToRegister(String target){
+        return maps.get(target);
     }
 
     protected enum cellslots{

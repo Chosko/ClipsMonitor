@@ -22,8 +22,6 @@ public class RescueMap extends MonitorMap implements Observer {
     private RescueModel model;
     protected MonitorImages images;
     private ClipsConsole console;
-    public final int MAP_DIMENSION = 550;
-    public final int DEFAULT_IMG_SIZE = 85;
     
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
@@ -88,13 +86,10 @@ public class RescueMap extends MonitorMap implements Observer {
         this.notifyObservers("repaint");
         console.info("Step attuale: " + model.getStep());
     }
-
     
-    
-    
-   
     @Override
-    public BufferedImage[][] makeIconMatrix(String[][] mapString){
+    public BufferedImage[][] getIconMatrix(){
+        String[][] mapString = model.getEnvMap();
         images = MonitorImages.getInstance();
         
         if(mapString==null){
@@ -203,13 +198,20 @@ public class RescueMap extends MonitorMap implements Observer {
         
     }
     
-    
-    
-    public String[][] getMap() {
-        return model.getEnvMap();
+    @Override
+    public int[] getSize() {
+        int[] size = null;
+        String[][] mapString = model.getEnvMap();
+        if(mapString == null || mapString.length == 0 || mapString[0].length == 0){
+            return null;
+        }
+        else{
+            size = new int[2];
+            size[0] = mapString.length;
+            size[1] = mapString[0].length;
+        }
+        return size;
     }
-
-    
 
     @Override
     protected void clear() {

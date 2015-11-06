@@ -15,6 +15,8 @@ import java.util.Observer;
  * Varesano Marco, Busso Marco, Cotrino Roberto
  */
 public abstract class MonitorMap extends Observable implements Observer {
+    public final int MAP_DIMENSION = 550;
+    public final int DEFAULT_IMG_SIZE = 85;
     
     @Override
     /**
@@ -97,13 +99,15 @@ public abstract class MonitorMap extends Observable implements Observer {
     
     protected abstract void init();
     
+    public abstract int[] getSize();
+    
     /*
        Questo metodo permette la realizzazione della matrice di icone con cui riempire
        la mappa a seconda dei valori contenuti dalla mappa stessa.
        Viene invocato ad ogni richiesta di repaint della mappa 
     */
     
-    protected abstract BufferedImage[][] makeIconMatrix(String[][] mapString);
+    public abstract BufferedImage[][] getIconMatrix();
     
     
 }
