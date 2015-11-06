@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
-import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.monitor2015.RescueImages;
 import org.clipsmonitor.monitor2015.RescueMap;
@@ -337,6 +337,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
        I|O event managment functions 
     */
     
+    
     private void timeLeftTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLeftTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_timeLeftTextFieldActionPerformed
@@ -354,7 +355,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_resetButtonActionPerformed
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
-        model.setMode(ClipsModel.ex_mode_STEP);
+        model.setMode(MonitorModel.ex_mode_STEP);
         model.resume();
         //model.step();
     }//GEN-LAST:event_stepButtonActionPerformed
@@ -362,7 +363,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         // Il tasto può essere Run oppure Stop (a seconda di cosa era attivo)
         if (runButton.getText().equals("Run")) {
-            model.setMode(ClipsModel.ex_mode_RUN);
+            model.setMode(MonitorModel.ex_mode_RUN);
             model.resume();
             runButton.setText("Stop");
             stepButton.setEnabled(false);
@@ -370,7 +371,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             resetButton.setEnabled(false);
         } else
          {
-                model.setMode(ClipsModel.ex_mode_STOP);
+                model.setMode(MonitorModel.ex_mode_STOP);
                 runButton.setText("Run");
                 stepButton.setEnabled(true);
                 runOneButton.setEnabled(true);
@@ -383,7 +384,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyReleased
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
-        model.setMode(ClipsModel.ex_mode_RUNN, 1);
+        model.setMode(MonitorModel.ex_mode_RUNN, 1);
         model.resume();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
@@ -404,7 +405,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.registerMap("envMap", new RescueMap(projectDirectory.getAbsolutePath()));
         core = MonitorCore.getInstance();
         model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
-        model.setMode(ClipsModel.ex_mode_START);
+        model.setMode(MonitorModel.ex_mode_START);
         model.execute();
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
@@ -436,54 +437,54 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyPressed
 
     private void runOneButtonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyTyped
-        model.setMode(ClipsModel.ex_mode_RUNN, 1);
+        model.setMode(MonitorModel.ex_mode_RUNN, 1);
         model.resume();                                          
     }//GEN-LAST:event_runOneButtonKeyTyped
 
-        private void setShortcut() {
-        /**
-         * Scorciatoie per RUN, RUN1, STEP, START E RESET. runButton: Alt+R
-         * runOneButton: Alt+T, stepButton: Alt+S loadDefaultFileButton: Alt+A
-         * resetButton: Alt+X
-         */
+    private void setShortcut() {
+    /**
+     * Scorciatoie per RUN, RUN1, STEP, START E RESET. runButton: Alt+R
+     * runOneButton: Alt+T, stepButton: Alt+S loadDefaultFileButton: Alt+A
+     * resetButton: Alt+X
+     */
 
-        runButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK), "run");
-        runOneButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T,InputEvent.CTRL_MASK), "run1");
-        stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "step");
-        loadDefaultFileButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "start");
-        resetButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.CTRL_MASK), "reset");
+    runButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK), "run");
+    runOneButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T,InputEvent.CTRL_MASK), "run1");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "step");
+    loadDefaultFileButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "start");
+    resetButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.CTRL_MASK), "reset");
 
-        runButton.getActionMap().put("run", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                runButton.doClick();
-            }
-        });
-        runOneButton.getActionMap().put("run1", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                runOneButton.doClick();
-            }
-        });
-        stepButton.getActionMap().put("step", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stepButton.doClick();
-            }
-        });
-        loadDefaultFileButton.getActionMap().put("start", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadDefaultFileButton.doClick();
-            }
-        });
-        resetButton.getActionMap().put("reset", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetButton.doClick();
-            }
-        });
-    }
+    runButton.getActionMap().put("run", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            runButton.doClick();
+        }
+    });
+    runOneButton.getActionMap().put("run1", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            runOneButton.doClick();
+        }
+    });
+    stepButton.getActionMap().put("step", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            stepButton.doClick();
+        }
+    });
+    loadDefaultFileButton.getActionMap().put("start", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loadDefaultFileButton.doClick();
+        }
+    });
+    resetButton.getActionMap().put("reset", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            resetButton.doClick();
+        }
+    });
+}
     
     void resetProjectDirectory(){
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + "/preferences.txt";
@@ -694,7 +695,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     @Override
     public void keyPressed(KeyEvent e) {
        if(e.getKeyCode() == KeyEvent.VK_SPACE){
-            model.setMode(ClipsModel.ex_mode_RUNN, 1);
+            model.setMode(MonitorModel.ex_mode_RUNN, 1);
             model.resume();
        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

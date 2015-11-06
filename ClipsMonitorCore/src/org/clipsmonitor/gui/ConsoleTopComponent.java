@@ -20,7 +20,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -58,7 +58,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     private String text;
     private String currentCmd;
     private ClipsConsole console;
-    private ClipsModel model;
+    private MonitorModel model;
     private LinkedList<String> CmdHistory;
     private int MaxCmdHistory;
     private int ActualCmd;
@@ -663,7 +663,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
               
             }
         }
-        else if(o instanceof ClipsModel){
+        else if(o instanceof MonitorModel){
             if(evt.equals("startApp")){
                 init();
             }
@@ -780,13 +780,17 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             return false;
         }
         else{
-            c=cmd.charAt(0);
+            
+            int firstParenthesis = cmd.indexOf("(");
+            
             
             // i comandi clips devono necessariamente iniziare con il simbolo (
-            if(c!='('){
+            if(firstParenthesis==-1){
                 return false;
             }
 
+            cmd=cmd.substring(firstParenthesis);
+            
              // controllo il resto della stringa per la corretta sintassi
             for (int i=0 ; i<cmd.length();i++){
 

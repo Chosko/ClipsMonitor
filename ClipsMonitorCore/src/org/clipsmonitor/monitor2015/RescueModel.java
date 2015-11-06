@@ -2,7 +2,7 @@ package org.clipsmonitor.monitor2015;
 
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Checked;
 import static org.clipsmonitor.monitor2015.RescueModel.cellslots.Clear;
@@ -21,7 +21,7 @@ import static org.clipsmonitor.monitor2015.RescueModel.cellslots.PosR;
  * @edit by Enrico Mensa, Matteo Madeddu, Davide Dell'Anna
  */
 
-public class RescueModel extends ClipsModel {
+public class RescueModel extends MonitorModel {
 
     
     private String direction;
@@ -190,7 +190,7 @@ public class RescueModel extends ClipsModel {
      * @throws ClipsExceptionF
      */
     @Override
-    protected synchronized void updateMap() throws CLIPSError {
+    protected synchronized void updateModel() throws CLIPSError {
 
         // ######################## FATTI DI TIPO cell ##########################
         console.debug("Aggiornamento modello mappa in corso...");
@@ -352,7 +352,7 @@ public class RescueModel extends ClipsModel {
     @Override
     protected void action() {
         try{
-            updateMap();
+            updateModel();
         }
         catch (CLIPSError ex){
             console.error(ex);
