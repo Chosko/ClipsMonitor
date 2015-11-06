@@ -2,7 +2,6 @@ package org.clipsmonitor.core;
 
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsCore;
-import org.clipsmonitor.clips.ClipsModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,7 +15,7 @@ import org.clipsmonitor.clips.ClipsModel;
  */
 public final class MonitorCore {
     private static MonitorCore instance;
-    private ClipsModel model;
+    private MonitorModel model;
     
     /**
      * Private constructor (Singleton)
@@ -45,7 +44,7 @@ public final class MonitorCore {
     /**
      * Register the model used in this application
      */
-    public void registerModel(ClipsModel model){
+    public void registerModel(MonitorModel model){
         this.model = model;
     }
     

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -42,7 +42,7 @@ import org.openide.util.NbBundle.Messages;
     "HINT_FocusTopComponent=This is a Focus window"
 })
 public final class FocusTopComponent extends TopComponent implements Observer {
-    private ClipsModel model;
+    private MonitorModel model;
     private ClipsConsole console;
     
     public FocusTopComponent() {

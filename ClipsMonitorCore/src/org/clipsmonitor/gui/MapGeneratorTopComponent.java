@@ -412,7 +412,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
             try {
                 File file = fc.getSelectedFile();
                 model.load_scene(file);
-                //model.initModelMap(model.getNumy(),model.getNumy(),PreviewMap.getWidth(), PreviewMap.getHeight());
                 PreviewMap.repaint();
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);

@@ -8,7 +8,7 @@ package org.clipsmonitor.gui;
 import java.util.Observable;
 import java.util.Observer;
 import org.clipsmonitor.clips.ClipsConsole;
-import org.clipsmonitor.clips.ClipsModel;
+import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -41,7 +41,7 @@ import org.openide.util.NbBundle.Messages;
     "HINT_FactsTopComponent=This is a Facts window"
 })
 public final class FactsTopComponent extends TopComponent implements Observer {
-    private ClipsModel model;
+    private MonitorModel model;
     private ClipsConsole console;
     
     public FactsTopComponent() {

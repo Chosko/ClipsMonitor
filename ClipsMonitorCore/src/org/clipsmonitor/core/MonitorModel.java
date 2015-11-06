@@ -1,7 +1,9 @@
-package org.clipsmonitor.clips;
+package org.clipsmonitor.core;
 
 import java.util.Observable;
 import net.sf.clipsrules.jni.CLIPSError;
+import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.clips.ClipsCore;
 
 /**
  * Questa classe astratta è la parte di model (in un'architettura MVC) che si
@@ -16,7 +18,7 @@ import net.sf.clipsrules.jni.CLIPSError;
  * Davide Dell'Anna, Ruben Caliandro, Marco Corona
  */
 
-public abstract class ClipsModel extends Observable implements Runnable {
+public abstract class MonitorModel extends Observable implements Runnable {
 
     protected ClipsCore core;
     private int executionMode;
@@ -47,7 +49,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     /**
      * costruttore del modello.
      */
-    protected ClipsModel() {
+    protected MonitorModel() {
         t = new Thread(this);
         init();
     }
@@ -99,11 +101,10 @@ public abstract class ClipsModel extends Observable implements Runnable {
                             core.run(1);
                             current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
                             actual = current[0] == null ? -1 : new Integer(current[0]);
-                            this.step=actual;
-                            
                             done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
                         }
-                        break;
+                        
+                       break;
                     case ex_mode_RUNN:
                         core.run(paramMode);
                         break;
@@ -127,11 +128,14 @@ public abstract class ClipsModel extends Observable implements Runnable {
                 if (executionMode != ex_mode_RUN) {
                     this.suspend();
                 }
+                this.setChanged();
+                this.notifyObservers("repaint");
             }
             // Aggiorna le penalità
             dispose();
             this.setChanged();
             this.notifyObservers("disposeDone");
+        
         } catch (NumberFormatException ex) {
             console.error(ex);
         } catch(CLIPSError ex) {
@@ -401,12 +405,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
     Clips 
     */
     
-    protected abstract void updateMap() throws CLIPSError;
+    protected abstract void updateModel() throws CLIPSError;
     
-    /*
-     Registra la classe che dovrà effettuare l'ovveride dei metodi e la notifica
-     alla classe di MapTopComponent per la sua visualizzazione
-    */
     
-   //  protected abstract <ProjectMap extends MonitorMap> void registerMap(String target,ProjectMap map);
 }

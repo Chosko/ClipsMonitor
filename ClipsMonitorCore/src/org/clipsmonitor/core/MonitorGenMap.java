@@ -75,8 +75,14 @@ public abstract class MonitorGenMap {
     }
     
     
-        public void resize(int NumCellX, int NumCellY) {
-        //creo una scena con la nuova dimensione
+    /*
+        Metodo per il ridimensionamento delle celle a seguito della modifica della dimensione della
+        griglia.
+    */
+    
+    public void resize(int NumCellX, int NumCellY) {
+    //creo una scena con la nuova dimensione
+        
         String[][] new_scene = new String[NumCellX][NumCellY];
         //salvo il numero di celle sulle x e sulle y
         this.NumCellX = NumCellX;
@@ -99,7 +105,7 @@ public abstract class MonitorGenMap {
 
         //inizializzo la nuova scena per farsi che abbia i muri sul perimetro
         initScene(new_scene);
-        
+
         //ricopio ogni cella della vecchia mappa nella nuova mappa senza uscire fuori dalle celle a disposizione
         for (int i = 1; i < new_scene.length - 1; i++) {
             for (int j = 1; j < new_scene[i].length - 1; j++) {
@@ -109,9 +115,12 @@ public abstract class MonitorGenMap {
             } 
         }
         scene = new_scene;
-    
+
     }
         
+    /*
+        Metodo per il disegno della scena utilizzando i valori in stringhe della mappa
+    */
     
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
 
@@ -181,6 +190,8 @@ public abstract class MonitorGenMap {
     }
     
     
+    //  SET E GET
+    
     public void setNumCell(int NumCellX, int NumCellY) {
         this.NumCellX = NumCellX;
         this.NumCellY = NumCellY;
@@ -243,16 +254,16 @@ public abstract class MonitorGenMap {
                
                 //scrivo il file della mappa
                 Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt"), sceneFile.getBytes());
-                consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt");
+                consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt \n");
 
                 if (historyFile.length() > 0) //scrivo il file della history solo se sono
                 {                               //sono state aggiunte persone alla scena
                     Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt"), historyFile.getBytes());
-                 consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt");
+                 consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt \n");
                 }
                 //scrivo il file json con la mappa scritta
-                this.salva_info_mappa(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json");
-                consoleOutput += "File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json");
+                this.saveMap(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json");
+                consoleOutput += "File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json + \n");
 
           
             
@@ -265,7 +276,9 @@ public abstract class MonitorGenMap {
        
     }
     
-    public boolean salva_info_mappa(String nome) throws JSONException {
+    
+    
+    public boolean saveMap(String nome) throws JSONException {
         
        
         try {
@@ -297,6 +310,8 @@ public abstract class MonitorGenMap {
         return true;
     }
 
+    
+    
     
     @SuppressWarnings("UnnecessaryUnboxing")
     public void load_scene(File jsonFile) throws ParseException {

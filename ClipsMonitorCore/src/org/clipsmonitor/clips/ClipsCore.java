@@ -522,7 +522,7 @@ public class ClipsCore {
         clips.clear();
     }
 
-    String evaluateOutput(String module, String command) throws CLIPSError {
+  public String evaluateOutput(String module, String command) throws CLIPSError {
         router.startRec();
         try{
             this.evaluate(module, command);
@@ -535,14 +535,14 @@ public class ClipsCore {
         return router.getStdout();
     }
     
-    String getBanner(){
+ public String getBanner(){
         router.startRec();
         clips.printBanner();
         router.stopRec();
         return router.getStdout();
     }
     
-    String getPrompt(){
+ public String getPrompt(){
         router.startRec();
         clips.printPrompt();
         router.stopRec();
