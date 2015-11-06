@@ -388,6 +388,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model = RescueModel.getInstance();
         model.addObserver(this);
         model.registerMap("envMap", new RescueMap(projectDirectory.getAbsolutePath()));
+        model.registerMap("agentMap", new RescueMap(projectDirectory.getAbsolutePath()));
         core = MonitorCore.getInstance();
         model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode(ClipsModel.ex_mode_START);
