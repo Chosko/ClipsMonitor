@@ -7,6 +7,7 @@ package org.clipsmonitor.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -17,11 +18,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsModel;
 import org.clipsmonitor.core.MonitorCore;
@@ -77,6 +81,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());
         putClientProperty(TopComponent.PROP_MAXIMIZATION_DISABLED, Boolean.TRUE);
+        this.setShortcut();
+    
     }
 
     
@@ -133,7 +139,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         loadDefaultFileButton.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         loadDefaultFileButton.setForeground(new java.awt.Color(0, 204, 0));
         org.openide.awt.Mnemonics.setLocalizedText(loadDefaultFileButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.loadDefaultFileButton.text")); // NOI18N
-        loadDefaultFileButton.setToolTipText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.loadDefaultFileButton.toolTipText")); // NOI18N
+        loadDefaultFileButton.setToolTipText("CTRL+A");
         loadDefaultFileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadDefaultFileButtonActionPerformed(evt);
@@ -141,7 +147,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(runOneButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.runOneButton.text")); // NOI18N
-        runOneButton.setToolTipText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.runOneButton.toolTipText")); // NOI18N
+        runOneButton.setToolTipText("CTRL+T");
         runOneButton.setEnabled(false);
         runOneButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,13 +155,19 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             }
         });
         runOneButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                runOneButtonKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 runOneButtonKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                runOneButtonKeyTyped(evt);
             }
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(runButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.runButton.text")); // NOI18N
-        runButton.setToolTipText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.runButton.toolTipText")); // NOI18N
+        runButton.setToolTipText("CTRL+R");
         runButton.setEnabled(false);
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,7 +176,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         });
 
         org.openide.awt.Mnemonics.setLocalizedText(stepButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.stepButton.text")); // NOI18N
-        stepButton.setToolTipText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.stepButton.toolTipText")); // NOI18N
+        stepButton.setToolTipText("CTRL+S");
         stepButton.setEnabled(false);
         stepButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -175,7 +187,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         resetButton.setFont(new java.awt.Font("Lucida Grande", 1, 12)); // NOI18N
         resetButton.setForeground(new java.awt.Color(255, 0, 0));
         org.openide.awt.Mnemonics.setLocalizedText(resetButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.resetButton.text")); // NOI18N
-        resetButton.setToolTipText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.resetButton.toolTipText")); // NOI18N
+        resetButton.setToolTipText("CTRL+X");
         resetButton.setEnabled(false);
         resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -375,6 +387,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.resume();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
+
+    
     private void loadDefaultFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultFileButtonActionPerformed
         loadDefaultFileButton.setEnabled(false);
         runButton.setEnabled(true);
@@ -417,6 +431,60 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         //stepTextField.setText(step);
     }//GEN-LAST:event_stepTextFieldPropertyChange
 
+    private void runOneButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_runOneButtonKeyPressed
+
+    private void runOneButtonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyTyped
+        model.setMode(ClipsModel.ex_mode_RUNN, 1);
+        model.resume();                                          
+    }//GEN-LAST:event_runOneButtonKeyTyped
+
+        private void setShortcut() {
+        /**
+         * Scorciatoie per RUN, RUN1, STEP, START E RESET. runButton: Alt+R
+         * runOneButton: Alt+T, stepButton: Alt+S loadDefaultFileButton: Alt+A
+         * resetButton: Alt+X
+         */
+
+        runButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK), "run");
+        runOneButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_T,InputEvent.CTRL_MASK), "run1");
+        stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "step");
+        loadDefaultFileButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "start");
+        resetButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.CTRL_MASK), "reset");
+
+        runButton.getActionMap().put("run", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runButton.doClick();
+            }
+        });
+        runOneButton.getActionMap().put("run1", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                runOneButton.doClick();
+            }
+        });
+        stepButton.getActionMap().put("step", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stepButton.doClick();
+            }
+        });
+        loadDefaultFileButton.getActionMap().put("start", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDefaultFileButton.doClick();
+            }
+        });
+        resetButton.getActionMap().put("reset", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetButton.doClick();
+            }
+        });
+    }
+    
     void resetProjectDirectory(){
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + "/preferences.txt";
         File prefFile = new File(prefPath);

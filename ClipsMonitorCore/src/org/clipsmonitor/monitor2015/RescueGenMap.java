@@ -43,7 +43,8 @@ public class RescueGenMap extends MonitorGenMap {
     private RescueGenMap() {
 
     }
-
+    
+    @Override
     public void init(){
   
         this.NumCellX=0;
