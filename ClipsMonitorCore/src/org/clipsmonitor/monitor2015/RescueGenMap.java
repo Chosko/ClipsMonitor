@@ -55,6 +55,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.CellWidth=0;
         this.direction="north";
         this.maxduration=100;
+        this.personName="person_rescuer";
         this.defaultagentposition= new int [2];
         this.defaultagentposition[0]=3;
         this.defaultagentposition[1]=2 ;
@@ -79,6 +80,9 @@ public class RescueGenMap extends MonitorGenMap {
         HashMap<String,BufferedImage> mapicons;
         mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
         this.images = mapicons;
+        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
+        this.images = mapicons;
+        
         Set<String> keys = images.keySet();
         setKeyMap= keys.toArray(new String[keys.size()]);
     }

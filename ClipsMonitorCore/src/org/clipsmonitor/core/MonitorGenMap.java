@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.clipsmonitor.monitor2015.RescueGenMap;
@@ -48,11 +49,82 @@ public abstract class MonitorGenMap {
             
     
     protected HashMap<String,BufferedImage> images; // hashmap delle immagini
+    protected HashMap<String,BufferedImage> colors; // hashmap delle immagini
     protected String[] setKeyMap; // array dei possibili valori di scene corrispondenti alle 
                                 // chiavi di accesso per l'hash map delle immagini
+    protected String[] setKeyColor;
+    
+    protected String personName;
     protected int [] agentposition;
     protected int[] defaultagentposition;
-
+    protected LinkedList<Person> Persons;
+    
+    
+    /*
+        Classe che definisce il concetto di persone e tiene traccia dei suoi movimenti
+    */
+    
+    protected class Person{
+    
+        protected String name;
+        protected LinkedList<Status> move;
+        protected String associatedColor;
+        
+        
+        protected class Status{
+        
+            protected int row;
+            protected int column;
+            protected int path;
+        
+            protected Status(int r , int c , int p){
+                this.row=r;
+                this.column=c;
+                this.path=p;
+            
+            }
+            
+            
+            protected int getRow(){
+                return row;
+            }
+            
+            protected int getColumn(){
+                return column;
+            }
+            
+            protected int path(){
+                return path;
+            }
+        
+        }
+    
+        protected Person(String label, String color){
+        
+            this.name=label;
+            this.associatedColor=color;
+            this.move=new LinkedList<Status>();
+        }
+        
+        protected String getName(){
+        
+            return this.name;
+        }
+        
+        protected String getColor(){
+        
+            return this.associatedColor;
+        }
+    
+        protected LinkedList<Status> getMoves(){
+        
+            return this.move;
+        }
+        
+            
+    }
+    
+    
     
     public void initModelMap(int NumCellX, int NumCellY, float MapWidth, float MapHeight){
     
@@ -227,6 +299,10 @@ public abstract class MonitorGenMap {
             
     public HashMap<String,BufferedImage> getImages(){
         return this.images;
+    }
+    
+    public HashMap<String,BufferedImage> getColors(){
+        return this.colors;
     }
 
     public String[] getSetKey(){

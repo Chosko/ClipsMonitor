@@ -24,6 +24,7 @@ public class MonitorImages {
     private static MonitorImages instance;
 
     private Map<String, BufferedImage> map_img;
+    private Map<String,BufferedImage> colors;
     private Map<String, BufferedImage> map_img_robot;
     private ClipsConsole console;
  
@@ -51,6 +52,7 @@ public class MonitorImages {
     private void init(){
         console = ClipsConsole.getInstance();
         map_img = new HashMap<String, BufferedImage>();
+        colors = new HashMap<String, BufferedImage>();
     }
 
     public Map<String, BufferedImage> getMapImg() {
@@ -62,9 +64,40 @@ public class MonitorImages {
         this.map_img_robot=null;
     }
     
+    /*
+        Carica le immagini per le mappe e il generatore di mappe
+    */
+    
     public void loadImages(String path) {
         try {
             File img_dir = new File(path + File.separator + "img");
+
+            File [] imgs = img_dir.listFiles();
+
+            for(File img : imgs)
+            {
+                if(img.isFile()){ // escludo la directory dei colori
+                    String file_name = img.getName(); // recupero il nome dell'immagine
+                    int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
+                    String img_name = file_name.substring(0,dot_position);
+                    map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
+                }
+                
+             }
+
+        } catch (IOException e) {
+            console.error(e);
+        }
+    }
+    
+    /*
+        Load dei colori utilizzati dal generatore di mappe per tracciare il percorso fatto dalle persone
+        eseguendo un overlap sulle celle
+    */
+    
+    public void loadGenColors(String path) {
+        try {
+            File img_dir = new File(path + File.separator + "img" + File.separator + "colors");
 
             File [] imgs = img_dir.listFiles();
 
@@ -74,11 +107,12 @@ public class MonitorImages {
                 String file_name = img.getName(); // recupero il nome dell'immagine
                 int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
                 String img_name = file_name.substring(0,dot_position);
-                map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
+                colors.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
             }
 
         } catch (IOException e) {
             console.error(e);
         }
     }
+    
 }
