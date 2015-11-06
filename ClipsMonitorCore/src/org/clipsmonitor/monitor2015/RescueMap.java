@@ -53,7 +53,6 @@ public class RescueMap extends MonitorMap implements Observer {
         } catch (IOException ex) {
             console.error(ex);
         }
-        console.info("Azione effettuata.");
     }
 
     @Override
@@ -84,7 +83,6 @@ public class RescueMap extends MonitorMap implements Observer {
     private void updateMap() throws IOException {
         this.setChanged();
         this.notifyObservers("repaint");
-        console.info("Step attuale: " + model.getStep());
     }
     
     @Override
