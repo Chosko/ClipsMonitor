@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -148,6 +149,108 @@ public abstract class MonitorGenMap {
         return list;
     }
     
+    /*
+    *  Ritorna una stringa indicante il numero di step disponibili alla modifica in base
+    *  al parametro che li viene dato .
+    * @param : param>-1 può indicare l'indice della persona su cui costruire la lista 
+    *          param==-1 indica che bisogna richiedere la lista globale di tutti gli step 
+    *                    in cui è stato definito almeno un move
+    */
+    
+    public String[] getListStep(int param){
+        
+        String [] list= null;
+        int maxStep= 0;
+        if(param==-1){
+            ListIterator<Person> it = this.Persons.listIterator();
+            while(it.hasNext()){
+                int numStepPerson = it.next().move.size();
+                if(numStepPerson>maxStep){
+                    maxStep=numStepPerson;
+                }
+            }
+            
+            list = new String[maxStep];
+            
+        }
+        else{
+        
+            Person paramPerson = this.Persons.get(param);
+            maxStep = paramPerson.move.size();
+        }
+        
+        list = new String[maxStep];
+        for(int i= 0; i<list.length;i++){
+            list[i]="Step " + i;
+        }
+        
+        return list;
+    }
+    
+    
+    /*
+    *   Ritorna la lista dei movimenti definiti fino a questo istante in base al parametro param
+    *    @paramPerson : paramPerson>-1  indica l'indice della persona da cui prelevare tutti le move definite
+    *                   paramPerson==-1 indica la richiesta delle move per tutti le persone nella lista
+    *
+    *   @paramStep : paramStep>-1  indica il numero dello step da cui prelevare tutti le move definite
+    *                paramStep==-1 indica la richieste delle move per tutti gli step
+    */
+    
+    
+    public String[] getListMove(int paramPerson , int paramStep ){
+            
+        String [] list= null;
+        ArrayList<String> moveslist = new ArrayList<String>();
+        // richiesta della lista completa degli step;
+        if(paramPerson==-1 && paramStep==-1){
+            
+            ListIterator<Person> it = this.Persons.listIterator();
+            while(it.hasNext()){
+                Person p = it.next();
+                ListIterator<StepMove> moves = p.move.listIterator();
+                while(moves.hasNext()){
+                    StepMove s = moves.next();
+                    String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: "  + s.path 
+                    + "\t (" + s.row + "," + s.column + ")"; 
+                    moveslist.add(move);
+                }
+            }        
+        }
+        // richiesta della lista completa delle move in un determinato step
+        if(paramPerson==-1 && paramStep>-1){
+            ListIterator<Person> it = this.Persons.listIterator();
+            while(it.hasNext()){
+                Person p = it.next();
+                if(p.move.size()>paramStep){
+                    StepMove s = p.move.get(paramStep);
+                    String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: "  + s.path 
+                    + "\t (" + s.row + "," + s.column + ")";
+                    moveslist.add(move);
+                }
+            
+            }
+        }
+        
+        // richiesta della lista delle move eseguita da una determinata persona
+        if(paramPerson>-1 && paramStep==-1){
+        
+            Person p = this.Persons.get(paramPerson);
+            ListIterator<StepMove> moves = p.move.listIterator();
+            while(moves.hasNext()){
+                StepMove s = moves.next();
+                String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: "  + s.path 
+                    + "\t (" + s.row + "," + s.column + ")";  
+                moveslist.add(move);
+            }
+        
+        }
+        
+        list = new String[moveslist.size()];
+        list = moveslist.toArray(list);
+        return list;
+    
+    }
     
     /*
         Carica le immagini del progetto e genera l'array di stringhe che possono essere

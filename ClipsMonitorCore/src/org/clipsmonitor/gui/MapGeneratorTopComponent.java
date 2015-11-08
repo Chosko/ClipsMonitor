@@ -85,6 +85,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         colors=model.getColors();
         this.initComboBox(icons);
         this.MakePersonList();
+        this.MakeStepList(-1);
+        this.MakeMoveList(-1,-1);
         this.state=this.InsertionOptionComboBox.getSelectedItem().toString();
         model.initModelMap(x, y, PreviewMap.getWidth(), PreviewMap.getHeight());
         console= ClipsConsole.getInstance();
@@ -496,6 +498,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
                      console.info("Modifica della mappa eseguita con successo");
                      PreviewMap.repaint();
                      this.MakePersonList();
+                     this.MakeStepList(-1);
+                     this.MakeMoveList(-1,-1);
                 break;
                     
                 case IllegalPosition :
@@ -554,7 +558,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
             try {
                 File file = fc.getSelectedFile();
                 model.load_scene(file);
-                
                 PreviewMap.repaint();
             } catch (Exception ex) {
                 Exceptions.printStackTrace(ex);
@@ -733,6 +736,30 @@ public final class MapGeneratorTopComponent extends TopComponent {
             ListRenderer render = new ListRenderer(this.PersonsList,list);
         
     }
+    
+    private void MakeStepList(int paramStep){
+    
+        String [] list = model.getListStep(paramStep);
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.StepList,list);
+        
+    }
+    
+    private void MakeMoveList(int paramPerson,int paramStep){
+    
+        String [] list = model.getListMove(paramPerson, paramStep);
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.MovementList,list);
+        
+    }
+    
+    
     
     /*
       Aggiorna la combo e l'icona corrisponendentemente scelta
