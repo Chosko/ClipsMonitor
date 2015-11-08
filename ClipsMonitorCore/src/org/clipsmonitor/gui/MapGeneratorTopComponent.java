@@ -59,6 +59,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private RescueGenMap model;
     private String state;
     private HashMap<String,BufferedImage> icons;
+    private HashMap<String,BufferedImage> colors;
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
@@ -73,7 +74,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
         int x =Integer.parseInt(this.XButton.getText());
         int y =Integer.parseInt(this.YButton.getText());
         icons= model.getImages();
+        colors=model.getColors();
+        
         this.initComboBox(icons);
+        this.MakePersonList();
         this.state=this.InsertionOptionComboBox.getSelectedItem().toString();
         model.initModelMap(x, y, PreviewMap.getWidth(), PreviewMap.getHeight());
         console= ClipsConsole.getInstance();
@@ -81,7 +85,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
         save = new JFileChooser();
         fc.setCurrentDirectory(new File("./"));
         fc.setFileFilter(new JSONFilter());
-
         save.setCurrentDirectory(new File("./"));
         //save_fc.setFileFilter(new CLIPSFilter());
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -129,14 +132,14 @@ public final class MapGeneratorTopComponent extends TopComponent {
         MaxDur = new javax.swing.JTextField();
         MaxDuration = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        MovementList = new javax.swing.JList();
         jScrollPane1 = new javax.swing.JScrollPane();
         PersonsList = new javax.swing.JList();
         jScrollPane2 = new javax.swing.JScrollPane();
-        PositionList = new javax.swing.JList();
+        StepList = new javax.swing.JList();
         AddMoveButton = new javax.swing.JButton();
         DeleteMoveButton = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        MovementList = new javax.swing.JList();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -312,44 +315,19 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(LoadButton)
                     .addComponent(SaveButton))
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
-        PersonsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        PersonsList.addContainerListener(new java.awt.event.ContainerAdapter() {
-            public void componentAdded(java.awt.event.ContainerEvent evt) {
-                PersonsListComponentAdded(evt);
-            }
-            public void componentRemoved(java.awt.event.ContainerEvent evt) {
-                PersonsListComponentRemoved(evt);
-            }
-        });
-        jScrollPane1.setViewportView(PersonsList);
-
-        PositionList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(PositionList);
-
-        org.openide.awt.Mnemonics.setLocalizedText(AddMoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.AddMoveButton.text")); // NOI18N
-        AddMoveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AddMoveButtonActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(DeleteMoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.DeleteMoveButton.text")); // NOI18N
-        DeleteMoveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DeleteMoveButtonActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 271, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 157, Short.MAX_VALUE)
+        );
 
         MovementList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -381,39 +359,41 @@ public final class MapGeneratorTopComponent extends TopComponent {
         });
         jScrollPane3.setViewportView(MovementList);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(DeleteMoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(AddMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(AddMoveButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(DeleteMoveButton))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+        PersonsList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        PersonsList.addContainerListener(new java.awt.event.ContainerAdapter() {
+            public void componentAdded(java.awt.event.ContainerEvent evt) {
+                PersonsListComponentAdded(evt);
+            }
+            public void componentRemoved(java.awt.event.ContainerEvent evt) {
+                PersonsListComponentRemoved(evt);
+            }
+        });
+        jScrollPane1.setViewportView(PersonsList);
+
+        StepList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(StepList);
+
+        org.openide.awt.Mnemonics.setLocalizedText(AddMoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.AddMoveButton.text")); // NOI18N
+        AddMoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddMoveButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(DeleteMoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.DeleteMoveButton.text")); // NOI18N
+        DeleteMoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteMoveButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -429,7 +409,21 @@ public final class MapGeneratorTopComponent extends TopComponent {
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(AddMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(DeleteMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(29, 29, 29))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -440,6 +434,18 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AddMoveButton)
+                    .addComponent(DeleteMoveButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -448,7 +454,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -466,15 +472,41 @@ public final class MapGeneratorTopComponent extends TopComponent {
     // PreviewMap MouseClick
     
     private void PreviewMapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreviewMapMouseClicked
+        
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        
         try{
             int x = evt.getX();
             int y = evt.getY();
             int [] posCell = new int [2] ;
             posCell = model.getCellPosition(x, y);
-            boolean result = model.UpdateCell(posCell[0],posCell[1], state);
-            if(result){
-                PreviewMap.repaint();
+            int result = model.UpdateCell(posCell[0],posCell[1], state);
+            switch(result){
+                case Success :
+                     console.info("Modifica della mappa eseguita con successo");
+                     PreviewMap.repaint();
+                     this.MakePersonList();
+                break;
+                    
+                case IllegalPosition :
+                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
+                break;
+                case keyColorEmpty :
+                    console.error("Color set vuoto");
+                break;
+                case keyColorFull :
+                    console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
+                break;
+                default :
+                    
+                break;    
+                  
             }
+         
+            
         }
         catch(NullPointerException err){
             err.printStackTrace();
@@ -615,10 +647,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JLabel MaxDuration;
     private javax.swing.JList MovementList;
     private javax.swing.JList PersonsList;
-    private javax.swing.JList PositionList;
     private javax.swing.JPanel PreviewMap;
     private javax.swing.JButton RefreshButton;
     private javax.swing.JButton SaveButton;
+    private javax.swing.JList StepList;
     private javax.swing.JTextField XButton;
     private javax.swing.JLabel XLabel;
     private javax.swing.JTextField YButton;
@@ -667,8 +699,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
         
         try{
             ImageIcon icon = new ImageIcon (this.icons.get(name));
-            Image image = icon.getImage(); // transform it 
-            Image newimg = image.getScaledInstance(90, 90,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+            Image image = icon.getImage(); // transform it
+            int width = this.Icons.getWidth();
+            int height = this.Icons.getHeight();
+            Image newimg = image.getScaledInstance(90,90,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
             icon = new ImageIcon(newimg);  // transform it back
             Icons.setIcon(icon);
             Icons.setToolTipText("A drawing of a " + name.toLowerCase());
@@ -682,10 +716,19 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
 
 
+    private void MakePersonList(){
     
+        String [] list = model.getListPerson();
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.PersonsList,list);
+        
+    }
     
     /*
-      Update Combobox label for new selected icon
+      Aggiorna la combo e l'icona corrisponendentemente scelta
     */
     
     private void initComboBox(HashMap<String,BufferedImage> icons){

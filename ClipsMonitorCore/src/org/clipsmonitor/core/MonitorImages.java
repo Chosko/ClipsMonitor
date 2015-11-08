@@ -17,6 +17,8 @@ import org.clipsmonitor.clips.ClipsConsole;
  *
  * @author Marco Corona 
  * 
+ * Questa classe viene utilizzata come supporto per la visualizzazione sia dell'ambiente 
+ * sia come supporto alla creazione delle mappe mediante il generatore.
  * 
  */
 public class MonitorImages {
@@ -25,7 +27,6 @@ public class MonitorImages {
 
     private Map<String, BufferedImage> map_img;
     private Map<String,BufferedImage> colors;
-    private Map<String, BufferedImage> map_img_robot;
     private ClipsConsole console;
  
     public int DEFAULT_IMG_SIZE;
@@ -58,14 +59,18 @@ public class MonitorImages {
     public Map<String, BufferedImage> getMapImg() {
         return map_img;
     }
+    
+    public Map<String, BufferedImage> getMapColor() {
+        return colors;
+    }
 
     public void ClearImg(){
         this.map_img=null;
-        this.map_img_robot=null;
+        this.colors=null;
     }
     
     /*
-        Carica le immagini per le mappe e il generatore di mappe
+        Carica le immagini per le mappe e il generatore di mappe 
     */
     
     public void loadImages(String path) {
@@ -86,6 +91,7 @@ public class MonitorImages {
              }
 
         } catch (IOException e) {
+            console.error("Load Icons error:");
             console.error(e);
         }
     }
@@ -97,7 +103,8 @@ public class MonitorImages {
     
     public void loadGenColors(String path) {
         try {
-            File img_dir = new File(path + File.separator + "img" + File.separator + "colors");
+            String colorPath = path + File.separator + "img" + File.separator + "colors";
+            File img_dir = new File(colorPath);
 
             File [] imgs = img_dir.listFiles();
 
@@ -107,10 +114,11 @@ public class MonitorImages {
                 String file_name = img.getName(); // recupero il nome dell'immagine
                 int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
                 String img_name = file_name.substring(0,dot_position);
-                colors.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
+                colors.put(img_name, ImageIO.read(new File(colorPath + File.separator + file_name)));
             }
 
         } catch (IOException e) {
+            console.error("Load color error:");
             console.error(e);
         }
     }

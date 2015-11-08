@@ -8,8 +8,8 @@ package org.clipsmonitor.monitor2015;
 import org.clipsmonitor.core.MonitorGenMap;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.Set;
-import org.clipsmonitor.core.MonitorImages;
+import java.util.LinkedList;
+import org.clipsmonitor.clips.ClipsConsole;
 
 /*
  * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
@@ -46,7 +46,8 @@ public class RescueGenMap extends MonitorGenMap {
     
     @Override
     public void init(){
-  
+        this.console = ClipsConsole.getInstance();
+        console.debug("Inizializzazione del map geneator");
         this.NumCellX=0;
         this.NumCellY=0;
         this.MapWidth=0;
@@ -62,30 +63,20 @@ public class RescueGenMap extends MonitorGenMap {
         this.agentposition= new int [2];
         this.agentposition[0]=this.defaultagentposition[0];
         this.agentposition[1]=this.defaultagentposition[1];
-        
+        this.NumPerson=0;
+        this.Persons= new LinkedList<Person>();
+        this.images= new HashMap<String,BufferedImage>();
+        this.colors= new HashMap<String,BufferedImage>();
+        this.setKeyColor = null;
+        this.setKeyMap = null;
         //carico tutte le image in ram
+        
         this.loadImages();
         
     }
     
     
-    
 
-    /*
-    Carica le immagini del progetto e genera l'array di stringhe che possono essere
-    utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
-    */
-    
-    public void loadImages() {
-        HashMap<String,BufferedImage> mapicons;
-        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
-        this.images = mapicons;
-        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
-        this.images = mapicons;
-        
-        Set<String> keys = images.keySet();
-        setKeyMap= keys.toArray(new String[keys.size()]);
-    }
 
     
 
@@ -197,9 +188,14 @@ public class RescueGenMap extends MonitorGenMap {
     */
    
     @Override
-    public boolean UpdateCell(int x, int y, String state) {
+    public int UpdateCell(int x, int y, String state) {
         
-        boolean result = true;
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        
+        
         if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
              
             // se è stato richiesto un aggiornamento della posizione di agent
@@ -210,9 +206,11 @@ public class RescueGenMap extends MonitorGenMap {
                 // se la nuova posizione agente è diversa dalla precedente
                 if(x!=this.agentposition[0] || y!=this.agentposition[1]){ 
                     
+                    // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
+                    // e successivamente inserisco il nuovo agente
                     scene[x][y]=state;                                    
-                    scene[this.agentposition[0]][this.agentposition[1]]="empty"; // rimuovo l'agente
-                    this.agentposition[0]=x; // setto la nuova posizione dell'agente
+                    scene[this.agentposition[0]][this.agentposition[1]]="empty"; 
+                    this.agentposition[0]=x; 
                     this.agentposition[1]=y;
                     
                     // setto la nuova direzione
@@ -235,23 +233,47 @@ public class RescueGenMap extends MonitorGenMap {
                     scene[x][y]=state; 
                 }
             }
-            else{ // valori di state differenti dalla posizione dell'agente
+            // si vuole aggiungere una nuova persona alla storia
+            else if(state.contains("person_rescuer")){
+              
+              if(this.setKeyColor.length==0){
+                  return keyColorEmpty;
+              }
+              // ho ancora disponibilita di colori per indicare le person
+              if(this.NumPerson<this.colors.size() && !scene[x][y].contains("person_rescuer")){          
+                        this.NumPerson++;
+                        String color=this.setKeyColor[this.NumPerson-1];
+                        this.Persons.add(new Person(color));
+                        String path ="P"+ this.Persons.size();
+                        this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0));
+                        scene[x][y]=state;
+                }  
+              // ho terminato il numero di aggiunte che posso fare
+              else{
+                  return keyColorFull;
+              }  
+                
+            }
+            // si richiedono modifiche alla scena diverse da tipologie di state agent
+            else{ 
+                // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
+                // allora semplicemente reimposto la posizione di default dell'agente
                 if(x==this.agentposition[0] && y==this.agentposition[1]){ 
                     scene[x][y]=state;                                    
-                    this.agentposition[0]=this.defaultagentposition[0]; // setto la posizione di default dell'agent
+                    this.agentposition[0]=this.defaultagentposition[0]; 
                     this.agentposition[1]=this.defaultagentposition[1];
                     scene[this.agentposition[0]][this.agentposition[1]]="agent_north_unloaded";
                 }
                 else{
-                scene[x][y]=state;
+                    scene[x][y]=state;
                 }
             }
         } 
         else { // caso di modifiche non permesse dal modello
             
-            result = false;
+            return IllegalPosition;
         }
-        return result;
+        return Success;
     }
 
 

@@ -5,7 +5,11 @@
  */
 package org.clipsmonitor.gui;
 
+import java.util.LinkedList;
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import org.clipsmonitor.core.MonitorModel;
 
 /**
@@ -18,15 +22,23 @@ import org.clipsmonitor.core.MonitorModel;
  * determina in che modo si dovrà popolare la lista e come sono etichettati gli
  * agenti esterni al robot nel progetto
  */
+
+
 public class ListRenderer {
     
-    private MonitorModel model;
-    
-    public ListRenderer(JList list , String [] target){
-    
-        
     
     
+    public ListRenderer(JList list , String [] Listmodel){
+    
+        DefaultListModel strings;
+        strings = new DefaultListModel();
+        for (String elem : Listmodel){
+            strings.addElement(elem);
+        }
+        ListSelectionModel modelSelect = list.getSelectionModel();
+        modelSelect.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setModel(strings);
     }
+    
     
 }

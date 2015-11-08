@@ -18,8 +18,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.monitor2015.RescueGenMap;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,14 +49,14 @@ public abstract class MonitorGenMap {
     protected String[][] scene; //matrice fondamentale rappresentante la scena
     
     protected int maxduration; // massima durata temporale di attività del robot nell scena
-            
+    protected ClipsConsole console;        
     
     protected HashMap<String,BufferedImage> images; // hashmap delle immagini
     protected HashMap<String,BufferedImage> colors; // hashmap delle immagini
     protected String[] setKeyMap; // array dei possibili valori di scene corrispondenti alle 
                                 // chiavi di accesso per l'hash map delle immagini
     protected String[] setKeyColor;
-    
+    protected int NumPerson;
     protected String personName;
     protected int [] agentposition;
     protected int[] defaultagentposition;
@@ -64,24 +67,18 @@ public abstract class MonitorGenMap {
         Classe che definisce il concetto di persone e tiene traccia dei suoi movimenti
     */
     
-    protected class Person{
-    
-        protected String name;
-        protected LinkedList<Status> move;
-        protected String associatedColor;
-        
-        
-        protected class Status{
+    protected class StepMove{
         
             protected int row;
             protected int column;
-            protected int path;
-        
-            protected Status(int r , int c , int p){
+            protected String path;
+            protected int step;
+            
+            public StepMove(int r , int c , String p , int s){
                 this.row=r;
                 this.column=c;
                 this.path=p;
-            
+                this.step=s;
             }
             
             
@@ -93,38 +90,69 @@ public abstract class MonitorGenMap {
                 return column;
             }
             
-            protected int path(){
+            protected String path(){
                 return path;
             }
         
         }
     
-        protected Person(String label, String color){
+    protected class Person{
+    
+        protected LinkedList<StepMove> move;
+        protected String associatedColor;
         
-            this.name=label;
+    
+        public Person(String color){
+        
             this.associatedColor=color;
-            this.move=new LinkedList<Status>();
+            this.move=new LinkedList<StepMove>();
         }
         
-        protected String getName(){
+
         
-            return this.name;
-        }
-        
-        protected String getColor(){
+        public String getColor(){
         
             return this.associatedColor;
         }
     
-        protected LinkedList<Status> getMoves(){
+        public LinkedList<StepMove> getMoves(){
         
             return this.move;
         }
         
             
     }
+   
+    /*
+        ritorna un array di stringhe che descrive le attuali persone attive nella scena
+        Questo metodo verrà poi richiesto per popolare la JList 
+    */
+    
+    public String[] getListPerson(){
+    
+        String [] list=null;
+        if(this.Persons.size()>0){
+            
+            list = new String [this.Persons.size()+1];
+            ListIterator<Person> it = this.Persons.listIterator();
+            int i =0;
+
+            while(it.hasNext()){
+
+                list[i]="person_" + it.next().getColor();
+                i++;
+            }
+        
+            list[this.Persons.size()]="all";
+        }
+        return list;
+    }
     
     
+    
+    /*
+        Metodo per l'inizializzazione del modello della mappa e la posizione iniziale dell'agente
+    */
     
     public void initModelMap(int NumCellX, int NumCellY, float MapWidth, float MapHeight){
     
@@ -310,8 +338,58 @@ public abstract class MonitorGenMap {
         return this.setKeyMap;
     }
     
+    public String[] getSetKeyColor(){
+    
+        return this.setKeyColor;
+    }
     
     //  METODI PER SAVE E LOAD DELLA MAPPA
+    
+        /*
+    Carica le immagini del progetto e genera l'array di stringhe che possono essere
+    utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
+    */
+    
+    protected void loadImages() {
+        // carico le icone per la selezione dei contenuti della mappa
+        
+        HashMap<String,BufferedImage> mapicons;
+        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
+        this.images = mapicons;
+        Set<String> keys = images.keySet();
+        setKeyMap= keys.toArray(new String[keys.size()]);
+        String setMap = "(";
+        for(int i=0; i<setKeyMap.length;i++){
+            if(i<setKeyMap.length-1){
+                setMap += setKeyMap[i] + "," ;
+            }
+            else{
+                setMap += setKeyMap[i] ;
+            }
+        }
+        setMap +=")";
+        console.debug("Chiavi icona registrate :" + setMap);
+        
+        // carico le icone per i colori 
+        HashMap<String,BufferedImage> coloricons;
+        coloricons=(HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapColor();
+        this.colors=coloricons;
+        Set<String> colorKeys = colors.keySet();
+        this.setKeyColor = colorKeys.toArray(new String[colorKeys.size()]);
+
+        String setColor = "(";
+        for(int i=0; i<setKeyColor.length;i++){
+            if(i<setKeyColor.length-1){
+                setColor += setKeyColor[i] + "," ;
+            }
+            else{
+                setColor += setKeyColor[i] ;
+            }
+        }
+        setColor +=")";
+        console.debug("Chiavi colore registrate :" + setColor);
+        
+    }
     
     
     public String exportScene(File file) throws JSONException {
@@ -468,7 +546,7 @@ public abstract class MonitorGenMap {
         metodo per l'aggiornamento della mappa in base alle modifiche richieste dalla gui
     */
     
-    public abstract boolean UpdateCell(int x, int y, String state);
+    public abstract int UpdateCell(int x, int y, String state);
     
     /*
         Esegue l'init del generatore, viene eseguito a livello di classe derivata
