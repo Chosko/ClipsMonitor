@@ -429,6 +429,13 @@ public class ClipsCore {
         }
     }
     
+    /*
+    *  Questa funzione ritorna un array di stringhe corrispondenti allo stack 
+    *  dei moduli attualmente attivi. Le stringhe dei moduli sono ordinate in maniera
+    * crescente a seconda della profondità in cui si trova un determinato modulo attivo
+    *
+    * @return : un array di stringhe con i nomi dei moduli attivi
+    */
     
     public String[] getFocusStack(){
     

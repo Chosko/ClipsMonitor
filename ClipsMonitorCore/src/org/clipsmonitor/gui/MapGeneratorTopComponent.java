@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.monitor2015.RescueGenMap;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -67,15 +68,21 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     
     public MapGeneratorTopComponent() {
+        
+        
+        
         initComponents();
         setName(Bundle.CTL_MapGeneratorTopComponent());
         setToolTipText(Bundle.HINT_MapGeneratorTopComponent());
         model = RescueGenMap.getInstance();
+        model.setMapImg((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapImg());
+        model.setMapColor((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapColor());
+        model.setKeyMap(MonitorImages.getInstance().getSetKeyMap());
+        model.setKeyColor(MonitorImages.getInstance().getSetKeyColor());
         int x =Integer.parseInt(this.XButton.getText());
         int y =Integer.parseInt(this.YButton.getText());
         icons= model.getImages();
         colors=model.getColors();
-        
         this.initComboBox(icons);
         this.MakePersonList();
         this.state=this.InsertionOptionComboBox.getSelectedItem().toString();

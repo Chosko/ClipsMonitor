@@ -149,6 +149,27 @@ public abstract class MonitorGenMap {
     }
     
     
+    /*
+        Carica le immagini del progetto e genera l'array di stringhe che possono essere
+        utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
+    */
+    
+    protected void loadImages() {
+        // carico le icone per la selezione dei contenuti della mappa
+        
+        HashMap<String,BufferedImage> mapicons;
+        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
+        this.images = mapicons;
+        this.setKeyMap=MonitorImages.getInstance().getSetKeyMap();
+        
+        // carico le icone per i colori 
+        HashMap<String,BufferedImage> coloricons;
+        coloricons=(HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapColor();
+        this.colors=coloricons;
+        this.setKeyColor=MonitorImages.getInstance().getSetKeyColor();
+        
+    }
+    
     
     /*
         Metodo per l'inizializzazione del modello della mappa e la posizione iniziale dell'agente
@@ -343,53 +364,27 @@ public abstract class MonitorGenMap {
         return this.setKeyColor;
     }
     
+    public void setMapImg(HashMap<String,BufferedImage> map){
+        this.images=map;
+    }
+    
+    public void setMapColor(HashMap<String,BufferedImage>  map){
+        this.colors=map;
+    }
+    
+    public void setKeyMap(String [] keys){
+    
+        this.setKeyMap=keys;
+    }
+    
+    public void setKeyColor(String [] keys){
+    
+       this.setKeyColor=keys;
+    }   
+    
     //  METODI PER SAVE E LOAD DELLA MAPPA
     
-        /*
-    Carica le immagini del progetto e genera l'array di stringhe che possono essere
-    utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
-    */
-    
-    protected void loadImages() {
-        // carico le icone per la selezione dei contenuti della mappa
-        
-        HashMap<String,BufferedImage> mapicons;
-        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
-        this.images = mapicons;
-        Set<String> keys = images.keySet();
-        setKeyMap= keys.toArray(new String[keys.size()]);
-        String setMap = "(";
-        for(int i=0; i<setKeyMap.length;i++){
-            if(i<setKeyMap.length-1){
-                setMap += setKeyMap[i] + "," ;
-            }
-            else{
-                setMap += setKeyMap[i] ;
-            }
-        }
-        setMap +=")";
-        console.debug("Chiavi icona registrate :" + setMap);
-        
-        // carico le icone per i colori 
-        HashMap<String,BufferedImage> coloricons;
-        coloricons=(HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapColor();
-        this.colors=coloricons;
-        Set<String> colorKeys = colors.keySet();
-        this.setKeyColor = colorKeys.toArray(new String[colorKeys.size()]);
 
-        String setColor = "(";
-        for(int i=0; i<setKeyColor.length;i++){
-            if(i<setKeyColor.length-1){
-                setColor += setKeyColor[i] + "," ;
-            }
-            else{
-                setColor += setKeyColor[i] ;
-            }
-        }
-        setColor +=")";
-        console.debug("Chiavi colore registrate :" + setColor);
-        
-    }
     
     
     public String exportScene(File file) throws JSONException {

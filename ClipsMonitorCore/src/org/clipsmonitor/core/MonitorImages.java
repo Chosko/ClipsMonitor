@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import org.clipsmonitor.clips.ClipsConsole;
 
@@ -27,6 +28,8 @@ public class MonitorImages {
 
     private Map<String, BufferedImage> map_img;
     private Map<String,BufferedImage> colors;
+    private String [] setKeyMap;
+    private String [] setKeyColor;
     private ClipsConsole console;
  
     public int DEFAULT_IMG_SIZE;
@@ -50,10 +53,13 @@ public class MonitorImages {
      * Initialize the instance. Used in a separate function to avoid infinite
      * recursion when initializing singleton classes
      */
+    @SuppressWarnings("empty-statement")
     private void init(){
         console = ClipsConsole.getInstance();
         map_img = new HashMap<String, BufferedImage>();
         colors = new HashMap<String, BufferedImage>();
+        setKeyColor = null;
+        setKeyMap = null;
     }
 
     public Map<String, BufferedImage> getMapImg() {
@@ -67,6 +73,8 @@ public class MonitorImages {
     public void ClearImg(){
         this.map_img=null;
         this.colors=null;
+        this.setKeyColor= null;
+        this.setKeyMap = null;
     }
     
     /*
@@ -89,7 +97,21 @@ public class MonitorImages {
                 }
                 
              }
-
+            
+            Set<String> keys = map_img.keySet();
+            setKeyMap= keys.toArray(new String[keys.size()]);
+            String setMap = "(";
+            for(int i=0; i<setKeyMap.length;i++){
+                if(i<setKeyMap.length-1){
+                     setMap += setKeyMap[i] + "," ;
+                }
+                else{
+                    setMap += setKeyMap[i] ;
+                }
+            }
+            setMap +=")";
+            console.debug("Chiavi icona registrate :" + setMap);
+            
         } catch (IOException e) {
             console.error("Load Icons error:");
             console.error(e);
@@ -117,10 +139,36 @@ public class MonitorImages {
                 colors.put(img_name, ImageIO.read(new File(colorPath + File.separator + file_name)));
             }
 
+            Set<String> colorKeys = colors.keySet();
+            this.setKeyColor = colorKeys.toArray(new String[colorKeys.size()]);
+
+            String setColor = "(";
+            for(int i=0; i<setKeyColor.length;i++){
+                if(i<setKeyColor.length-1){
+                    setColor += setKeyColor[i] + "," ;
+                }
+                else{
+                    setColor += setKeyColor[i] ;
+                }
+            }
+            setColor +=")";
+            console.debug("Chiavi colore registrate :" + setColor);
+            
         } catch (IOException e) {
             console.error("Load color error:");
             console.error(e);
         }
     }
     
+   public String [] getSetKeyMap(){
+   
+      return this.setKeyMap;
+   }
+
+   public String[] getSetKeyColor(){
+   
+       return this.setKeyColor;
+   }
+
 }
+

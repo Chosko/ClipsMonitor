@@ -69,10 +69,9 @@ public class RescueGenMap extends MonitorGenMap {
         this.colors= new HashMap<String,BufferedImage>();
         this.setKeyColor = null;
         this.setKeyMap = null;
-        //carico tutte le image in ram
-        
+       
         this.loadImages();
-        
+        console.debug("Inizializzzione terminata del map generator");
     }
     
     
