@@ -64,7 +64,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
-    
+    private boolean actualMode ;
     
     
     public MapGeneratorTopComponent() {
@@ -83,7 +83,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         int y =Integer.parseInt(this.YButton.getText());
         icons= model.getImages();
         colors=model.getColors();
-        this.initComboBox(icons);
+        this.initComboBox();
         this.MakePersonList();
         this.MakeStepList(-1);
         this.MakeMoveList(-1,-1);
@@ -97,7 +97,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
         save.setCurrentDirectory(new File("./"));
         //save_fc.setFileFilter(new CLIPSFilter());
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        
+        this.MapButton.setSelected(true);
+        this.MoveButton.setSelected(false);
+        this.setEnabled(false);
+        this.setEnabled(true);
     }
     
     
@@ -149,6 +152,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         StepList = new javax.swing.JList();
         AddMoveButton = new javax.swing.JButton();
         DeleteMoveButton = new javax.swing.JButton();
+        MapButton = new javax.swing.JRadioButton();
+        MoveButton = new javax.swing.JRadioButton();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -404,6 +409,22 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
         });
 
+        MapButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(MapButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MapButton.text")); // NOI18N
+        MapButton.setContentAreaFilled(false);
+        MapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MapButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(MoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MoveButton.text")); // NOI18N
+        MoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MoveButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -431,7 +452,12 @@ public final class MapGeneratorTopComponent extends TopComponent {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(AddMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(DeleteMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(DeleteMoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(MapButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(MoveButton)))
                 .addGap(29, 29, 29))
         );
         jPanel3Layout.setVerticalGroup(
@@ -454,6 +480,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AddMoveButton)
                     .addComponent(DeleteMoveButton))
+                .addGap(26, 26, 26)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(MapButton)
+                    .addComponent(MoveButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -581,6 +611,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_LoadButtonMouseClicked
 
+    
+    
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         int retrival = save.showSaveDialog(this);
         if (retrival == JFileChooser.APPROVE_OPTION) {
@@ -594,9 +626,13 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
-
+        boolean checkButton = this.MapButton.isSelected();
+        HashMap<String,BufferedImage> toChange = this.icons;
+        if(!checkButton){
+            toChange = this.colors;
+        }
         setState(InsertionOptionComboBox.getSelectedItem().toString());
-        this.updateLabel(state);
+        this.updateLabel(state,toChange);
         Icons.repaint();
     }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
 
@@ -644,6 +680,24 @@ public final class MapGeneratorTopComponent extends TopComponent {
         // TODO add your handling code here:
     }//GEN-LAST:event_MovementListMouseClicked
 
+    private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
+        this.MapButton.setSelected(true);
+        this.MoveButton.setSelected(false);
+        this.setEnabled(false);
+        this.setEnabled(true);
+        this.InitMapComboBox();
+        Icons.repaint();
+    }//GEN-LAST:event_MapButtonActionPerformed
+
+    private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
+        this.MapButton.setSelected(false);
+        this.MoveButton.setSelected(true);
+        this.setEnabled(true);
+        this.setEnabled(false);
+        this.InitColorComboBox();
+        Icons.repaint();
+    }//GEN-LAST:event_MoveButtonActionPerformed
+
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -653,8 +707,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JLabel Icons;
     private javax.swing.JComboBox InsertionOptionComboBox;
     private javax.swing.JButton LoadButton;
+    private javax.swing.JRadioButton MapButton;
     private javax.swing.JTextField MaxDur;
     private javax.swing.JLabel MaxDuration;
+    private javax.swing.JRadioButton MoveButton;
     private javax.swing.JList MovementList;
     private javax.swing.JList PersonsList;
     private javax.swing.JPanel PreviewMap;
@@ -698,17 +754,24 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
    
     
+    private void InitMapComboBox(){
     
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
+    }
     
+    private void InitColorComboBox(){
+    
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(colors,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),colors);
+     }
     
     // Aggiornamento dell'img di preview
     
-    protected void updateLabel(String name) {
-        
-        
+    protected void updateLabel(String name, HashMap<String,BufferedImage> map ) {
         
         try{
-            ImageIcon icon = new ImageIcon (this.icons.get(name));
+            ImageIcon icon = new ImageIcon (map.get(name));
             Image image = icon.getImage(); // transform it
             int width = this.Icons.getWidth();
             int height = this.Icons.getHeight();
@@ -765,10 +828,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
       Aggiorna la combo e l'icona corrisponendentemente scelta
     */
     
-    private void initComboBox(HashMap<String,BufferedImage> icons){
-    
+    private void initComboBox(){
+        
         ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
         
     }
     

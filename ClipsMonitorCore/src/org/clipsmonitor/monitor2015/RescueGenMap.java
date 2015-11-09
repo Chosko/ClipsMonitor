@@ -9,6 +9,7 @@ import org.clipsmonitor.core.MonitorGenMap;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import org.clipsmonitor.clips.ClipsConsole;
 
 /*
@@ -245,7 +246,7 @@ public class RescueGenMap extends MonitorGenMap {
                         this.Persons.add(new Person(color));
                         String path ="P"+ this.Persons.size();
                         this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0));
-                        scene[x][y]=state;
+                        scene[x][y]=state + "_" + color;
                 }  
               // ho terminato il numero di aggiunte che posso fare
               else{
@@ -262,6 +263,20 @@ public class RescueGenMap extends MonitorGenMap {
                     this.agentposition[0]=this.defaultagentposition[0]; 
                     this.agentposition[1]=this.defaultagentposition[1];
                     scene[this.agentposition[0]][this.agentposition[1]]="agent_north_unloaded";
+                }
+                else if(scene[x][y].contains("person_rescuer")){
+                    
+                    int lastUnderScore = scene[x][y].lastIndexOf("_");
+                    String color = scene[x][y].substring(lastUnderScore+1);
+                    ListIterator<Person> it = this.Persons.listIterator();
+                    while(it.hasNext()){
+                    
+                        Person p = it.next();
+                        if(p.getColor().equals(color)){
+                            this.Persons.remove(p);
+                        }
+                    }
+                    scene[x][y]=state;
                 }
                 else{
                     scene[x][y]=state;

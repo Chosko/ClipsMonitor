@@ -51,7 +51,7 @@ public class ComboBoxRenderer extends JPanel {
 
         ComboBoxModel<String> jcombostrings = new DefaultComboBoxModel<String>(keyStrings);
         jcomboicons.setModel(jcombostrings);
-        jcomboicons.setSelectedIndex(4);
+        jcomboicons.setSelectedIndex(0);
 
         icons.setFont(icons.getFont().deriveFont(Font.ITALIC));
         icons.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));

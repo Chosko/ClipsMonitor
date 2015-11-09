@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -48,7 +47,8 @@ public abstract class MonitorGenMap {
     protected float MapWidth, MapHeight;  //largezza e altezza finestra
     
     protected String[][] scene; //matrice fondamentale rappresentante la scena
-    
+    protected String[][] move ; 
+     
     protected int maxduration; // massima durata temporale di attività del robot nell scena
     protected ClipsConsole console;        
     
@@ -381,7 +381,12 @@ public abstract class MonitorGenMap {
                 //se la cella non è vuota, allora disegno l'immagine corrispondente
                 if (!scene[i][j].equals("")) {
                     //disegno l'immagine corretta usando la stringa che definisce la chiave per l'hashmap
-                    g.drawImage(images.get(scene[i][j]), x, y, (int) (CellWidth - 1), (int) (CellHeight - 1), null);
+                    if(scene[i][j].contains(personName)){
+                        g.drawImage(images.get(personName), x, y, (int) (CellWidth - 1), (int) (CellHeight - 1), null);
+                    }
+                    else{
+                        g.drawImage(images.get(scene[i][j]), x, y, (int) (CellWidth - 1), (int) (CellHeight - 1), null);
+                    }
                 }
 
                 //traccio il rettangolo della cella
