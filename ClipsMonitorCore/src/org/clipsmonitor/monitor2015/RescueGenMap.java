@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorImages;
 
 /*
  * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
@@ -28,6 +29,7 @@ public class RescueGenMap extends MonitorGenMap {
     
     
     private String direction; // direzione iniziale del robot
+    private String loaded; // stato iniziale del robot
     
     /*
         La classe viene definita singleton 
@@ -56,7 +58,9 @@ public class RescueGenMap extends MonitorGenMap {
         this.CellHeight=0;
         this.CellWidth=0;
         this.direction="north";
+        this.direction="unloaded";
         this.maxduration=100;
+        this.mode="scene";
         this.personName="person_rescuer";
         this.defaultagentposition= new int [2];
         this.defaultagentposition[0]=3;
@@ -87,7 +91,6 @@ public class RescueGenMap extends MonitorGenMap {
     @Override
     public void initScene(String[][] scene) {
 
-        //imposto i muri sul perimetro
         for (int i = 0; i < scene.length; i++) {
             for (int j = 0; j < scene[i].length; j++) {
                 if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
@@ -227,6 +230,14 @@ public class RescueGenMap extends MonitorGenMap {
                         this.direction="south";
                     }
                     
+                    if(state.contains("unloaded")){
+                        this.loaded="unloaded";
+                    }
+                    
+                    if(state.contains("loaded")){
+                    
+                        this.loaded="loaded";
+                    }
                 }
                 else{ // stessa posizione attuale dell'agent position
                     
@@ -289,7 +300,136 @@ public class RescueGenMap extends MonitorGenMap {
         }
         return Success;
     }
+    
+    /*
+    * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
+    * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
+    * lista dei movimenti 
+    */
 
+    @Override
+    public int UpdateMoveCell(int x, int y, Person p){
+    
+        final int Success = 0;
+        final int IllegalPosition = 1;
+        
+        
+        if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
+            
+             StepMove s = p.getMoves().getLast();
+             // distanza di manhattam
+             if((s.getRow()-x)+ (s.getColumn()-y)<=1){
+                 p.getMoves().addLast(new StepMove(x,y,p.getMoves().getLast().getPath() , p.getMoves().getLast().getStep()));
+             }
+             
+             return Success;
+        }
+        else{
+        
+            return IllegalPosition;
+        }
+    
+    }
+    
+    
+    /*
+     *   Metodo per la creazione della matrice di icone da disegnare sulla mappa del generatore.
+     *   Il metodo si occupa di creare le icone con l'overlap . 
+     *   @param typeMap : determina quale tipologia di mappa si sta chiedendo la visualizzazione
+    */
+    
+    @Override
+    public BufferedImage[][] makeIconMatrix(String typeMap){
+    
+        BufferedImage[][] icons = new BufferedImage[mapActive.length][mapActive[0].length];
+    
+        if(typeMap.equals("scene")){
+            
+            for(int i=0;i<this.NumCellX;i++){
+            
+                for(int j=0;i<this.NumCellY;j++){
+                
+                    if(!mapActive[i][j].equals("")){
+                        
+                        if(mapActive[i][j].contains(personName)){
+                            icons[i][j]=this.images.get(personName);
+                            
+                        }
+                        
+                        else if(mapActive[i][j].contains("agent")){
+                    
+                        String background = mapActive[i][j].substring("agent_".length());
+                        BufferedImage backImg = this.images.get(background);
+                        String key_agent_map="agent_"+ direction + "_" + loaded;
+                        BufferedImage img = MonitorImages.getInstance().overlapImages(backImg,this.images.get(key_agent_map));
+                        icons[i][j]=img;
+                    
+                        }
+                        else{
+                            icons[i][j]=this.images.get(mapActive[i][j]);
+                        }
+                    }
+                }
+            
+            }
+        
+        
+        } 
+    
+        // determino le regole nel caso in cui ci sia attiva la mappa di move
+        
+        if(typeMap.equals("move")){
+        
+            for(int i=0;i<this.NumCellX;i++){
+            
+                for(int j=0;i<this.NumCellY;j++){
+                    
+                    if(mapActive[i][j].contains("agent")){
+                    
+                        String background = mapActive[i][j].substring("agent_".length());
+                        BufferedImage backImg = this.images.get(background);
+                        String key_agent_map="agent_"+ direction + "_" + loaded;
+                        BufferedImage img = MonitorImages.getInstance().overlapImages(backImg,this.images.get(key_agent_map));
+                        icons[i][j]=img;
+                    
+                    }
+                    
+                    else if(mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")){
 
+                            int lastUnderScore = mapActive[i][j].lastIndexOf("_");
+                            String color = mapActive[i][j].substring(lastUnderScore+1);
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("empty"),this.colors.get(color));
+                            icons[i][j]=img;
+                        }
+                    else if(mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")){
+
+                            int lastUnderScore = mapActive[i][j].lastIndexOf("_");
+                            String color = mapActive[i][j].substring(lastUnderScore+1);
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("gate"),this.colors.get(color));
+                            icons[i][j]=img;
+                        }
+
+                    else if(mapActive[i][j].contains("outdoor") && !mapActive[i][j].equals("outdoor")){
+
+                            int lastUnderScore = mapActive[i][j].lastIndexOf("_");
+                            String color = mapActive[i][j].substring(lastUnderScore+1);
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("outdoor"),this.colors.get(color));
+                            icons[i][j]=img;
+                        }
+                    else{
+                    
+                        icons[i][j]=this.images.get(mapActive[i][j]);
+                    }
+                    
+                    
+                }
+        
+            }
+                
+       }
+        
+        return icons;
+    }
+    
     
 }

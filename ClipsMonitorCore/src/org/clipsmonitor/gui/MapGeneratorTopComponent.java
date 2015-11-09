@@ -58,14 +58,12 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     // Var Declaration
     private RescueGenMap model;
-    private String state;
     private HashMap<String,BufferedImage> icons;
     private HashMap<String,BufferedImage> colors;
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
-    private boolean actualMode ;
-    
+    private String state;
     
     public MapGeneratorTopComponent() {
         
@@ -124,7 +122,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 Graphics2D g2 = (Graphics2D) g; // cast g to Graphics2D
 
                 if (model != null) {
-                    model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight());
+                    model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight(), model.getMode());
                 }
             }
 
@@ -683,19 +681,29 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
         this.MapButton.setSelected(true);
         this.MoveButton.setSelected(false);
-        this.setEnabled(false);
-        this.setEnabled(true);
+        this.MapButton.setEnabled(false);
+        this.MoveButton.setEnabled(true);
+        this.XButton.setEditable(true);
+        this.YButton.setEditable(true);
+        this.MaxDur.setEditable(true);
+        this.model.setMode("scene");
         this.InitMapComboBox();
         Icons.repaint();
+        PreviewMap.repaint();
     }//GEN-LAST:event_MapButtonActionPerformed
 
     private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
         this.MapButton.setSelected(false);
         this.MoveButton.setSelected(true);
-        this.setEnabled(true);
-        this.setEnabled(false);
+        this.MapButton.setEnabled(true);
+        this.MoveButton.setEnabled(false);
+        this.XButton.setEditable(false);
+        this.YButton.setEditable(false);
+        this.MaxDur.setEditable(false);
+        this.model.setMode("scene");
         this.InitColorComboBox();
         Icons.repaint();
+        PreviewMap.repaint();
     }//GEN-LAST:event_MoveButtonActionPerformed
 
     

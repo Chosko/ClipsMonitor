@@ -136,7 +136,7 @@ public class RescueMap extends MonitorMap implements Observer {
                             key_agent_map="agent_"+ direction + "_" + loaded;
                             background = map_img.get(mapString[i][j].substring(6, mapString[i][j].length()));
                             robot = map_img_robot.get(key_agent_map);
-                            iconMatrix[i][j] = overlapImages(robot, background);
+                            iconMatrix[i][j] = MonitorImages.getInstance().overlapImages(robot, background);
                         
                     }
                     
@@ -178,7 +178,7 @@ public class RescueMap extends MonitorMap implements Observer {
                                                                                                       // vado a sovrapporre l'iconMatrix[i][j]a di undiscover
                         try{                                                                              // escludo il termine "undiscovered" dalla precedente stringa   
                         iconMatrix[i][j]= map_img.get(map_substr);     
-                        iconMatrix[i][j]= overlapImages(undiscovered,iconMatrix[i][j]);
+                        iconMatrix[i][j]= MonitorImages.getInstance().overlapImages(undiscovered,iconMatrix[i][j]);
                         }
                         catch(NullPointerException e){
 
