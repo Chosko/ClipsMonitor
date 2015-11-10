@@ -244,7 +244,8 @@ public abstract class MonitorGenMap {
         return clone;
     
     }
-        
+    
+   
     
     
     /*
@@ -270,6 +271,7 @@ public abstract class MonitorGenMap {
     
     
     //  SET E GET
+  
     
     public void setNumCell(int NumCellX, int NumCellY) {
         this.NumCellX = NumCellX;
@@ -290,6 +292,67 @@ public abstract class MonitorGenMap {
     
         this.maxduration=max_dur;
     }
+    
+    
+    public void setMode(String mode){
+    
+        this.mode=mode;
+    }
+    
+    public void setMapImg(HashMap<String,BufferedImage> map){
+        this.images=map;
+    }
+    
+    public void setMapColor(HashMap<String,BufferedImage>  map){
+        this.colors=map;
+    }
+    
+    public void setKeyMap(String [] keys){
+    
+        this.setKeyMap=keys;
+    }
+    
+    public void setKeyColor(String [] keys){
+    
+       this.setKeyColor=keys;
+    }   
+    
+    /*
+    *   Copia una delle mappe in input sulla mappa attiva di modo che venga visualizzata
+    *   successivamente soltanto la mappa attiva
+    */
+    
+    public void CopyToActive(String[][] map){
+    
+        this.mapActive=this.clone(map);
+    }
+  
+    
+    
+    /*
+    * Copia la nuova scena come base per le nuove move in modo da far coincidere
+    * la mappa dello scenario con la mappa in cui si determinano le moves
+    */
+    
+    public void CopySceneToMove(){
+    
+        this.move = this.clone(scene);
+    }
+    
+    
+    
+    /*
+    * Questo metodo serve per generare la nuova mappa di stringhe move a partire
+    * dalle celle coinvolte. Le celle coinvolte sono state generate prelevando
+    * le informazioni dalla lista linkata delle persone
+    */
+    
+    
+    public void ApplyUpdateOnMoveMap(String[][] cellMove){
+    
+        this.move = this.loadMoveonMap(scene, cellMove);
+    }
+    
     
     public String[][] getScene(){
     
@@ -332,34 +395,6 @@ public abstract class MonitorGenMap {
         return this.mode;
     }
 
-    public void setMode(String mode){
-    
-        this.mode=mode;
-    }
-    
-    public void setMapImg(HashMap<String,BufferedImage> map){
-        this.images=map;
-    }
-    
-    public void setMapColor(HashMap<String,BufferedImage>  map){
-        this.colors=map;
-    }
-    
-    public void setKeyMap(String [] keys){
-    
-        this.setKeyMap=keys;
-    }
-    
-    public void setKeyColor(String [] keys){
-    
-       this.setKeyColor=keys;
-    }   
-    
-    public void CopyToActive(String[][] map){
-    
-        this.mapActive=this.clone(map);
-    }
-    
     
     // Metodi per l'utilizzo del generatore della history dei movimenti 
     
@@ -445,6 +480,80 @@ public abstract class MonitorGenMap {
             
     }
    
+    
+    /*
+    *   Metodo che resistuisce l'indice della persona associata al colore nella linkedList 
+    *   @param color : colore associato
+    *   @return position : indice nella linkedList
+    */
+    
+    public int findPosByColor(String color){
+    
+       int position = 0;
+       ListIterator<Person> it = this.Persons.listIterator();
+       Person p = null;
+       while(it.hasNext()){
+           p = it.next();
+           if(p.associatedColor.equals(color)){
+               return position;
+           }
+           position++;
+       }
+       return -1;
+  }
+    
+    
+    /*
+    *  Questo metodo ricerca l'oggetto Person corrispondente al suo colore associato
+    *  @param color : stringa del colore associato alla persona
+    *  @return p : oggetto Person da restituire
+    */
+    
+    public Person findByColor(String color){
+    
+       ListIterator<Person> it = this.Persons.listIterator();
+       Person p = null;
+       while(it.hasNext()){
+       
+           p = it.next();
+           if(p.associatedColor.equals(color)){
+               return p;
+           }
+       
+       }
+       return p;
+    
+    }
+    
+    /*
+    *  Restituisce un array di tutti colori attualmente attivi nella mappa in modo 
+    *  da controllare quali risultano essere le opzioni disponibili al generatore 
+    *  delle move. 
+    */
+    
+    public String[] getListColorActive(){
+    
+        ListIterator<Person> it = this.Persons.listIterator();
+        ArrayList<String> listColor = new ArrayList<String>();
+        String [] colors ;
+        
+        while(it.hasNext()){
+        
+            Person p = it.next();
+            listColor.add(p.associatedColor);
+        }
+        
+        if(listColor.size()>0){
+            colors = new String[listColor.size()];
+            colors = listColor.toArray(colors);
+        }
+        else{
+            colors = new String[1];
+            colors[0]="";
+        }
+        return colors;
+    }
+    
     /*
         ritorna un array di stringhe che descrive le attuali persone attive nella scena
         Questo metodo verrà poi richiesto per popolare la JList 
@@ -585,7 +694,12 @@ public abstract class MonitorGenMap {
     
         String [][] newmap = new String[this.NumCellX][this.NumCellY];
         
+        for(int i = 0 ; i<newmap.length;i++){
         
+            for(int j=0;j<newmap[0].length;j++){
+                newmap[i][j]="";
+            }
+        }
         // caso di richiesta di uno specifico step
         if(paramPerson==-1){
             ListIterator<Person> it = this.Persons.listIterator();
@@ -638,7 +752,7 @@ public abstract class MonitorGenMap {
             
                 if(!move[i][j].equals("")){
                 
-                    newmap[i][j]=map[i][j]+move[i][j];
+                    newmap[i][j]=map[i][j] + "_" + move[i][j];
                 }
                 else{
                 
@@ -858,7 +972,7 @@ public abstract class MonitorGenMap {
     * richieste dall'
     */
     
-    public abstract int UpdateMoveCell(int x,int y,Person p);
+    public abstract int UpdateMoveCell(int x,int y,String color);
     
     
     /*

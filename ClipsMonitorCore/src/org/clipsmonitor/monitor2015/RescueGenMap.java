@@ -186,9 +186,21 @@ public class RescueGenMap extends MonitorGenMap {
     
     
     /*
-    * Metodo per l'aggiornamento consistente delle celle
-    *  @param x ,y : possibile in riga e colonna della cella da modificare
-    *  @param state : nuovo stato da inserire
+    * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna interi corrispondenti
+    * ad un particolare conclusione dell'esecuzione. L'aggiornamento viene sostanzialmente separato
+    * in tre casi (richiesta di una posizione dell'agente robotico , richiesta di una nuova posizione iniziale
+    * di un agente umano, modifiche allo scenario).
+    * Il robot può essere modificato nella sua posizione, solo se si trova in celle contenenti (empty e gate) 
+    * mentre le person possono stare nelle celle contenenti(empty,gate e outdoor)
+    * @param x ,y : possibile in riga e colonna della cella da modificare
+    * @param state : nuovo stato da inserire
+    * @return   Success ==0 : aggiornamento consistente
+    *           IllegalPosition ==1 : posizione del cursore non valida
+    *           KeyColorEmpty ==2 : le chiavi dei colori non sono state correttamente generate
+    *           KeyColorFull ==3 : le chiavi per nuove person sono terminate
+    *           IllegalRobotPosition ==4 : posizione del robot non valida
+    *           IllegalAgentPosition ==5 : posizione dell'agente umano non valida
+    *           PersonOverride ==6 : sovrascrittura di un agente umano
     */
    
     @Override
@@ -340,11 +352,12 @@ public class RescueGenMap extends MonitorGenMap {
     */
 
     @Override
-    public int UpdateMoveCell(int x, int y, Person p){
+    public int UpdateMoveCell(int x, int y, String color){
     
         final int Success = 0;
         final int IllegalPosition = 1;
         
+        Person p=this.findByColor(color);
         
         if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
             
