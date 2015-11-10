@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -78,6 +79,8 @@ public abstract class MonitorGenMap {
         HashMap<String,BufferedImage> mapicons;
         mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
         this.images = mapicons;
+        this.images.remove("informed");
+        this.images.remove("undiscovered");
         this.setKeyMap=MonitorImages.getInstance().getSetKeyMap();
         
         // carico le icone per i colori 
@@ -163,7 +166,12 @@ public abstract class MonitorGenMap {
     }
         
     /*
-        Metodo per il disegno della scena utilizzando i valori in stringhe della mappa
+     *   Metodo per il disegno della scena utilizzando i valori in stringhe della mappa.le mappe
+     *  sono di due tipologie per cui devono essere riempite in maniera distinta.
+     *  @param g : per effettuare il draw del pannello
+     *  @param MapWidth : larghezza in pixel del pannello della mappa
+     *  @param MapHeight : altezza in pixel del pannello della mappa
+     *  @param type : tipologia di mappa di cui si deve eseguire il disegno
     */
     
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight,String type) {
@@ -237,7 +245,8 @@ public abstract class MonitorGenMap {
     
     }
         
-        
+    
+    
     /*
     *  Verifica se la posizione in pixel (x,y) ottenuta dal click sul mouse, risulta valida e in caso affermativo 
     *  resistuisce la cella corrispondente  alle coordinate  
@@ -285,6 +294,11 @@ public abstract class MonitorGenMap {
     public String[][] getScene(){
     
         return this.scene;
+    }
+    
+    public String[][] getMove(){
+    
+        return this.move;
     }
     
     public int getNumx(){
@@ -341,7 +355,11 @@ public abstract class MonitorGenMap {
        this.setKeyColor=keys;
     }   
     
-
+    public void CopyToActive(String[][] map){
+    
+        this.mapActive=this.clone(map);
+    }
+    
     
     // Metodi per l'utilizzo del generatore della history dei movimenti 
     
@@ -357,12 +375,14 @@ public abstract class MonitorGenMap {
             protected int row;
             protected int column;
             protected String path;
+            protected int stepStart;
             protected int step;
             
-            public StepMove(int r , int c , String p , int s){
+            public StepMove(int r , int c , String p, int st , int s){
                 this.row=r;
                 this.column=c;
                 this.path=p;
+                this.stepStart=st;
                 this.step=s;
             }
             
@@ -382,6 +402,10 @@ public abstract class MonitorGenMap {
             public int getStep(){
             
                 return step;
+            }
+            
+            public int getStepStart(){
+                return stepStart;
             }
         }
     

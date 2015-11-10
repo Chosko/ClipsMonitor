@@ -514,6 +514,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
         final int IllegalPosition = 1 ;
         final int keyColorEmpty = 2; 
         final int keyColorFull = 3;
+        final int IllegalRobotPosition = 4;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
         
         try{
             int x = evt.getX();
@@ -524,6 +527,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             switch(result){
                 case Success :
                      console.info("Modifica della mappa eseguita con successo");
+                     model.CopyToActive(model.getScene());
                      PreviewMap.repaint();
                      this.MakePersonList();
                      this.MakeStepList(-1);
@@ -538,6 +542,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 break;
                 case keyColorFull :
                     console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
+                break;
+                case IllegalRobotPosition :
+                    console.error("Posizione del robot non valida");
+                break;
+                case IllegalAgentPosition:
+                    console.error("Posizione dell'agente non valida");
+                break;
+                
+                case PersonOverride :
+                     console.error("La cella è già occupata da un altro agente");
                 break;
                 default :
                     
@@ -689,6 +703,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         this.model.setMode("scene");
         this.InitMapComboBox();
         Icons.repaint();
+        model.CopyToActive(model.getScene());
         PreviewMap.repaint();
     }//GEN-LAST:event_MapButtonActionPerformed
 
@@ -700,9 +715,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
         this.XButton.setEditable(false);
         this.YButton.setEditable(false);
         this.MaxDur.setEditable(false);
-        this.model.setMode("scene");
+        this.model.setMode("move");
         this.InitColorComboBox();
         Icons.repaint();
+        model.CopyToActive(model.getMove());
         PreviewMap.repaint();
     }//GEN-LAST:event_MoveButtonActionPerformed
 

@@ -58,7 +58,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.CellHeight=0;
         this.CellWidth=0;
         this.direction="north";
-        this.direction="unloaded";
+        this.loaded="unloaded";
         this.maxduration=100;
         this.mode="scene";
         this.personName="person_rescuer";
@@ -74,7 +74,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.colors= new HashMap<String,BufferedImage>();
         this.setKeyColor = null;
         this.setKeyMap = null;
-       
+        
         this.loadImages();
         console.debug("Inizializzzione terminata del map generator");
     }
@@ -85,8 +85,8 @@ public class RescueGenMap extends MonitorGenMap {
     
 
     /*
-        Inizializzazione della scena eseguita mettendo nel perimetro della scena l'outdoor
-        e riempiendo il resto con le celle empty
+    *   Inizializzazione della scena eseguita mettendo nel perimetro della scena l'outdoor
+    *   e riempiendo il resto con le celle empty
     */
     @Override
     public void initScene(String[][] scene) {
@@ -103,7 +103,8 @@ public class RescueGenMap extends MonitorGenMap {
             }
         }
        
-        scene[this.agentposition[0]][this.agentposition[1]]="agent_" + direction + "_unloaded";
+        scene[this.agentposition[0]][this.agentposition[1]]="gate" + "_" + "agent_" + direction + "_" + loaded;
+        this.move = this.clone(scene);
     }
     
     
@@ -197,6 +198,9 @@ public class RescueGenMap extends MonitorGenMap {
         final int IllegalPosition = 1 ;
         final int keyColorEmpty = 2; 
         final int keyColorFull = 3;
+        final int IllegalRobotPosition = 4;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
         
         
         if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
@@ -204,99 +208,124 @@ public class RescueGenMap extends MonitorGenMap {
             // se è stato richiesto un aggiornamento della posizione di agent
             // controllo se attualmente non si trova nella stessa cella in cui vado a fare la modifica
             
-            if(state.contains("agent")){ 
-                
-                // se la nuova posizione agente è diversa dalla precedente
-                if(x!=this.agentposition[0] || y!=this.agentposition[1]){ 
-                    
-                    // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
-                    // e successivamente inserisco il nuovo agente
-                    scene[x][y]=state;                                    
-                    scene[this.agentposition[0]][this.agentposition[1]]="empty"; 
-                    this.agentposition[0]=x; 
-                    this.agentposition[1]=y;
-                    
-                    // setto la nuova direzione
-                    if(state.contains("north")){
-                        this.direction="north";
-                    }
-                    if(state.contains("west")){
-                        this.direction="west";
-                    }
-                    if(state.contains("east")){
-                        this.direction="east";
-                    }
-                    if(state.contains("south")){
-                        this.direction="south";
-                    }
-                    
-                    if(state.contains("unloaded")){
-                        this.loaded="unloaded";
-                    }
-                    
-                    if(state.contains("loaded")){
-                    
-                        this.loaded="loaded";
-                    }
-                }
-                else{ // stessa posizione attuale dell'agent position
-                    
-                    scene[x][y]=state; 
-                }
-            }
-            // si vuole aggiungere una nuova persona alla storia
-            else if(state.contains("person_rescuer")){
-              
-              if(this.setKeyColor.length==0){
-                  return keyColorEmpty;
-              }
-              // ho ancora disponibilita di colori per indicare le person
-              if(this.NumPerson<this.colors.size() && !scene[x][y].contains("person_rescuer")){          
-                        this.NumPerson++;
-                        String color=this.setKeyColor[this.NumPerson-1];
-                        this.Persons.add(new Person(color));
-                        String path ="P"+ this.Persons.size();
-                        this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0));
-                        scene[x][y]=state + "_" + color;
-                }  
-              // ho terminato il numero di aggiunte che posso fare
-              else{
-                  return keyColorFull;
-              }  
-                
-            }
-            // si richiedono modifiche alla scena diverse da tipologie di state agent
-            else{ 
-                // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
-                // allora semplicemente reimposto la posizione di default dell'agente
-                if(x==this.agentposition[0] && y==this.agentposition[1]){ 
-                    scene[x][y]=state;                                    
-                    this.agentposition[0]=this.defaultagentposition[0]; 
-                    this.agentposition[1]=this.defaultagentposition[1];
-                    scene[this.agentposition[0]][this.agentposition[1]]="agent_north_unloaded";
-                }
-                else if(scene[x][y].contains("person_rescuer")){
-                    
-                    int lastUnderScore = scene[x][y].lastIndexOf("_");
-                    String color = scene[x][y].substring(lastUnderScore+1);
-                    ListIterator<Person> it = this.Persons.listIterator();
-                    while(it.hasNext()){
-                    
-                        Person p = it.next();
-                        if(p.getColor().equals(color)){
-                            this.Persons.remove(p);
+                    if(state.contains("agent")){ 
+
+                        // se la nuova posizione agente è diversa dalla precedente
+                        if(x!=this.agentposition[0] || y!=this.agentposition[1]){ 
+
+                            if(!scene[x][y].contains("debris") && !scene[x][y].contains("wall") && !scene[x][y].contains("outdoor")){
+
+                                // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
+                                // e successivamente inserisco il nuovo agente
+
+                                int separate = scene[this.agentposition[0]][this.agentposition[1]].indexOf("_");
+                                String background = scene[this.agentposition[0]][this.agentposition[1]].substring(0,separate);
+                                scene[x][y] += "_" + state;
+                                scene[this.agentposition[0]][this.agentposition[1]]=background; 
+                                this.agentposition[0]=x; 
+                                this.agentposition[1]=y;
+
+                                // setto la nuova direzione
+                                if(state.contains("north")){
+                                    this.direction="north";
+                                }
+                                if(state.contains("west")){
+                                    this.direction="west";
+                                }
+                                if(state.contains("east")){
+                                    this.direction="east";
+                                }
+                                if(state.contains("south")){
+                                    this.direction="south";
+                                }
+
+                                if(state.equals("unloaded")){
+                                    this.loaded="unloaded";
+                                }
+
+                                if(state.equals("loaded")){
+
+                                    this.loaded="loaded";
+                                }
+
+                            }
+                            else{
+
+                                return IllegalRobotPosition;
+                            }
+
+                        }
+                        else{ // stessa posizione attuale dell'agent position
+
+                            int separate = scene[x][y].indexOf("_");
+                            String background = scene[x][y].substring(0,separate);
+                            scene[x][y]=background+state; 
                         }
                     }
-                    scene[x][y]=state;
-                }
-                else{
-                    scene[x][y]=state;
-                }
-            }
+                    // si vuole aggiungere una nuova persona alla storia
+                    else if(state.contains("person_rescuer")){
+
+                        if(this.setKeyColor.length==0){
+                            return keyColorEmpty;
+                        }
+                        
+                        if(scene[x][y].contains(personName)){
+                        
+                            return PersonOverride;
+                        }
+                        // ho ancora disponibilita di colori per indicare le person
+                        if(this.NumPerson<this.colors.size()){          
+                                  this.NumPerson++;
+                                  String color=this.setKeyColor[this.NumPerson-1];
+                                  this.Persons.add(new Person(color));
+                                  String path ="P"+ this.Persons.size();
+                                  this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0,0));
+                                  if(!scene[x][y].contains("debris") && !scene[x][y].contains("wall")){
+                                      String background = scene[x][y];
+                                      scene[x][y]=background + "_" + state + "_" + color;
+                                  }
+                                  else{
+
+                                        return IllegalAgentPosition;
+                                  }
+                          }  
+                        // ho terminato il numero di aggiunte che posso fare
+                        else{
+                            return keyColorFull;
+                        }  
+
+                    }
+                    // si richiedono modifiche alla scena diverse da tipologie di state agent
+                    else{ 
+                        // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
+                        // allora semplicemente reimposto la posizione di default dell'agente
+                        if(x==this.agentposition[0] && y==this.agentposition[1]){ 
+                            scene[x][y]=state;                                    
+                            this.agentposition[0]=this.defaultagentposition[0]; 
+                            this.agentposition[1]=this.defaultagentposition[1];
+                            scene[this.agentposition[0]][this.agentposition[1]]="gate_agent_north_unloaded";
+                        }
+                        else if(scene[x][y].contains(personName) && !state.equals(personName)){
+
+                            int lastUnderScore = scene[x][y].lastIndexOf("_");
+                            String color = scene[x][y].substring(lastUnderScore+1);
+                            ListIterator<Person> it = this.Persons.listIterator();
+                            while(it.hasNext()){
+
+                                Person p = it.next();
+                                if(p.getColor().equals(color)){
+                                    this.Persons.remove(p);
+                                }
+                            }
+                        }
+                        else{
+                            scene[x][y]=state;
+                        }
+                    }
         } 
-        else { // caso di modifiche non permesse dal modello
+        else {  // punto della mappa non disponibile per la modifica
             
-            return IllegalPosition;
+                return IllegalPosition;
         }
         return Success;
     }
@@ -305,6 +334,9 @@ public class RescueGenMap extends MonitorGenMap {
     * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
     * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
     * lista dei movimenti 
+    * @param x : numero di riga
+    * @param y : numero di colonna
+    * @param p : persona a cui aggiungere la move
     */
 
     @Override
@@ -319,7 +351,10 @@ public class RescueGenMap extends MonitorGenMap {
              StepMove s = p.getMoves().getLast();
              // distanza di manhattam
              if((s.getRow()-x)+ (s.getColumn()-y)<=1){
-                 p.getMoves().addLast(new StepMove(x,y,p.getMoves().getLast().getPath() , p.getMoves().getLast().getStep()));
+                 String pathName = p.getMoves().getLast().getPath();
+                 int start = s.getStepStart();
+                 int step = p.getMoves().getLast().getStep();
+                 p.getMoves().addLast(new StepMove(x,y, pathName , start , step));
              }
              
              return Success;
@@ -347,22 +382,26 @@ public class RescueGenMap extends MonitorGenMap {
             
             for(int i=0;i<this.NumCellX;i++){
             
-                for(int j=0;i<this.NumCellY;j++){
+                for(int j=0;j<this.NumCellY;j++){
                 
                     if(!mapActive[i][j].equals("")){
                         
                         if(mapActive[i][j].contains(personName)){
-                            icons[i][j]=this.images.get(personName);
+                            int underscoreSeparate = mapActive[i][j].indexOf("_");
+                            String background = mapActive[i][j].substring(0,underscoreSeparate);
+                            BufferedImage backImg = this.images.get(background);
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(personName),backImg);
+                            icons[i][j]=img;
                             
                         }
                         
                         else if(mapActive[i][j].contains("agent")){
-                    
-                        String background = mapActive[i][j].substring("agent_".length());
-                        BufferedImage backImg = this.images.get(background);
-                        String key_agent_map="agent_"+ direction + "_" + loaded;
-                        BufferedImage img = MonitorImages.getInstance().overlapImages(backImg,this.images.get(key_agent_map));
-                        icons[i][j]=img;
+                            int underscoreSeparate = mapActive[i][j].indexOf("_");
+                            String background = mapActive[i][j].substring(0,underscoreSeparate);
+                            BufferedImage backImg = this.images.get(background);
+                            String key_agent_map="agent_"+ direction + "_" + loaded;
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(key_agent_map),backImg);
+                            icons[i][j]=img;
                     
                         }
                         else{
@@ -382,14 +421,15 @@ public class RescueGenMap extends MonitorGenMap {
         
             for(int i=0;i<this.NumCellX;i++){
             
-                for(int j=0;i<this.NumCellY;j++){
+                for(int j=0;j<this.NumCellY;j++){
                     
                     if(mapActive[i][j].contains("agent")){
                     
-                        String background = mapActive[i][j].substring("agent_".length());
+                        int underscoreSeparate = mapActive[i][j].indexOf("_");
+                        String background = mapActive[i][j].substring(0,underscoreSeparate);
                         BufferedImage backImg = this.images.get(background);
                         String key_agent_map="agent_"+ direction + "_" + loaded;
-                        BufferedImage img = MonitorImages.getInstance().overlapImages(backImg,this.images.get(key_agent_map));
+                        BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(key_agent_map),backImg);
                         icons[i][j]=img;
                     
                     }
@@ -398,14 +438,14 @@ public class RescueGenMap extends MonitorGenMap {
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("empty"),this.colors.get(color));
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("empty"));
                             icons[i][j]=img;
                         }
                     else if(mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("gate"),this.colors.get(color));
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("gate"));
                             icons[i][j]=img;
                         }
 
@@ -413,7 +453,7 @@ public class RescueGenMap extends MonitorGenMap {
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get("outdoor"),this.colors.get(color));
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("outdoor"));
                             icons[i][j]=img;
                         }
                     else{

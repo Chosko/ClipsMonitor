@@ -8,6 +8,9 @@ package org.clipsmonitor.gui;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import javax.swing.BorderFactory;
@@ -47,7 +50,8 @@ public class ComboBoxRenderer extends JPanel {
         
         Set<String> keySet = iconsMap.keySet();
         keyStrings = keySet.toArray(new String[keySet.size()]);
-
+        Arrays.sort(keyStrings);
+        
 
         ComboBoxModel<String> jcombostrings = new DefaultComboBoxModel<String>(keyStrings);
         jcomboicons.setModel(jcombostrings);
