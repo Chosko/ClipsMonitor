@@ -442,6 +442,28 @@ public abstract class MonitorGenMap {
             public int getStepStart(){
                 return stepStart;
             }
+            
+            
+            public void setRow(int nr){
+                this.row=nr;
+            }
+            
+            public void setColumn(int nc){
+                this.column=nc;
+            }
+            
+            public void getPath(String np){
+                this.path=np;
+            }
+        
+            public void getStep(int ns){
+            
+                this.step=ns;
+            }
+            
+            public void getStepStart(int nss){
+                this.stepStart=nss;
+            }
         }
     
     /*
@@ -457,12 +479,13 @@ public abstract class MonitorGenMap {
     
         protected LinkedList<StepMove> move;
         protected String associatedColor;
-        
+        protected ArrayList<String> paths;
     
         public Person(String color){
         
             this.associatedColor=color;
             this.move=new LinkedList<StepMove>();
+            this.paths= new ArrayList<String>();
         }
         
 
@@ -477,7 +500,10 @@ public abstract class MonitorGenMap {
             return this.move;
         }
         
+        public ArrayList<String> getPaths(){
             
+            return this.paths;
+        }    
     }
    
     
@@ -553,6 +579,8 @@ public abstract class MonitorGenMap {
         }
         return colors;
     }
+    
+    
     
     /*
         ritorna un array di stringhe che descrive le attuali persone attive nella scena
@@ -680,6 +708,75 @@ public abstract class MonitorGenMap {
         list = moveslist.toArray(list);
         return list;
     
+    }
+    
+    /*
+    * Restituisce l'elenco dei path già dichiarati all'interno della linkedList delle persons.
+    * Può essere richiesto o l'elenco totale o l'elenco dei path specifici per una determinata person
+    * Le stringhe sono costruite tutte con la struttura personName_pathName. 
+    * @paramPerson : paramPerson>-1  indica l'indice della persona da cui prelevare tutti i path definite
+    *                   paramPerson==-1 indica la richiesta dei path per tutti le persone nella lista
+    * @return : array di stringhe equivalente all'elenco
+    */
+    
+    public String[] getPaths(int paramPerson){
+    
+        String[] paths = null ;
+        ArrayList<String> listPaths = new ArrayList<String>();
+    
+       if(paramPerson==-1){ 
+        
+            ListIterator<Person> it = this.Persons.listIterator();
+            while(it.hasNext()){
+
+                Person p = it.next();
+                ArrayList<String> tmp = p.paths;
+                for(String elem : tmp){
+                    listPaths.add(p.associatedColor + "_" + elem);
+                }
+
+            }
+        }
+       else{
+       
+           Person p = this.Persons.get(paramPerson);
+           ArrayList<String> tmp = p.paths;
+           for(String elem : tmp){
+                listPaths.add(p.associatedColor + "_" + elem);
+            }
+       
+       }
+       
+        paths = new String[listPaths.size()];
+        paths = listPaths.toArray(paths);
+        
+        return paths;
+    
+    }
+    
+    /*
+    * Restituisce un mappa temporanea di move per la visualizzazione delle modifiche
+    * sulla mappa. La move map restituita e soltanto temporanea
+    * @param x : riga della cella da inserire la move
+    * @param y : colonna della cella da inserire la move
+    * @param color : colore temporaneo 
+    */
+    
+    public String[][] getTmpMoveMap(int x , int y , String color){
+    
+        String [][] newmap = new String[this.NumCellX][this.NumCellY];
+        
+        for(int i = 0 ; i<newmap.length;i++){
+        
+            for(int j=0;j<newmap[0].length;j++){
+                newmap[i][j]="";
+            }
+        }
+    
+        newmap[x][y]=color;
+        
+        return newmap;
+        
     }
     
     /*
@@ -982,15 +1079,38 @@ public abstract class MonitorGenMap {
     public abstract int UpdateCell(int x, int y, String state);
     
     /*
-        Esegue l'init del generatore, viene eseguito a livello di classe derivata
-        specifica per il progetto 
+    *    Esegue l'init del generatore, viene eseguito a livello di classe derivata
+    *    specifica per il progetto 
     */
     
 
     
     public abstract void init();
     
+    /*
+    * Genera le icone per il disegno delle mappe 
+    */
     
     public abstract BufferedImage[][] makeIconMatrix(String type);
+    
+    
+    /*
+    *  Verifica le condizioni imposte alla posizione del robot
+    */
+
+    public abstract boolean RobotPositionIsValid(String mapPos);
+    
+    
+    /*
+    *  Verifica le condizioni imposte alla posizione del robot
+    */
+
+    public abstract boolean PersonPositionIsValid(String mapPos);
+    
+    /*
+    * Setta le impostazioni del robot nel modello
+    */
+    
+    public abstract void SetRobotParams(String state, int x , int y);
     
 }

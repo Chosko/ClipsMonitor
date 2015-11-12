@@ -184,6 +184,63 @@ public class RescueGenMap extends MonitorGenMap {
         return map;
     }
     
+    /*
+    *  Verifica se la posizione dell'agente richiesta risulta essere compatibile
+    *  rispetto ai vincoli del progetto. Ritorna true se la condizione è rispettata
+    */
+    
+    @Override
+    public boolean RobotPositionIsValid(String mapPos){
+    
+       return !mapPos.contains("debris") && !mapPos.contains("wall") && !mapPos.contains("outdoor");
+    
+    }
+
+        /*
+    *  Verifica se la posizione dell'agente richiesta risulta essere compatibile
+    *  rispetto ai vincoli del progetto. Ritorna true se la condizione è rispettata
+    */
+    
+    @Override
+    public boolean PersonPositionIsValid(String mapPos){
+    
+        return !mapPos.contains("debris") && !mapPos.contains("wall");
+     
+    }
+    
+    @Override 
+    public void SetRobotParams(String state , int x , int y){
+    
+        this.agentposition[0]=x; 
+        this.agentposition[1]=y;
+
+        // setto la nuova direzione
+        if(state.contains("north")){
+            this.direction="north";
+        }
+        if(state.contains("west")){
+            this.direction="west";
+        }
+        if(state.contains("east")){
+            this.direction="east";
+        }
+        if(state.contains("south")){
+            this.direction="south";
+        }
+
+        if(state.equals("unloaded")){
+            this.loaded="unloaded";
+        }
+
+        if(state.equals("loaded")){
+
+            this.loaded="loaded";
+        }
+
+    
+    }
+    
+    
     
     /*
     * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna interi corrispondenti
@@ -225,7 +282,7 @@ public class RescueGenMap extends MonitorGenMap {
                         // se la nuova posizione agente è diversa dalla precedente
                         if(x!=this.agentposition[0] || y!=this.agentposition[1]){ 
 
-                            if(!scene[x][y].contains("debris") && !scene[x][y].contains("wall") && !scene[x][y].contains("outdoor")){
+                            if(this.RobotPositionIsValid(scene[x][y])){
 
                                 // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
                                 // e successivamente inserisco il nuovo agente
@@ -234,31 +291,7 @@ public class RescueGenMap extends MonitorGenMap {
                                 String background = scene[this.agentposition[0]][this.agentposition[1]].substring(0,separate);
                                 scene[x][y] += "_" + state;
                                 scene[this.agentposition[0]][this.agentposition[1]]=background; 
-                                this.agentposition[0]=x; 
-                                this.agentposition[1]=y;
-
-                                // setto la nuova direzione
-                                if(state.contains("north")){
-                                    this.direction="north";
-                                }
-                                if(state.contains("west")){
-                                    this.direction="west";
-                                }
-                                if(state.contains("east")){
-                                    this.direction="east";
-                                }
-                                if(state.contains("south")){
-                                    this.direction="south";
-                                }
-
-                                if(state.equals("unloaded")){
-                                    this.loaded="unloaded";
-                                }
-
-                                if(state.equals("loaded")){
-
-                                    this.loaded="loaded";
-                                }
+                                this.SetRobotParams(state, x, y);
 
                             }
                             else{
@@ -274,39 +307,7 @@ public class RescueGenMap extends MonitorGenMap {
                             scene[x][y]=background+state; 
                         }
                     }
-                    // si vuole aggiungere una nuova persona alla storia
-                    else if(state.contains("person_rescuer")){
 
-                        if(this.setKeyColor.length==0){
-                            return keyColorEmpty;
-                        }
-                        
-                        if(scene[x][y].contains(personName)){
-                        
-                            return PersonOverride;
-                        }
-                        // ho ancora disponibilita di colori per indicare le person
-                        if(this.NumPerson<this.colors.size()){          
-                                  this.NumPerson++;
-                                  String color=this.setKeyColor[this.NumPerson-1];
-                                  this.Persons.add(new Person(color));
-                                  String path ="P"+ this.Persons.size();
-                                  this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0,0));
-                                  if(!scene[x][y].contains("debris") && !scene[x][y].contains("wall")){
-                                      String background = scene[x][y];
-                                      scene[x][y]=background + "_" + state + "_" + color;
-                                  }
-                                  else{
-
-                                        return IllegalAgentPosition;
-                                  }
-                          }  
-                        // ho terminato il numero di aggiunte che posso fare
-                        else{
-                            return keyColorFull;
-                        }  
-
-                    }
                     // si richiedono modifiche alla scena diverse da tipologie di state agent
                     else{ 
                         // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
@@ -342,6 +343,71 @@ public class RescueGenMap extends MonitorGenMap {
         return Success;
     }
     
+    
+    public int AddNewPerson( int x , int y , String color ){
+    
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
+
+        if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
+
+            if(this.setKeyColor.length==0){
+                return keyColorEmpty;
+            }
+
+            if(x==this.agentposition[0] && y==this.agentposition[1]){
+
+                return IllegalAgentPosition;
+            }
+
+            if(move[x][y].contains(color)){
+
+                return PersonOverride;
+            }
+            
+            if(this.findPosByColor(color)!=-1){
+            
+                Person p = this.findByColor(color);
+                p.getMoves().getFirst().setRow(x);
+                p.getMoves().getFirst().setColumn(y);
+                return PersonOverride;
+            
+            }
+            
+            // ho ancora disponibilita di colori per indicare le person
+            if(this.NumPerson<this.colors.size()){          
+                    this.NumPerson++;
+                    this.Persons.add(new Person(color));
+                    String path ="P"+ this.Persons.getLast().getPaths().size();
+                    this.Persons.getLast().getPaths().add(path);
+                    this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0,0));
+                    if(this.PersonPositionIsValid(move[x][y])){
+                        String background = move[x][y];
+                        move[x][y]=background + "_" + personName + "_" + color;
+                    }
+                    else{
+
+                          return IllegalAgentPosition;
+                    }
+              }  
+            // ho terminato il numero di aggiunte che posso fare
+            else{
+                return keyColorFull;
+            }  
+
+            return Success;
+        }
+        else{
+            
+            return IllegalPosition;
+        }
+    }
+    
+    
     /*
     * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
     * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
@@ -363,10 +429,10 @@ public class RescueGenMap extends MonitorGenMap {
             
              StepMove s = p.getMoves().getLast();
              // distanza di manhattam
-             if((s.getRow()-x)+ (s.getColumn()-y)<=1){
-                 String pathName = p.getMoves().getLast().getPath();
+             if(Math.abs(s.getRow()-x)+ Math.abs(s.getColumn()-y)==1){
+                 String pathName = "P"+ p.getPaths().get(p.getPaths().size()-1);
                  int start = s.getStepStart();
-                 int step = p.getMoves().getLast().getStep();
+                 int step = p.getMoves().getLast().getStep()+1;
                  p.getMoves().addLast(new StepMove(x,y, pathName , start , step));
              }
              
