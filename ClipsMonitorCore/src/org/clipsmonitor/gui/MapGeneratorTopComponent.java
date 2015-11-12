@@ -721,7 +721,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }//GEN-LAST:event_AddPersonButtonActionPerformed
 
     private void DeletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletePersonButtonActionPerformed
-        // TODO add your handling code here:
+        this.ExecRemove();
     }//GEN-LAST:event_DeletePersonButtonActionPerformed
 
     private void MovementListComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_MovementListComponentAdded
@@ -827,6 +827,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_PersonsListValueChanged
 
+    
     private void StepListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_StepListValueChanged
 
         this.MakeStepList(-1);
@@ -1016,7 +1017,29 @@ public final class MapGeneratorTopComponent extends TopComponent {
         
     }
     
+    private void ExecRemove(){
     
+        boolean result = this.model.Remove(state);
+        if(result){
+            console.info(state + "Persona rimossa correttamente : ");
+            String[][] move = model.getMoveCellMap(-1,0);
+                    model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            this.MakePersonList();
+            this.MakeStepList(-1);
+            this.MakeMoveList(-1,-1);
+            this.MakePathList(-1);
+        }
+        else{
+            console.error(state + " non presente nello scenario");
+        }
+    }
+    
+    /*
+    * Inserisce una nuova persona nello scenario        
+    */        
+            
     private void ExecAddPerson(){
     
         final int Success = 0;
@@ -1134,6 +1157,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private void ExecUpdateMove(){
         final int Success = 0;
         final int IllegalPosition = 1 ;
+        final int UnavaiblePosition = 2 ;
         
         int result = model.UpdateMoveCell(this.actualPosClicked[0],this.actualPosClicked[1],state);
         switch(result){
@@ -1153,7 +1177,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case IllegalPosition :
                     console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
                 break;
-                
+                case UnavaiblePosition :
+                    
+                    console.error("Movimento non disponibile ");
+                break;    
                 default :
                     
                 break;

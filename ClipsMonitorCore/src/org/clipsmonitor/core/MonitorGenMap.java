@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -396,6 +397,17 @@ public abstract class MonitorGenMap {
     }
 
     
+    
+    /*
+    * Restituisce la distanza di Manhattam tra due celle  
+    */
+    
+    public int ManhattamDistance(int xstart , int ystart , int xtarget , int ytarget){
+        
+            return Math.abs(ytarget - ystart) + Math.abs(xtarget - xstart);
+    }
+    
+    
     // Metodi per l'utilizzo del generatore della history dei movimenti 
     
     
@@ -474,6 +486,7 @@ public abstract class MonitorGenMap {
         nella scena.
     */
 
+   
     
     protected class Person{
     
@@ -503,9 +516,12 @@ public abstract class MonitorGenMap {
         public ArrayList<String> getPaths(){
             
             return this.paths;
-        }    
+        }  
+    
     }
    
+    
+    
     
     /*
     *   Metodo che resistuisce l'indice della persona associata al colore nella linkedList 
@@ -846,15 +862,19 @@ public abstract class MonitorGenMap {
         }
         // caso di richiesta di una specifico agente
         else{
+            int r = 0;
+            int c = 0;
             Person p = this.Persons.get(paramPerson);
             ListIterator<StepMove> it = p.move.listIterator();
             while(it.hasNext()){
                 StepMove s = it.next();
-                int r = s.getRow();
-                int c = s.getColumn();
+                r = s.getRow();
+                c = s.getColumn();
                 newmap[r][c]=p.associatedColor;
             
             }
+            
+            newmap[r][c]+="_last";
         }
         
         return newmap;

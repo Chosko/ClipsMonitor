@@ -317,19 +317,7 @@ public class RescueGenMap extends MonitorGenMap {
                             this.agentposition[1]=this.defaultagentposition[1];
                             scene[this.agentposition[0]][this.agentposition[1]]="gate_agent_north_unloaded";
                         }
-                        else if(scene[x][y].contains(personName) && !state.equals(personName)){
-
-                            int lastUnderScore = scene[x][y].lastIndexOf("_");
-                            String color = scene[x][y].substring(lastUnderScore+1);
-                            ListIterator<Person> it = this.Persons.listIterator();
-                            while(it.hasNext()){
-
-                                Person p = it.next();
-                                if(p.getColor().equals(color)){
-                                    this.Persons.remove(p);
-                                }
-                            }
-                        }
+                        
                         else{
                             scene[x][y]=state;
                         }
@@ -406,6 +394,22 @@ public class RescueGenMap extends MonitorGenMap {
         }
     }
     
+
+    public boolean Remove(String color){
+   
+        ListIterator<Person> it = this.Persons.listIterator();
+        while(it.hasNext()){
+
+            Person p = it.next();
+            if(p.getColor().equals(color)){
+                this.Persons.remove(p);
+                this.NumPerson--;
+                return true;
+            }
+        }
+       
+        return false;
+    }
     
     /*
     * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
@@ -421,21 +425,27 @@ public class RescueGenMap extends MonitorGenMap {
     
         final int Success = 0;
         final int IllegalPosition = 1;
+        final int UnavaibleMove = 2;
+        
         
         Person p=this.findByColor(color);
         
         if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
             
              StepMove s = p.getMoves().getLast();
-             // distanza di manhattam
-             if(Math.abs(s.getRow()-x)+ Math.abs(s.getColumn()-y)==1){
+             // distanza di manhattam e check sulla attraversabilità della cella
+             if(this.ManhattamDistance(s.getRow(),s.getColumn(), x, y)==1 && this.PersonPositionIsValid(scene[x][y])){
                  String pathName = "P"+ p.getPaths().get(p.getPaths().size()-1);
                  int start = s.getStepStart();
                  int step = p.getMoves().getLast().getStep()+1;
                  p.getMoves().addLast(new StepMove(x,y, pathName , start , step));
+                 return Success;
+             }
+             else{
+                 return UnavaibleMove ;
+             
              }
              
-             return Success;
         }
         else{
         
@@ -511,15 +521,23 @@ public class RescueGenMap extends MonitorGenMap {
                         icons[i][j]=img;
                     
                     }
-                    
-                    else if(mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")){
+                    else if(mapActive[i][j].contains("last")){
+                            String [] underscoreSplit = mapActive[i][j].split("_");
+                            String color = underscoreSplit[1];
+                            String background = underscoreSplit[0];
+                            BufferedImage tmp = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get(background));
+                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(personName), tmp);
+                            icons[i][j]=img;
+                    }
+                    else{
+                        if(mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
                             BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("empty"));
                             icons[i][j]=img;
                         }
-                    else if(mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")){
+                        else if(mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
@@ -527,19 +545,20 @@ public class RescueGenMap extends MonitorGenMap {
                             icons[i][j]=img;
                         }
 
-                    else if(mapActive[i][j].contains("outdoor") && !mapActive[i][j].equals("outdoor")){
+                        else if(mapActive[i][j].contains("outdoor") && !mapActive[i][j].equals("outdoor")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
                             BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("outdoor"));
                             icons[i][j]=img;
                         }
-                    else{
                     
-                        icons[i][j]=this.images.get(mapActive[i][j]);
+                        else{
+
+                            icons[i][j]=this.images.get(mapActive[i][j]);
+                        }
+                    
                     }
-                    
-                    
                 }
         
             }
