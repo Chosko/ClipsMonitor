@@ -526,7 +526,31 @@ public abstract class MonitorGenMap {
            position++;
        }
        return -1;
-  }
+    }
+    
+    
+    /*
+    *  Restituisce l'indice della posizione della Person che occupa attualemnte quella 
+    *   cella oppure restituisce -1 in caso la cella sia libera.
+    *   @param x : numero di riga della cella
+    *   @param y : numero di colonna della cella
+    */
+    
+    public int CheckBusyStartCellFromPerson(int x , int y){
+        int position = 0;
+        ListIterator<Person> it = this.Persons.listIterator();
+        Person p = null;
+        while(it.hasNext()){
+           p = it.next();
+           if(p.getMoves().getFirst().getRow()==x && p.getMoves().getFirst().getColumn()==y ){
+               return position;
+           }
+           position++;
+       }
+       return -1;
+        
+    }
+    
     
     
     /*
@@ -765,15 +789,24 @@ public abstract class MonitorGenMap {
     public String[][] getTmpMoveMap(int x , int y , String color){
     
         String [][] newmap = new String[this.NumCellX][this.NumCellY];
+        int index = -1;
         
         for(int i = 0 ; i<newmap.length;i++){
         
             for(int j=0;j<newmap[0].length;j++){
-                newmap[i][j]="";
+                if((index=this.CheckBusyStartCellFromPerson(i, j))!=-1){
+                    
+                    newmap[i][j]=this.Persons.get(index).associatedColor;
+                }
+                else{
+                    newmap[i][j]="";
+                }
             }
         }
     
         newmap[x][y]=color;
+        
+        
         
         return newmap;
         

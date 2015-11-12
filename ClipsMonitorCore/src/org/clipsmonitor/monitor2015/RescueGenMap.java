@@ -96,6 +96,9 @@ public class RescueGenMap extends MonitorGenMap {
                 if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
                     scene[i][j]="outdoor"; 
                 }
+                else if (i==1 || i==scene.length-2 || j ==1 || j==scene[0].length-2){
+                    scene[i][j]="wall";
+                }
                 else{
                 
                     scene[i][j]="empty";
@@ -265,11 +268,7 @@ public class RescueGenMap extends MonitorGenMap {
         
         final int Success = 0;
         final int IllegalPosition = 1 ;
-        final int keyColorEmpty = 2; 
-        final int keyColorFull = 3;
-        final int IllegalRobotPosition = 4;
-        final int IllegalAgentPosition = 5;
-        final int PersonOverride = 6;
+        final int IllegalRobotPosition = 2;
         
         
         if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
@@ -364,7 +363,7 @@ public class RescueGenMap extends MonitorGenMap {
                 return IllegalAgentPosition;
             }
 
-            if(move[x][y].contains(color)){
+            if(this.CheckBusyStartCellFromPerson(x, y)!=-1){
 
                 return PersonOverride;
             }
