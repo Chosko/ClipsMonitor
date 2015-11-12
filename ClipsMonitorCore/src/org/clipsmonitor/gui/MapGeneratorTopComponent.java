@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsConsole;
+import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.monitor2015.RescueGenMap;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -58,23 +59,39 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     // Var Declaration
     private RescueGenMap model;
-    private String state;
     private HashMap<String,BufferedImage> icons;
+    private HashMap<String,BufferedImage> colors;
+    private HashMap<String,BufferedImage> colorsActive;
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
-    
-    
+    private String state;
+    private int [] actualPosClicked;
     
     public MapGeneratorTopComponent() {
+        
+        
+        
         initComponents();
         setName(Bundle.CTL_MapGeneratorTopComponent());
         setToolTipText(Bundle.HINT_MapGeneratorTopComponent());
         model = RescueGenMap.getInstance();
+        model.setMapImg((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapImg());
+        model.setMapColor((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapColor());
+        model.setKeyMap(MonitorImages.getInstance().getSetKeyMap());
+        model.setKeyColor(MonitorImages.getInstance().getSetKeyColor());
         int x =Integer.parseInt(this.XButton.getText());
         int y =Integer.parseInt(this.YButton.getText());
         icons= model.getImages();
-        this.initComboBox(icons);
+        colors=model.getColors();
+        actualPosClicked = new int [2];
+        actualPosClicked[0]=(x/2)+1;
+        actualPosClicked[1]=(y/2)+1;
+        this.initComboBox();
+        this.MakePersonList();
+        this.MakeStepList(-1);
+        this.MakeMoveList(-1,-1);
+        this.MakePathList(-1);
         this.state=this.InsertionOptionComboBox.getSelectedItem().toString();
         model.initModelMap(x, y, PreviewMap.getWidth(), PreviewMap.getHeight());
         console= ClipsConsole.getInstance();
@@ -82,11 +99,13 @@ public final class MapGeneratorTopComponent extends TopComponent {
         save = new JFileChooser();
         fc.setCurrentDirectory(new File("./"));
         fc.setFileFilter(new JSONFilter());
-
         save.setCurrentDirectory(new File("./"));
         //save_fc.setFileFilter(new CLIPSFilter());
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        
+        this.MapButton.setSelected(true);
+        this.MoveButton.setSelected(false);
+        this.setEnabled(false);
+        this.setEnabled(true);
     }
     
     
@@ -110,7 +129,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 Graphics2D g2 = (Graphics2D) g; // cast g to Graphics2D
 
                 if (model != null) {
-                    model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight());
+                    model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight(), model.getMode());
                 }
             }
 
@@ -129,6 +148,25 @@ public final class MapGeneratorTopComponent extends TopComponent {
         jLabel1 = new javax.swing.JLabel();
         MaxDur = new javax.swing.JTextField();
         MaxDuration = new javax.swing.JLabel();
+        MapButton = new javax.swing.JRadioButton();
+        MoveButton = new javax.swing.JRadioButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        AddPersonButton = new javax.swing.JButton();
+        DeletePersonButton = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        PersonPathList = new javax.swing.JList();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        StepList = new javax.swing.JList();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        MovementList = new javax.swing.JList();
+        AddPathButton = new javax.swing.JButton();
+        RemovePathButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        PersonsList = new javax.swing.JList();
+        jLabel4 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -157,11 +195,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
         PreviewMap.setLayout(PreviewMapLayout);
         PreviewMapLayout.setHorizontalGroup(
             PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
+            .addGap(0, 309, Short.MAX_VALUE)
         );
         PreviewMapLayout.setVerticalGroup(
             PreviewMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 266, Short.MAX_VALUE)
+            .addGap(0, 310, Short.MAX_VALUE)
         );
 
         InsertionOptionComboBox.setModel(new javax.swing.DefaultComboBoxModel<String>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
@@ -228,6 +266,22 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(MaxDuration, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MaxDuration.text")); // NOI18N
 
+        MapButton.setSelected(true);
+        org.openide.awt.Mnemonics.setLocalizedText(MapButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MapButton.text")); // NOI18N
+        MapButton.setContentAreaFilled(false);
+        MapButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MapButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(MoveButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.MoveButton.text")); // NOI18N
+        MoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MoveButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -270,9 +324,13 @@ public final class MapGeneratorTopComponent extends TopComponent {
                                 .addComponent(jLabel1)
                                 .addGap(62, 62, 62))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(SaveButton)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(MapButton)
+                                    .addComponent(SaveButton))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(LoadButton)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(LoadButton)
+                                    .addComponent(MoveButton))
                                 .addContainerGap())))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -304,7 +362,166 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(LoadButton)
                     .addComponent(SaveButton))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(MapButton)
+                    .addComponent(MoveButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel5.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(AddPersonButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.AddPersonButton.text")); // NOI18N
+        AddPersonButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddPersonButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(DeletePersonButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.DeletePersonButton.text")); // NOI18N
+        DeletePersonButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeletePersonButtonActionPerformed(evt);
+            }
+        });
+
+        PersonPathList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane5.setViewportView(PersonPathList);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel3.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel2.text")); // NOI18N
+
+        StepList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        StepList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                StepListValueChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(StepList);
+
+        MovementList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        MovementList.addContainerListener(new java.awt.event.ContainerAdapter() {
+            public void componentAdded(java.awt.event.ContainerEvent evt) {
+                MovementListComponentAdded(evt);
+            }
+            public void componentRemoved(java.awt.event.ContainerEvent evt) {
+                MovementListComponentRemoved(evt);
+            }
+        });
+        MovementList.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                MovementListFocusGained(evt);
+            }
+        });
+        MovementList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MovementListMouseClicked(evt);
+            }
+        });
+        MovementList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                MovementListValueChanged(evt);
+            }
+        });
+        jScrollPane3.setViewportView(MovementList);
+
+        org.openide.awt.Mnemonics.setLocalizedText(AddPathButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.AddPathButton.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(RemovePathButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.RemovePathButton.text")); // NOI18N
+
+        PersonsList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        PersonsList.addContainerListener(new java.awt.event.ContainerAdapter() {
+            public void componentAdded(java.awt.event.ContainerEvent evt) {
+                PersonsListComponentAdded(evt);
+            }
+            public void componentRemoved(java.awt.event.ContainerEvent evt) {
+                PersonsListComponentRemoved(evt);
+            }
+        });
+        PersonsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                PersonsListValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(PersonsList);
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel4.text")); // NOI18N
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(DeletePersonButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(AddPersonButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(RemovePathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(AddPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel5))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AddPersonButton)
+                    .addComponent(AddPathButton))
+                .addGap(12, 12, 12)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(DeletePersonButton)
+                    .addComponent(RemovePathButton))
+                .addGap(26, 26, 26)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -312,25 +529,35 @@ public final class MapGeneratorTopComponent extends TopComponent {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(PreviewMap, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,15 +575,27 @@ public final class MapGeneratorTopComponent extends TopComponent {
     // PreviewMap MouseClick
     
     private void PreviewMapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreviewMapMouseClicked
+       
         try{
             int x = evt.getX();
             int y = evt.getY();
-            int [] posCell = new int [2] ;
-            posCell = model.getCellPosition(x, y);
-            boolean result = model.UpdateCell(posCell[0],posCell[1], state);
-            if(result){
-                PreviewMap.repaint();
+            
+            this.actualPosClicked = model.getCellPosition(x, y);
+            if(this.MapButton.isSelected()){
+                this.ExecUpdateMap();
             }
+            else{
+                if(model.findPosByColor(state)!=-1){
+                    this.ExecUpdateMove();
+                }
+                else{
+                    String [][] move = model.getTmpMoveMap(this.actualPosClicked[0],this.actualPosClicked[1], state);
+                    model.ApplyUpdateOnMoveMap(move);
+                    model.CopyToActive(model.getMove());
+                    PreviewMap.repaint();
+                }
+            }
+            
         }
         catch(NullPointerException err){
             console.error(err);
@@ -396,7 +635,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
             try {
                 File file = fc.getSelectedFile();
                 model.load_scene(file);
-                
                 PreviewMap.repaint();
             } catch (ParseException ex) {
                 console.error(ex);
@@ -420,6 +658,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_LoadButtonMouseClicked
 
+    
+    
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         int retrival = save.showSaveDialog(this);
         if (retrival == JFileChooser.APPROVE_OPTION) {
@@ -433,9 +673,29 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
-
-        setState(InsertionOptionComboBox.getSelectedItem().toString());
-        this.updateLabel(state);
+        boolean checkButton = this.MapButton.isSelected();
+        HashMap<String,BufferedImage> toChange = this.icons;
+        if(!checkButton){
+            toChange = this.colors;
+            setState(InsertionOptionComboBox.getSelectedItem().toString());
+            this.updateLabel(state,toChange);
+            int pos = model.findPosByColor(state);
+            if(pos!=-1){
+                String[][] move = model.getMoveCellMap(pos,-1);
+                model.ApplyUpdateOnMoveMap(move);
+            }
+            
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            this.MakePersonList();
+            this.MakeStepList(-1);
+            this.MakeMoveList(-1,-1);
+        
+        }
+        else{
+            setState(InsertionOptionComboBox.getSelectedItem().toString());
+            this.updateLabel(state,toChange);
+        }
         Icons.repaint();
     }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
 
@@ -447,26 +707,171 @@ public final class MapGeneratorTopComponent extends TopComponent {
         // TODO add your handling code
     }//GEN-LAST:event_InsertionOptionComboBoxComponentAdded
 
+    private void PersonsListComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_PersonsListComponentAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PersonsListComponentAdded
+
+    private void PersonsListComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_PersonsListComponentRemoved
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PersonsListComponentRemoved
+
+    private void AddPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPersonButtonActionPerformed
+        this.ExecAddPerson();
+        
+    }//GEN-LAST:event_AddPersonButtonActionPerformed
+
+    private void DeletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletePersonButtonActionPerformed
+        this.ExecRemove();
+    }//GEN-LAST:event_DeletePersonButtonActionPerformed
+
+    private void MovementListComponentAdded(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_MovementListComponentAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MovementListComponentAdded
+
+    private void MovementListComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_MovementListComponentRemoved
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MovementListComponentRemoved
+
+    private void MovementListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_MovementListValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MovementListValueChanged
+
+    private void MovementListFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_MovementListFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MovementListFocusGained
+
+    private void MovementListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MovementListMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MovementListMouseClicked
+
     
+    private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
+        this.MapButton.setSelected(true);
+        this.MoveButton.setSelected(false);
+        this.MapButton.setEnabled(false);
+        this.MoveButton.setEnabled(true);
+        this.XButton.setEditable(true);
+        this.YButton.setEditable(true);
+        this.MaxDur.setEditable(true);
+        this.model.setMode("scene");
+        this.InitMapComboBox();
+        this.InsertionOptionComboBox.enable(true);
+        this.Icons.enable(true);
+        Icons.repaint();
+        model.CopyToActive(model.getScene());
+        this.MakePersonList();
+        this.MakeStepList(-1);
+        this.MakeMoveList(-1,-1);
+        this.MakePathList(-1);
+        PreviewMap.repaint();
+    }//GEN-LAST:event_MapButtonActionPerformed
+
+       
+     
+    private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
+        this.MapButton.setSelected(false);
+        this.MoveButton.setSelected(true);
+        this.MapButton.setEnabled(true);
+        this.MoveButton.setEnabled(false);
+        this.XButton.setEditable(false);
+        this.YButton.setEditable(false);
+        this.MaxDur.setEditable(false);
+        this.model.setMode("move");
+        
+        
+        this.InitColorComboBox();
+        if(getActiveColorMap()){
+            this.InsertionOptionComboBox.enable(true);
+            this.Icons.enable(true);
+            Icons.repaint();
+            model.CopySceneToMove();
+            int pos = model.findPosByColor(state);
+            String[][] move = model.getMoveCellMap(pos,-1);
+            model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+        }
+        else{
+            this.InsertionOptionComboBox.enable(true);
+            Icons.enable(true);
+            model.CopySceneToMove();
+            model.CopyToActive(model.getMove());
+        }
+        
+        
+        PreviewMap.repaint();
+        this.MakePersonList();
+        this.MakeStepList(-1);
+        this.MakePathList(-1);
+        this.MakeMoveList(-1,-1);
+        
+    }//GEN-LAST:event_MoveButtonActionPerformed
+
+    private void PersonsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_PersonsListValueChanged
+        
+        String [] persons = model.getListPerson();
+        if(persons.length>evt.getFirstIndex()){
+            String val = persons[evt.getFirstIndex()];
+            int underScoreIndex = val.indexOf("_");
+            String color = val.substring(underScoreIndex+1);
+            this.MakePersonList();
+            int pos = model.findPosByColor(color);
+            this.MakeStepList(-1);
+            this.MakeMoveList(pos,-1);
+            this.MakePathList(pos);
+        }
+        else{
+            this.MakePersonList();
+            this.MakeStepList(-1);
+            this.MakeMoveList(-1,-1);
+            this.MakePathList(-1);
+        }
+    }//GEN-LAST:event_PersonsListValueChanged
+
+    
+    private void StepListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_StepListValueChanged
+
+        this.MakeStepList(-1);
+        this.MakeMoveList(-1,evt.getFirstIndex());
+    }//GEN-LAST:event_StepListValueChanged
+ 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddPathButton;
+    private javax.swing.JButton AddPersonButton;
+    private javax.swing.JButton DeletePersonButton;
     private javax.swing.JLabel DimensionLabel;
     private javax.swing.JLabel Icons;
     private javax.swing.JComboBox InsertionOptionComboBox;
     private javax.swing.JButton LoadButton;
+    private javax.swing.JRadioButton MapButton;
     private javax.swing.JTextField MaxDur;
     private javax.swing.JLabel MaxDuration;
+    private javax.swing.JRadioButton MoveButton;
+    private javax.swing.JList MovementList;
+    private javax.swing.JList PersonPathList;
+    private javax.swing.JList PersonsList;
     private javax.swing.JPanel PreviewMap;
     private javax.swing.JButton RefreshButton;
+    private javax.swing.JButton RemovePathButton;
     private javax.swing.JButton SaveButton;
+    private javax.swing.JList StepList;
     private javax.swing.JTextField XButton;
     private javax.swing.JLabel XLabel;
     private javax.swing.JTextField YButton;
     private javax.swing.JLabel YLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
     @Override
@@ -490,21 +895,42 @@ public final class MapGeneratorTopComponent extends TopComponent {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-   
+  
     
+    private void InitMapComboBox(){
     
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
+    }
     
-    
-    // Aggiornamento dell'img di preview
-    
-    protected void updateLabel(String name) {
+    private void InitColorComboBox(){
         
         
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(colors,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),colors);
+     }
+    
+    private void InitColorActiveComboBox(){
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(colorsActive,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),colorsActive);
+    
+    }
+    
+    
+    /*
+    * Genera l'immagine di preview della combobox
+    * @param name : chiave dell'hash map
+    * @param map : hashmap da cui prelevare le immagini
+    */
+    
+    protected void updateLabel(String name, HashMap<String,BufferedImage> map ) {
         
         try{
-            ImageIcon icon = new ImageIcon (this.icons.get(name));
-            Image image = icon.getImage(); // transform it 
-            Image newimg = image.getScaledInstance(90, 90,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+            ImageIcon icon = new ImageIcon (map.get(name));
+            Image image = icon.getImage(); // transform it
+            int width = this.Icons.getWidth();
+            int height = this.Icons.getHeight();
+            Image newimg = image.getScaledInstance(90,90,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
             icon = new ImageIcon(newimg);  // transform it back
             Icons.setIcon(icon);
             Icons.setToolTipText("A drawing of a " + name.toLowerCase());
@@ -519,17 +945,154 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
 
 
+    private boolean getActiveColorMap(){
+    
+        String[] colors = model.getListColorActive();
+        if(colors.length==1 && colors[0].equals("")){
+            
+            return false;
+        }
+        else{
+        
+            return true;
+            
+        }
+                      
+    }
+    
+    private void MakePersonList(){
+    
+        String [] list = model.getListPerson();
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.PersonsList,list);
+        
+    }
+    
+    private void MakeStepList(int paramStep){
+    
+        String [] list = model.getListStep(paramStep);
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.StepList,list);
+        
+    }
+    
+    private void MakeMoveList(int paramPerson,int paramStep){
+    
+        String [] list = model.getListMove(paramPerson, paramStep);
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.MovementList,list);
+        
+    }
+    
+    private void MakePathList(int paramPerson){
+    
+        String [] list = model.getPaths(paramPerson);
+        if(list==null){
+            list = new String[1];
+            list[0]="";
+        }
+            ListRenderer render = new ListRenderer(this.PersonPathList,list);
+    
+    }
+    
+    
     
     
     /*
-      Update Combobox label for new selected icon
+      Aggiorna la combo e l'icona corrisponendentemente scelta
     */
     
-    private void initComboBox(HashMap<String,BufferedImage> icons){
-    
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
+    private void initComboBox(){
         
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
+        
+    }
+    
+    private void ExecRemove(){
+    
+        boolean result = this.model.Remove(state);
+        if(result){
+            console.info(state + "Persona rimossa correttamente : ");
+            String[][] move = model.getMoveCellMap(-1,0);
+                    model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            this.MakePersonList();
+            this.MakeStepList(-1);
+            this.MakeMoveList(-1,-1);
+            this.MakePathList(-1);
+        }
+        else{
+            console.error(state + " non presente nello scenario");
+        }
+    }
+    
+    /*
+    * Inserisce una nuova persona nello scenario        
+    */        
+            
+    private void ExecAddPerson(){
+    
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        final int IllegalRobotPosition = 4;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
+    
+        int result = this.model.AddNewPerson(this.actualPosClicked[0],this.actualPosClicked[1], state);
+            switch(result){
+                case Success :
+                    console.info("Modifica della mappa eseguita con successo");
+                    int pos = model.findPosByColor(state);
+                    String[][] move = model.getMoveCellMap(pos,-1);
+                    model.ApplyUpdateOnMoveMap(move);
+                    model.CopyToActive(model.getMove());
+                    PreviewMap.repaint();
+                    this.MakePersonList();
+                    this.MakeStepList(-1);
+                    this.MakeMoveList(-1,-1);
+                    this.MakePathList(-1);
+                break;
+                    
+                case IllegalPosition :
+                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
+                break;
+                case keyColorEmpty :
+                    console.error("Color set vuoto");
+                break;
+                case keyColorFull :
+                    console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
+                break;
+                case IllegalRobotPosition :
+                    console.error("Posizione del robot non valida");
+                break;
+                case IllegalAgentPosition:
+                    console.error("Posizione dell'agente non valida");
+                break;
+                
+                case PersonOverride :
+                     console.error("La cella è già occupata da un altro agente");
+                break;
+                default :
+                    
+                break;    
+                  
+            }
+        
+    
+    
     }
     
     /*
@@ -537,6 +1100,99 @@ public final class MapGeneratorTopComponent extends TopComponent {
      max duration
     */
     
+    private void ExecUpdateMap(){
+        
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        final int IllegalRobotPosition = 4;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
+    
+        int result = model.UpdateCell(this.actualPosClicked[0],this.actualPosClicked[1], state);
+            switch(result){
+                case Success :
+                     console.info("Modifica della mappa eseguita con successo");
+                     model.CopyToActive(model.getScene());
+                     PreviewMap.repaint();
+                     this.MakePersonList();
+                     this.MakeStepList(-1);
+                     this.MakeMoveList(-1,-1);
+                     this.MakePathList(-1);
+                break;
+                    
+                case IllegalPosition :
+                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
+                break;
+                case keyColorEmpty :
+                    console.error("Color set vuoto");
+                break;
+                case keyColorFull :
+                    console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
+                break;
+                case IllegalRobotPosition :
+                    console.error("Posizione del robot non valida");
+                break;
+                case IllegalAgentPosition:
+                    console.error("Posizione dell'agente non valida");
+                break;
+                
+                case PersonOverride :
+                     console.error("La cella è già occupata da un altro agente");
+                break;
+                default :
+                    
+                break;    
+                  
+            }
+    
+    }
+    
+    /*
+    * Esegue una richiesta di aggiornamento dei movimenti di una certa persona
+    * su una posizione specificata
+    * 
+    */
+    
+    private void ExecUpdateMove(){
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int UnavaiblePosition = 2 ;
+        
+        int result = model.UpdateMoveCell(this.actualPosClicked[0],this.actualPosClicked[1],state);
+        switch(result){
+                case Success :
+                    console.info("Movimento agente aggiunto con successo");
+                    int pos = model.findPosByColor(state);
+                    String[][] move = model.getMoveCellMap(pos,-1);
+                    model.ApplyUpdateOnMoveMap(move);
+                    model.CopyToActive(model.getMove());
+                    PreviewMap.repaint();
+                    this.MakePersonList();
+                    this.MakeStepList(-1);
+                    this.MakeMoveList(-1,-1);
+                    this.MakePathList(-1);
+                break;
+                    
+                case IllegalPosition :
+                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
+                break;
+                case UnavaiblePosition :
+                    
+                    console.error("Movimento non disponibile ");
+                break;    
+                default :
+                    
+                break;
+        }
+        
+    }
+    
+    /*
+     * Ridisegna la mappa in base alla nuova dimensione della griglia richiesta e 
+     * in base alla nuova durata del tempo prestabilita
+    */
     
     
     void updateMap(int x, int y,int max) {
