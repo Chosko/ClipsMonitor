@@ -22,6 +22,7 @@ import org.openide.awt.ActionReference;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 import org.json.JSONException;
+import org.json.simple.parser.ParseException;
 import org.openide.util.Exceptions;
 
 /**
@@ -358,7 +359,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
         }
         catch(NullPointerException err){
-            err.printStackTrace();
+            console.error(err);
         }
     }//GEN-LAST:event_PreviewMapMouseClicked
 
@@ -381,7 +382,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
         } catch (NumberFormatException err) {
             console.error("Input non valido: Verificare che i valori siano interi \n" );
-            err.printStackTrace();
         }
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
@@ -398,8 +398,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 model.load_scene(file);
                 
                 PreviewMap.repaint();
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
+            } catch (ParseException ex) {
+                console.error(ex);
             }
 
         }
@@ -413,8 +413,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 File file = fc.getSelectedFile();
                 model.load_scene(file);
                 PreviewMap.repaint();
-            } catch (Exception ex) {
-                Exceptions.printStackTrace(ex);
+            } catch (ParseException ex) {
+                console.error(ex);
             }
 
         }
@@ -513,6 +513,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         catch(NullPointerException e){
            Icons.setText("Image not found");
            System.out.println(e.getLocalizedMessage());
+           console.error(e);
         }
         
     }

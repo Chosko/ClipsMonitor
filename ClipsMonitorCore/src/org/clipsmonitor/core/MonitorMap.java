@@ -18,8 +18,8 @@ import org.clipsmonitor.clips.ClipsConsole;
  * Varesano Marco, Busso Marco, Cotrino Roberto, Ruben Caliandro
  */
 public abstract class MonitorMap extends Observable implements Observer {
-    public final int MAP_DIMENSION = 550;
-    public final int DEFAULT_IMG_SIZE = 85;
+    public static final int MAP_DIMENSION = 550;
+    protected String[][] map;
     
     @Override
     /**
@@ -57,7 +57,11 @@ public abstract class MonitorMap extends Observable implements Observer {
     * @return
     */
     public BufferedImage overlapImages(BufferedImage object, BufferedImage background) {
-
+       if(background == null){
+           
+           return object;
+       }
+        
        BufferedImage combined;
        Graphics g;
        // crea una nuova immagine, la dimensione è quella più grande tra le 2 img
@@ -71,6 +75,14 @@ public abstract class MonitorMap extends Observable implements Observer {
        g.drawImage(object, 0, 0, null);
 
        return combined;
+    }
+
+    protected void debugMap(){
+        for (int i=0; i<map.length; i++) {
+            for (int j=0; j<map[i].length; j++) {
+                ClipsConsole.getInstance().debug("k-cell " + (i+1) + " " + (j+1) + ": " + map[i][j]);
+            }
+        }
     }
     
     /**

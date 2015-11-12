@@ -139,8 +139,8 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         int cellDimension = Math.round(map.MAP_DIMENSION / x);
 
         // bloccata la dimensione massima delle singole immagini
-        if (cellDimension > map.DEFAULT_IMG_SIZE) {
-            cellDimension = map.DEFAULT_IMG_SIZE;
+        if (cellDimension > MonitorImages.DEFAULT_IMG_SIZE) {
+            cellDimension = MonitorImages.DEFAULT_IMG_SIZE;
         }
 
         mapPanel = new MapPanel(map);

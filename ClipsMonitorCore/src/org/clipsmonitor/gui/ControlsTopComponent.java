@@ -30,7 +30,8 @@ import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorImages;
-import org.clipsmonitor.monitor2015.RescueMap;
+import org.clipsmonitor.monitor2015.RescueAgentMap;
+import org.clipsmonitor.monitor2015.RescueEnvMap;
 import org.clipsmonitor.monitor2015.RescueModel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.LifecycleManager;
@@ -388,10 +389,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyReleased
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
-        disableButtons();
         model.setMode(MonitorModel.ex_mode_RUNN, 1);
         model.resume();
-        enableButtons();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
 
@@ -408,8 +407,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
         model = RescueModel.getInstance();
         model.addObserver(this);
-        model.registerMap("envMap", new RescueMap(projectDirectory.getAbsolutePath()));
-        //model.registerMap("agentMap", new RescueMap(projectDirectory.getAbsolutePath()));
+        model.registerMap("envMap", new RescueEnvMap(projectDirectory.getAbsolutePath()));
+        model.registerMap("agentMap", new RescueAgentMap(projectDirectory.getAbsolutePath()));
         core = MonitorCore.getInstance();
         model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode(MonitorModel.ex_mode_START);

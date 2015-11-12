@@ -1,5 +1,6 @@
 package org.clipsmonitor.monitor2015;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.sf.clipsrules.jni.CLIPSError;
@@ -27,7 +28,7 @@ public class RescueModel extends MonitorModel {
     private static RescueModel instance;
     private String advise;
     private Map<String, MonitorMap> maps;
-    
+    private ArrayList<int[]> personPositions;
     
     /*costanti enumerative intere per un uso più immediato delle posizioni all'interno 
      degli array che definiscono i fatti di tipo (real-cell)*/
@@ -46,21 +47,24 @@ public class RescueModel extends MonitorModel {
     }
     
     public static void clearInstance() {
-        instance.advise = null;
-        instance.direction = null;
-        instance.mode = null;
-        instance.maps = null;
-        instance.durlastact = 0;
-        instance.time = null;
-        instance.step = null;
-        instance.maxduration = null;
-        instance.result = null;
-        instance.score = 0;
-        instance.loaded = null;
-        instance.console = null;
-        instance.row = 0;
-        instance.column = 0;    
-        instance = null;
+        if(instance != null){
+            instance.advise = null;
+            instance.direction = null;
+            instance.mode = null;
+            instance.maps = null;
+            instance.durlastact = 0;
+            instance.time = null;
+            instance.step = null;
+            instance.maxduration = null;
+            instance.result = null;
+            instance.score = 0;
+            instance.loaded = null;
+            instance.console = null;
+            instance.row = 0;
+            instance.column = 0;
+            instance.personPositions = null;
+            instance = null;
+        }
     }
     
     /**
@@ -72,6 +76,7 @@ public class RescueModel extends MonitorModel {
         console = ClipsConsole.getInstance();
         MonitorCore.getInstance().registerModel(this);
         maps = new HashMap<String, MonitorMap>();
+        personPositions = new ArrayList<int[]>();
     }
 
     /**
@@ -131,28 +136,6 @@ public class RescueModel extends MonitorModel {
     public MonitorMap getMapToRegister(String target){
         return maps.get(target);
     }
-
-    public enum Cellslots{
-    
-        POSC (0),
-        POSR (1),
-        CONTAINS(2),
-        INJURIED (3),
-        DISCOVERED (4),
-        CHECKED (5), 
-        CLEAR(6);
-        
-        
-        private final int slot;
-        
-        Cellslots(int num){
-            this.slot=num;
-        }
-    
-        int slot(){
-            return slot;
-        }
-    }
     
     /**
      * Aggiorna la mappa leggendola dal motore clips. Lanciato ogni volta che si
@@ -163,57 +146,63 @@ public class RescueModel extends MonitorModel {
     @Override
     protected synchronized void updateModel() throws CLIPSError {
 
-        console.debug("Aggiornamento modello in corso...");
-        String[] kcellArray = {"pos-r", "pos-c", "contains"};
-
-        String[][] kcellFacts = core.findAllFacts("AGENT", "K-cell", "TRUE", kcellArray);
+        console.debug("Aggiornamento del modello...");
         
-        String[] arrayRobot = {"step", "time", "pos-r", "pos-c", "direction", "loaded"};
-        String[] robot = core.findFact("ENV", "agentstatus", "TRUE", arrayRobot);
-        if (robot[0] != null) { //Se hai trovato il fatto
-            step = new Integer(robot[0]);
-            time = new Integer(robot[1]);
-            row = new Integer(robot[2]);
-            column = new Integer(robot[3]);
-            direction = robot[4];
-            loaded = robot[5];
-            mode = loaded.equals("yes") ? "loaded" : "unloaded";
-
-            console.debug("Acquisizione background dell'agente...");
-        }
-        /*
-            prendo tutti i fatti di tipo kcell e valuto se esistono celle contenenti nello slot
-            unknown 
-        */
+        // Update the agent
+        updateAgent();
         
-//        
-//        for (String[] fact : kcellFacts) {
-//            int r = new Integer(fact[Cellslots.POSC.slot()]) - 1;
-//            int c = new Integer(fact[Cellslots.POSR.slot()]) - 1;
-//            if (fact[Cellslots.CONTAINS.slot()].equals("unknown")) {
-//                map[r][c] += "_undiscovered";
-//            }
-//            
-//        }
-       
-        // Update all the maps!
+        // Update the other agents
+        updatePeople();
+        
+        // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
             map.updateMap();
         }
 
-        // ######################## FATTO agentstatus ##########################
-        
-        // ######################## FATTO status ##########################
-        String[] arrayStatus = {"step", "time", "result"};
-        String[] status = core.findFact("MAIN", "status", "TRUE", arrayStatus);
+        // Update the simulation status
+        updateStatus();
+    }
+
+    private void updateAgent() throws CLIPSError{
+        String[] robot = core.findFact("ENV", RescueFacts.AgentStatus.factName(), "TRUE", RescueFacts.AgentStatus.slotsArray());
+        if (robot[0] != null) { //Se hai trovato il fatto
+            step = new Integer(robot[RescueFacts.AgentStatus.STEP.index()]);
+            time = new Integer(robot[RescueFacts.AgentStatus.TIME.index()]);
+            row = new Integer(robot[RescueFacts.AgentStatus.POSR.index()]);
+            column = new Integer(robot[RescueFacts.AgentStatus.POSC.index()]);
+            direction = robot[RescueFacts.AgentStatus.DIRECTION.index()];
+            loaded = robot[RescueFacts.AgentStatus.LOADED.index()];
+            mode = loaded.equals("yes") ? "loaded" : "unloaded";
+        }
+    }
+    
+    private void updatePeople() throws CLIPSError{
+        console.debug("Acquisizione posizione degli altri agenti...");
+        String[][] persons = core.findAllFacts("ENV", RescueFacts.PersonStatus.factName(), "TRUE", RescueFacts.PersonStatus.slotsArray());
+        personPositions.clear();
+        if (persons != null) {
+            for (int i = 0; i < persons.length; i++) {
+                if(persons[i][0] != null){
+                    int r = new Integer(persons[i][RescueFacts.PersonStatus.POSR.index()]);
+                    int c = new Integer(persons[i][RescueFacts.PersonStatus.POSC.index()]);
+                    personPositions.add(new int[]{r, c});
+                }
+            }
+        }
+    }
+
+    private void updateStatus() throws CLIPSError{
+        String[] status = core.findFact("MAIN", RescueFacts.Status.factName(), "TRUE", RescueFacts.Status.slotsArray());
         if (status[0] != null) {
-            step = new Integer(status[0]);
-            time = new Integer(status[1]);
-            result = status[2];
+            step = new Integer(status[RescueFacts.Status.STEP.index()]);
+            time = new Integer(status[RescueFacts.Status.TIME.index()]);
+            result = status[RescueFacts.Status.RESULT.index()];
             console.debug("Step: " + step + " Time: " + time + " Result: " + result);
         }
-
-        console.debug("Aggiornamento modello completato");
+    }
+    
+    public ArrayList<int[]> getPersonPositions(){
+        return personPositions;
     }
 
     @Override

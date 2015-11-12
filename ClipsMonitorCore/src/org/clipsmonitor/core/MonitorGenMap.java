@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.monitor2015.RescueGenMap;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -268,8 +269,8 @@ public abstract class MonitorGenMap {
           
             
         }
-        catch(Exception err){
-            err.printStackTrace();
+        catch(IOException err){
+            ClipsConsole.getInstance().error(err);
         }
         
        return consoleOutput;          
@@ -347,9 +348,15 @@ public abstract class MonitorGenMap {
                 
                 this.setCell (x,y,stato);
             }
-        } catch (Exception ex) {
+        } catch (JSONException ex) {
             //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+            ClipsConsole.getInstance().error(ex);
+        } catch (IOException ex) {
+            //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
+            ClipsConsole.getInstance().error(ex);
+        } catch (NumberFormatException ex) {
+            //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
+            ClipsConsole.getInstance().error(ex);
         }
        
         

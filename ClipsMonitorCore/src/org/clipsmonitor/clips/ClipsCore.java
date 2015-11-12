@@ -30,7 +30,7 @@ import org.openide.modules.InstalledFileLocator;
  */
 public class ClipsCore {
 
-    public static void clearInstance() {
+    public synchronized static void clearInstance() {
         instance.router = null;
         instance.clips.destroy();
         instance.clips = null;
@@ -46,7 +46,7 @@ public class ClipsCore {
     /**
      * Singleton
      */
-    public static ClipsCore getInstance(){
+    public synchronized static ClipsCore getInstance(){
         if(instance == null){
             instance = new ClipsCore();
             instance.init();
@@ -63,7 +63,7 @@ public class ClipsCore {
      * Initialize the instance. Used in a separate function to avoid infinite
      * recursion when initializing singleton classes
      */
-    private void init(){
+    private synchronized void init(){
         console = ClipsConsole.getInstance();
         clips = new Environment();
         router = new RouterDialog("routerCore");
@@ -95,7 +95,7 @@ public class ClipsCore {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    public void initialize(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
+    public synchronized void initialize(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
         /* ------- Prima di tutto carichiamo i file CLP in CLIPS -------- */
         File str_folder = new File(projectDirectory + File.separator + "CLP" + File.separator + strategyFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
         File[] str_listOfFiles = str_folder.listFiles();
@@ -117,7 +117,7 @@ public class ClipsCore {
                     console.debug("Loading in CLIPS the file: " + path);
                     clips.load(path); //carica ogni file
                 }
-            } catch (Exception e) {
+            } catch (CLIPSError e) {
                 console.error(e);
             }
         }
@@ -131,31 +131,28 @@ public class ClipsCore {
         String destPath = System.getProperty("user.dir");
 
         for (File envFile : env_listOfFiles) {
-            try {
-                String fileName = envFile.getName();
-                String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
-                if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
-                    File source = envFile;
-                    String sourceName = source.getName();
-                    String destName;
-                    if(sourceName.startsWith("RealMap")){
-                        destName = "RealMap.txt";
-                    }
-                    else if(sourceName.startsWith("history")){
-                        destName = "history.txt";
-                    } 
-                    else{
-                        destName = sourceName;
-                    }
-                    File dest = new File(destPath + File.separator + destName);
 
-                    console.debug("Copying the file: " + source.getAbsolutePath() + " into " + dest.getAbsolutePath());
-
-                    copyFileUsingFileStreams(source, dest); //Copiamo il file
-                    dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
+            String fileName = envFile.getName();
+            String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
+            if (!envFile.isHidden() && !envFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
+                File source = envFile;
+                String sourceName = source.getName();
+                String destName;
+                if(sourceName.startsWith("RealMap")){
+                    destName = "RealMap.txt";
                 }
-            } catch (Exception e) {
-                console.error(e);
+                else if(sourceName.startsWith("history")){
+                    destName = "history.txt";
+                } 
+                else{
+                    destName = sourceName;
+                }
+                File dest = new File(destPath + File.separator + destName);
+
+                console.debug("Copying the file: " + source.getAbsolutePath() + " into " + dest.getAbsolutePath());
+
+                copyFileUsingFileStreams(source, dest); //Copiamo il file
+                dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
             }
         }
     }
@@ -169,7 +166,7 @@ public class ClipsCore {
      * @param eval l'interrogazione da passare a clips
      * @return un PrimitiveValue che contiene il risultato dell'interrogazione
      */
-    public PrimitiveValue evaluate(String module, String eval) throws CLIPSError{
+    public synchronized PrimitiveValue evaluate(String module, String eval) throws CLIPSError{
         if(module == null) {
             return clips.eval(eval);
         }
@@ -192,7 +189,7 @@ public class ClipsCore {
      * asserisce tutti i facts dichiarati negli initial
      *
      */
-    public void reset() {
+    public synchronized void reset() {
         clips.reset();
     }
 
@@ -201,7 +198,7 @@ public class ClipsCore {
      *
      * @return ritona 1 se ha successo 0 se fallisce
      */
-    public long run() {
+    public synchronized long run() {
         return clips.run();
     }
 
@@ -211,7 +208,7 @@ public class ClipsCore {
      * @param l il numero di "passi" da fare
      * @return ritona 1 se ha successo 0 se fallisce
      */
-    public long run(long l) {
+    public synchronized long run(long l) {
         return clips.run(l);
     }
 
@@ -220,7 +217,7 @@ public class ClipsCore {
      *
      * @return ritona 1 se ha successo 0 se fallisce
      */
-    public long runOne() {
+    public synchronized long runOne() {
         return clips.run(1);
     }
 
@@ -242,7 +239,7 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public String[][] findAllFacts(String module, String template, String conditions, String[] slots) throws CLIPSError {
+    public synchronized String[][] findAllFacts(String module, String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
@@ -257,8 +254,8 @@ public class ClipsCore {
                 }
             }
         }
-        catch (Exception ex) {
-            console.error(ex);
+        catch (NullPointerException ex) {
+            console.error("Impossible to find fact: " + template + " with conditions: " + conditions + " in module " + module);
         }
         return result;
     }
@@ -278,7 +275,7 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError {
+    public synchronized String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
@@ -324,7 +321,7 @@ public class ClipsCore {
      * null se non c'e' nessun fatto che corrisponde all'interrogazione
      * @throws ClipsException
      */
-    public String[] findFact(String module, String template, String conditions, String[] slots) throws CLIPSError {
+    public synchronized String[] findFact(String module, String template, String conditions, String[] slots) throws CLIPSError {
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
@@ -356,7 +353,7 @@ public class ClipsCore {
      * @return il resto del fatto, null se il fatto non esiste
      * @throws ClipsException
      */
-    public String findOrderedFact(String module, String template) throws CLIPSError {
+    public synchronized String findOrderedFact(String module, String template) throws CLIPSError {
         String eval = "(find-fact ((?f " + template + ")) TRUE)";
         MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
         String result = "";
@@ -381,7 +378,7 @@ public class ClipsCore {
      * @return una stringa che rappresenta i facts del modulo corrente
      * @throws ClipsException
      */
-    public String getFactList() {
+    public synchronized String getFactList() {
         router.startRec();
         try{
             PrimitiveValue fc = clips.eval("(get-focus)");
@@ -403,7 +400,7 @@ public class ClipsCore {
      * @return una stringa che rappresenta le azioni attivabili al momento
      * @throws ClipsException
      */
-    public String getAgenda() {
+    public synchronized String getAgenda() {
         router.startRec();
         try{
             PrimitiveValue fc = clips.eval("(get-focus)");
@@ -418,7 +415,7 @@ public class ClipsCore {
         return router.getStdout();
     }
 
-    public String getFocus() {
+    public synchronized String getFocus() {
         try {
             PrimitiveValue fc = clips.eval("(get-focus)");
             return fc.toString();
@@ -430,7 +427,7 @@ public class ClipsCore {
     }
     
     
-    public String[] getFocusStack(){
+    public synchronized String[] getFocusStack(){
     
         Stack<String> FocusStack=new Stack<String>();
         ArrayList<String> stack = new ArrayList<String>();
@@ -471,7 +468,7 @@ public class ClipsCore {
      * linguaggio clips, perchè non sarà controllata.
      * @return true se non ci sono stati problemi, false altrimenti
      */
-    public boolean defrule(String module, String rule) {
+    public synchronized boolean defrule(String module, String rule) {
         try{
             PrimitiveValue val = evaluate(module, rule);
             return !val.toString().equalsIgnoreCase("FALSE");
@@ -518,11 +515,11 @@ public class ClipsCore {
      Chiama la clear di clips
      */
 
-    void clear() {
+    synchronized void clear() {
         clips.clear();
     }
 
-  public String evaluateOutput(String module, String command) throws CLIPSError {
+    public synchronized String evaluateOutput(String module, String command) throws CLIPSError {
         router.startRec();
         try{
             this.evaluate(module, command);
@@ -535,14 +532,14 @@ public class ClipsCore {
         return router.getStdout();
     }
     
- public String getBanner(){
+    public synchronized String getBanner(){
         router.startRec();
         clips.printBanner();
         router.stopRec();
         return router.getStdout();
     }
     
- public String getPrompt(){
+    public synchronized String getPrompt(){
         router.startRec();
         clips.printPrompt();
         router.stopRec();

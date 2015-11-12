@@ -317,6 +317,12 @@ public class ClipsConsole extends Observable {
      */
     public void error(Object log) {
         String logString = "[ERROR] " + log;
+        if(log instanceof Throwable){
+            StackTraceElement[] st = ((Throwable) log).getStackTrace();
+            for (int i = 0; i < st.length; i++) {
+                logString += "\n  at " + st[i].toString();
+            }
+        }
         System.out.println(logString);
         this.append(LogLevel.ERROR, logString);
 
