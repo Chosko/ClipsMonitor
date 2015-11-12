@@ -17,11 +17,9 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -49,24 +47,25 @@ public abstract class MonitorGenMap {
     protected float MapWidth, MapHeight;  //largezza e altezza finestra
     
     protected String[][] scene; //matrice fondamentale rappresentante la scena
-    protected String[][] move ; 
-    protected String[][] mapActive;
-    protected String mode;
+    protected String[][] move ; // matrice fondamentale rappresentante i movimenti delle persone
+    protected String[][] mapActive; //matrice per la visualizzazione sull'interfaccia
+    protected String mode; // modalità di esecuzione del generatore 
     
     protected int maxduration; // massima durata temporale di attività del robot nell scena
-    protected ClipsConsole console;        
+    protected ClipsConsole console;    // istanza della console clips     
     
     protected HashMap<String,BufferedImage> images; // hashmap delle immagini
     protected HashMap<String,BufferedImage> colors; // hashmap delle immagini
     protected String[] setKeyMap; // array dei possibili valori di scene corrispondenti alle 
                                 // chiavi di accesso per l'hash map delle immagini
-    protected String[] setKeyColor;
-    protected int NumPerson;
-    protected String personName;
-    protected int [] agentposition;
-    protected int[] defaultagentposition;
-    protected LinkedList<Person> Persons;
-    
+    protected String[] setKeyColor; // set di chiavi colori disponibili 
+    protected int NumPerson; // numero di persone attualmente inserite
+    protected String personName; //chiave che identifa le persona all'interno dell'hashmap
+    protected int [] agentposition; // posizione attuale dell'agente all'inizio dello scenario
+    protected int[] defaultagentposition; // posizione iniziale di default dell'agente
+    protected LinkedList<Person> Persons; // Struttura che contiene i path delle varie persone
+    protected String defaulagentcondition; // stringa di default utilizzata per inizializzare la scena
+                                           // formata come background_keyagentdefault
     
     
     /*
@@ -949,6 +948,232 @@ public abstract class MonitorGenMap {
     
     }
     
+        /*
+    * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna interi corrispondenti
+    * ad un particolare conclusione dell'esecuzione. L'aggiornamento viene sostanzialmente separato
+    * in tre casi (richiesta di una posizione dell'agente robotico , richiesta di una nuova posizione iniziale
+    * di un agente umano, modifiche allo scenario).
+    * Il robot può essere modificato nella sua posizione solo se vengono rispettate le condizoioni del progetto
+    * @param x ,y : possibile in riga e colonna della cella da modificare
+    * @param state : nuovo stato da inserire
+    * @return   Success ==0 : aggiornamento consistente
+    *           IllegalPosition ==1 : posizione del cursore non valida
+    *           KeyColorEmpty ==2 : le chiavi dei colori non sono state correttamente generate
+    *           KeyColorFull ==3 : le chiavi per nuove person sono terminate
+    *           IllegalRobotPosition ==4 : posizione del robot non valida
+    *           IllegalAgentPosition ==5 : posizione dell'agente umano non valida
+    *           PersonOverride ==6 : sovrascrittura di un agente umano
+    */
+   
+    public int UpdateCell(int x, int y, String state) {
+        
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int IllegalRobotPosition = 2;
+        
+        
+        if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
+             
+            // se è stato richiesto un aggiornamento della posizione di agent
+            // controllo se attualmente non si trova nella stessa cella in cui vado a fare la modifica
+            
+                    if(state.contains("agent")){ 
+
+                        // se la nuova posizione agente è diversa dalla precedente
+                        if(x!=this.agentposition[0] || y!=this.agentposition[1]){ 
+
+                            if(this.RobotPositionIsValid(scene[x][y])){
+
+                                // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
+                                // e successivamente inserisco il nuovo agente
+
+                                int separate = scene[this.agentposition[0]][this.agentposition[1]].indexOf("_");
+                                String background = scene[this.agentposition[0]][this.agentposition[1]].substring(0,separate);
+                                scene[x][y] += "_" + state;
+                                scene[this.agentposition[0]][this.agentposition[1]]=background; 
+                                this.SetRobotParams(state, x, y);
+
+                            }
+                            else{
+
+                                return IllegalRobotPosition;
+                            }
+
+                        }
+                        else{ // stessa posizione attuale dell'agent position
+
+                            int separate = scene[x][y].indexOf("_");
+                            String background = scene[x][y].substring(0,separate);
+                            scene[x][y]=background+state; 
+                        }
+                    }
+
+                    // si richiedono modifiche alla scena diverse da tipologie di state agent
+                    else{ 
+                        // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
+                        // allora semplicemente reimposto la posizione di default dell'agente
+                        if(x==this.agentposition[0] && y==this.agentposition[1]){ 
+                            scene[x][y]=state;                                    
+                            this.agentposition[0]=this.defaultagentposition[0]; 
+                            this.agentposition[1]=this.defaultagentposition[1];
+                            scene[this.agentposition[0]][this.agentposition[1]]=this.defaulagentcondition;
+                        }
+                        
+                        else{
+                            scene[x][y]=state;
+                        }
+                    }
+        } 
+        else {  // punto della mappa non disponibile per la modifica
+            
+                return IllegalPosition;
+        }
+        return Success;
+    }
+    
+    
+    /*
+    * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
+    * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
+    * lista dei movimenti 
+    * @param x : numero di riga
+    * @param y : numero di colonna
+    * @param p : persona a cui aggiungere la move
+    */
+
+    public int UpdateMoveCell(int x, int y, String color){
+    
+        final int Success = 0;
+        final int IllegalPosition = 1;
+        final int UnavaibleMove = 2;
+        
+        
+        Person p=this.findByColor(color);
+        
+        if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
+            
+             StepMove s = p.getMoves().getLast();
+             // distanza di manhattam e check sulla attraversabilità della cella
+             if(this.ManhattamDistance(s.getRow(),s.getColumn(), x, y)==1 && this.PersonPositionIsValid(scene[x][y])){
+                 String pathName = "P"+ p.getPaths().get(p.getPaths().size()-1);
+                 int start = s.getStepStart();
+                 int step = p.getMoves().getLast().getStep()+1;
+                 p.getMoves().addLast(new StepMove(x,y, pathName , start , step));
+                 return Success;
+             }
+             else{
+                 return UnavaibleMove ;
+             
+             }
+             
+        }
+        else{
+        
+            return IllegalPosition;
+        }
+    
+    }
+    
+    
+    /*
+    * Rimuove una persona in base al colore ad esso assegnata
+    * @param color : colore rappresentante la persona da rimuovere
+    * @return boolean : verifica se la rimozione è avvenuta correttamente
+    */
+
+    public boolean Remove(String color){
+   
+        ListIterator<Person> it = this.Persons.listIterator();
+        while(it.hasNext()){
+
+            Person p = it.next();
+            if(p.getColor().equals(color)){
+                this.Persons.remove(p);
+                this.NumPerson--;
+                return true;
+            }
+        }
+       
+        return false;
+    }
+    
+    
+    
+    /*
+    *  Aggiunge una nuova persona allo scenario dichiarandone il colore associato
+    *  e la posizione di partenza
+    * @param x : riga della cella iniziale
+    * @param y : colonna della cella iniziale
+    * @param color : colore da associare
+    */
+
+    
+    
+    public int AddNewPerson( int x , int y , String color ){
+    
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
+
+        if (x >= 0 && x < NumCellX  && y >= 0 && y < NumCellY) {
+
+            if(this.setKeyColor.length==0){
+                return keyColorEmpty;
+            }
+
+            if(x==this.agentposition[0] && y==this.agentposition[1]){
+
+                return IllegalAgentPosition;
+            }
+
+            if(this.CheckBusyStartCellFromPerson(x, y)!=-1){
+
+                return PersonOverride;
+            }
+            
+            if(this.findPosByColor(color)!=-1){
+            
+                Person p = this.findByColor(color);
+                p.getMoves().getFirst().setRow(x);
+                p.getMoves().getFirst().setColumn(y);
+                return PersonOverride;
+            
+            }
+            
+            // ho ancora disponibilita di colori per indicare le person
+            if(this.NumPerson<this.colors.size()){          
+                    this.NumPerson++;
+                    this.Persons.add(new Person(color));
+                    String path ="P"+ this.Persons.getLast().getPaths().size();
+                    this.Persons.getLast().getPaths().add(path);
+                    this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0,0));
+                    if(this.PersonPositionIsValid(move[x][y])){
+                        String background = move[x][y];
+                        move[x][y]=background + "_" + personName + "_" + color;
+                    }
+                    else{
+
+                          return IllegalAgentPosition;
+                    }
+              }  
+            // ho terminato il numero di aggiunte che posso fare
+            else{
+                return keyColorFull;
+            }  
+
+            return Success;
+        }
+        else{
+            
+            return IllegalPosition;
+        }
+    }
+    
+    
+    
     //  METODI PER SAVE E LOAD DELLA MAPPA
     
 
@@ -1116,20 +1341,8 @@ public abstract class MonitorGenMap {
     */
     
     public abstract String exportScene();
-    
-    /*
-    * Metodo per l'aggiornamento della mappa in modalità move, in base alle direttive
-    * richieste dall'
-    */
-    
-    public abstract int UpdateMoveCell(int x,int y,String color);
-    
-    
-    /*
-        metodo per l'aggiornamento della mappa in base alle modifiche richieste dalla gui
-    */
-    
-    public abstract int UpdateCell(int x, int y, String state);
+        
+
     
     /*
     *    Esegue l'init del generatore, viene eseguito a livello di classe derivata
