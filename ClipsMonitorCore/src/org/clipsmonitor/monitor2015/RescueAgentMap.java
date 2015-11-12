@@ -170,7 +170,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
                     String curOverlap = curCel[k];
 
                     tmpImage = images.getImage(curOverlap);
-                    iconMatrix[i][j] = overlapImages(tmpImage, iconMatrix[i][j]);
+                    iconMatrix[i][j] = images.overlapImages(tmpImage, iconMatrix[i][j]);
                 }
             }
         }

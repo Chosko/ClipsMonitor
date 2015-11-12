@@ -104,6 +104,7 @@ public class MonitorImages {
         img.setRGB(0, 0, DEFAULT_IMG_SIZE, DEFAULT_IMG_SIZE, red, 0, 0);
         map_img.put(name, img);
         return img;
+    }
 
     public Map<String, BufferedImage> getMapColor() {
         return colors;

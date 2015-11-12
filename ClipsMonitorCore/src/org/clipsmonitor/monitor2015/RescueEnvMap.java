@@ -169,30 +169,16 @@ public class RescueEnvMap extends MonitorMap implements Observer {
     @Override
     public BufferedImage[][] getIconMatrix(){
         images = MonitorImages.getInstance();
-        
-        if(map==null){
+
+        if (map == null) {
             return null;
         }
-        
+
         BufferedImage[][] iconMatrix = new BufferedImage[map.length][map[0].length];
-    
-        /*
-            casi possibili per le icone :
-        
-            - agent_direction_load
-            - person
-            - gate
-            - outdoor
-            - empty
-            
-        */
-        
-        for (int i=map.length-1;i>=0;i--){
-  
+
+        for (int i = map.length - 1; i >= 0; i--) {
+
             for (int j = 0; j < map[0].length; j++) {
-                String direction = "";
-                String loaded = "";
-                String key_agent_map = "";
                 BufferedImage tmpImage;
 
                 // Split the map string in arguments
@@ -205,24 +191,12 @@ public class RescueEnvMap extends MonitorMap implements Observer {
                 for (int k = 1; k < curCel.length; k++) {
                     String curOverlap = curCel[k];
 
-                    // If agent, we must check directiona and loaded
-                    if(curOverlap.equals("agent")){
-                        direction = model.getDirection();
-                        loaded= model.getMode();
-                        key_agent_map="agent_"+ direction + "_" + loaded;
-                        tmpImage = images.getImage(key_agent_map);
-                        iconMatrix[i][j] = overlapImages(tmpImage, iconMatrix[i][j]);
-                    }
-
-                    // If other, just overlap
-                    else {
-                        tmpImage = images.getImage(curOverlap);
-                        iconMatrix[i][j] = overlapImages(tmpImage, iconMatrix[i][j]);
-                    }
+                    tmpImage = images.getImage(curOverlap);
+                    iconMatrix[i][j] = images.overlapImages(tmpImage, iconMatrix[i][j]);
                 }
             }
         }
-        return iconMatrix;   
+        return iconMatrix;
     }
     
     @Override
