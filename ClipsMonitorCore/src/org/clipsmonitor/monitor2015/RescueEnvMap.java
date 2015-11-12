@@ -28,6 +28,7 @@ public class RescueEnvMap extends MonitorMap implements Observer {
     private ClipsCore core;
     
     private final String UNKNOWN_COLOR = "#000000";
+    private final String UNDISCOVERED_COLOR = "rgba(0,0,0,0.3)";
     
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
@@ -110,33 +111,38 @@ public class RescueEnvMap extends MonitorMap implements Observer {
 
         for (String[] fact : cellFacts) {
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
-            int c = new Integer(fact[RescueFacts.Cell.POSC.index()]);
-            int r = new Integer(fact[RescueFacts.Cell.POSR.index()]);
+            int c = new Integer(fact[RescueFacts.Cell.POSC.index()]) - 1;
+            int r = new Integer(fact[RescueFacts.Cell.POSR.index()]) - 1;
             String contains = fact[RescueFacts.Cell.CONTAINS.index()];
             String injured = fact[RescueFacts.Cell.INJURED.index()];
             String discovered = fact[RescueFacts.Cell.DISCOVERED.index()];
             String checked = fact[RescueFacts.Cell.CHECKED.index()];
             String clear = fact[RescueFacts.Cell.CLEAR.index()];
+            String previous = fact[RescueFacts.Cell.PREVIOUS.index()];
 
             //caso di default preleviamo il valore dello slot contains e lo applichiamo alla mappa
-            map[r - 1][c - 1] = contains;  
+            map[r][c] = contains;  
             
+            if(contains.equals("robot")){
+                map[r][c] = previous;
+            }
+
             // controlla se lo slot injured sia impostato a yes
             
             if (injured.equals("yes")) {
-                map[r - 1][c - 1] += "_injured";
+                map[r][c] += "_injured";
             }
 
             if (discovered.equals("no")) {
-                map[r - 1][c - 1] += "+undiscovered";
+                map[r][c] += "+" + UNDISCOVERED_COLOR;
             }
 
             if (checked.equals("yes")) {
-                map[r - 1][c - 1] += "+checked";
+                map[r][c] += "+checked";
             }
 
             if (clear.equals("yes")) {
-                map[r - 1][c - 1] += "+clear";
+                map[r][c] += "+clear";
             }
         }
     }

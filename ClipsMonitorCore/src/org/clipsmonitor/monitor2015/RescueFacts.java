@@ -62,7 +62,8 @@ public final class RescueFacts{
         INJURED (3, "injured"),
         DISCOVERED (4, "discovered"),
         CHECKED (5, "checked"), 
-        CLEAR(6, "clear");
+        CLEAR(6, "clear"),
+        PREVIOUS(7, "previous");
         
         private static final String FACT_NAME = "cell";
         private final int index;
