@@ -78,7 +78,6 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     public ControlsTopComponent() {
         loadPreferences();
         MonitorImages.getInstance().loadImages(projectDirectory.getAbsolutePath());
-        MonitorImages.getInstance().loadGenColors(projectDirectory.getAbsolutePath());
         initComponents();
         setName(Bundle.CTL_ControlsTopComponent());
         setToolTipText(Bundle.HINT_ControlsTopComponent());

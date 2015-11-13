@@ -32,8 +32,6 @@ import javax.swing.JPanel;
 public class ComboBoxRenderer extends JPanel {
     
     
-    private final String [] keyStrings;
-    
     /*
     Costruttore della Classe ComboBoxRenderer
     @args:
@@ -43,17 +41,16 @@ public class ComboBoxRenderer extends JPanel {
     */
 
 
-    public ComboBoxRenderer(HashMap<String, BufferedImage> iconsMap , JComboBox<String> jcomboicons ,JLabel icons) {
+    public ComboBoxRenderer(String [] keys, JComboBox<String> jcomboicons ,JLabel icons) {
         super(new BorderLayout());
 
         // prelevo il set di chiavi dall'hashMap e genero il model che popola il JComboBox
+                
         
-        Set<String> keySet = iconsMap.keySet();
-        keyStrings = keySet.toArray(new String[keySet.size()]);
-        Arrays.sort(keyStrings);
+        Arrays.sort(keys);
         
 
-        ComboBoxModel<String> jcombostrings = new DefaultComboBoxModel<String>(keyStrings);
+        ComboBoxModel<String> jcombostrings = new DefaultComboBoxModel<String>(keys);
         jcomboicons.setModel(jcombostrings);
         jcomboicons.setSelectedIndex(0);
 

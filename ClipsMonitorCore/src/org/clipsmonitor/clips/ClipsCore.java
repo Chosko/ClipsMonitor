@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.StringTokenizer;
 import net.sf.clipsrules.jni.CLIPSError;
 import net.sf.clipsrules.jni.FactAddressValue;
-import org.openide.modules.InstalledFileLocator;
 
 /**
  * Questa classe implemente il cuore di connessione con l'ambiente clips,

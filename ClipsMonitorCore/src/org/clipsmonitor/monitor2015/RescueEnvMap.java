@@ -2,11 +2,8 @@ package org.clipsmonitor.monitor2015;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Observer;
-import javax.swing.JOptionPane;
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.clips.ClipsCore;

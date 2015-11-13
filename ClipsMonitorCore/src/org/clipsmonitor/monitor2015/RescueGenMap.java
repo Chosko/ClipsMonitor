@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorImages;
+import org.clipsmonitor.monitor2015.RescueFacts;
 
 /*
  * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
@@ -25,6 +26,7 @@ public class RescueGenMap extends MonitorGenMap {
  
     
     private static RescueGenMap instance;
+    private static RescueFacts facts;
     
     
     private String direction; // direzione iniziale del robot
@@ -49,6 +51,7 @@ public class RescueGenMap extends MonitorGenMap {
     @Override
     public void init(){
         this.console = ClipsConsole.getInstance();
+        this.img = MonitorImages.getInstance();
         console.debug("Inizializzazione del map geneator");
         this.NumCellX=0;
         this.NumCellY=0;
@@ -70,12 +73,11 @@ public class RescueGenMap extends MonitorGenMap {
         this.agentposition[1]=this.defaultagentposition[1];
         this.NumPerson=0;
         this.Persons= new LinkedList<Person>();
-        this.images= new HashMap<String,BufferedImage>();
-        this.colors= new HashMap<String,BufferedImage>();
-        this.setKeyColor = null;
-        this.setKeyMap = null;
-        
-        this.loadImages();
+        this.setKeyColor = new String[]{"blue","green","red","yellow","grey"};
+        this.setKeyMap =  new String[]{"agent_north_unloaded","agent_north_loaded",
+                "agent_west_unloaded","agent_west_loaded","agent_east_unloaded","agent_east_loaded",
+        "agent_south_unloaded","agent_south_loaded","gate","empty","outdoor","wall","debris","debris_injured"};
+        this.MaxNumPerson=this.setKeyColor.length;
         console.debug("Inizializzzione terminata del map generator");
     }
     
@@ -116,7 +118,6 @@ public class RescueGenMap extends MonitorGenMap {
     @Override
     public String exportHistory() {
         String history = "";
-        
         history +="(maxduration " + this.maxduration + ") \n\n";
         
         // posizione iniziale dell'agente
@@ -128,7 +129,7 @@ public class RescueGenMap extends MonitorGenMap {
         int count = 1;
         for (int i = 0; i < scene.length; i++) {
             for (int j = 0; j < scene[i].length; j++) {
-                if (scene[i][j].equals("person_rescuer")) {  //controllo che la cella contenga una persona
+                if (scene[i][j].equals(personName)) {  //controllo che la cella contenga una persona
                     history += "\n(personstatus\n\t(step 0)\n\t(time 0)\n\t(ident C" + count + ")\n";
                     history += "\t(pos-r " + (scene[i].length - j) + ")\n";
                     history += "\t(pos-c " + (i + 1) + ")\n";
@@ -268,23 +269,22 @@ public class RescueGenMap extends MonitorGenMap {
                         if(mapActive[i][j].contains(personName)){
                             int underscoreSeparate = mapActive[i][j].indexOf("_");
                             String background = mapActive[i][j].substring(0,underscoreSeparate);
-                            BufferedImage backImg = this.images.get(background);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(personName),backImg);
-                            icons[i][j]=img;
+                            BufferedImage backImg = img.getImage(background);
+                            BufferedImage overlapImg = img.overlapImages(img.getImage(personName),backImg);
+                            icons[i][j]=overlapImg;
                             
                         }
                         
                         else if(mapActive[i][j].contains("agent")){
                             int underscoreSeparate = mapActive[i][j].indexOf("_");
                             String background = mapActive[i][j].substring(0,underscoreSeparate);
-                            BufferedImage backImg = this.images.get(background);
                             String key_agent_map="agent_"+ direction + "_" + loaded;
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(key_agent_map),backImg);
-                            icons[i][j]=img;
+                            BufferedImage overlapImage = img.overlapImages(img.getImage(key_agent_map),img.getImage(background));
+                            icons[i][j]=overlapImage;
                     
                         }
                         else{
-                            icons[i][j]=this.images.get(mapActive[i][j]);
+                            icons[i][j]=img.getImage(mapActive[i][j]);
                         }
                     }
                 }
@@ -306,47 +306,47 @@ public class RescueGenMap extends MonitorGenMap {
                     
                         int underscoreSeparate = mapActive[i][j].indexOf("_");
                         String background = mapActive[i][j].substring(0,underscoreSeparate);
-                        BufferedImage backImg = this.images.get(background);
+                        BufferedImage backImg = img.getImage(background);
                         String key_agent_map="agent_"+ direction + "_" + loaded;
-                        BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(key_agent_map),backImg);
-                        icons[i][j]=img;
+                        BufferedImage overlapImage = img.overlapImages(img.getImage(key_agent_map),backImg);
+                        icons[i][j]=overlapImage;
                     
                     }
                     else if(mapActive[i][j].contains("last")){
                             String [] underscoreSplit = mapActive[i][j].split("_");
                             String color = underscoreSplit[1];
                             String background = underscoreSplit[0];
-                            BufferedImage tmp = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get(background));
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.images.get(personName), tmp);
-                            icons[i][j]=img;
+                            BufferedImage tmp = img.overlapImages(img.getImage(color),img.getImage(background));
+                            BufferedImage overlapImage = img.overlapImages(img.getImage(personName), tmp);
+                            icons[i][j]=overlapImage;
                     }
                     else{
                         if(mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("empty"));
-                            icons[i][j]=img;
+                            BufferedImage overlapImage = img.overlapImages(img.getImage(color),img.getImage("empty"));
+                            icons[i][j]=overlapImage;
                         }
                         else if(mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("gate"));
-                            icons[i][j]=img;
+                            BufferedImage overlapImage = img.overlapImages(img.getImage(color),img.getImage("gate"));
+                            icons[i][j]=overlapImage;
                         }
 
                         else if(mapActive[i][j].contains("outdoor") && !mapActive[i][j].equals("outdoor")){
 
                             int lastUnderScore = mapActive[i][j].lastIndexOf("_");
                             String color = mapActive[i][j].substring(lastUnderScore+1);
-                            BufferedImage img = MonitorImages.getInstance().overlapImages(this.colors.get(color),this.images.get("outdoor"));
-                            icons[i][j]=img;
+                            BufferedImage overlapImage = img.overlapImages(img.getImage(color),img.getImage("outdoor"));
+                            icons[i][j]=overlapImage;
                         }
                     
                         else{
 
-                            icons[i][j]=this.images.get(mapActive[i][j]);
+                            icons[i][j]=img.getImage(mapActive[i][j]);
                         }
                     
                     }

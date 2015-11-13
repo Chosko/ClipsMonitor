@@ -41,6 +41,7 @@ import org.json.simple.parser.ParseException;
 
 public abstract class MonitorGenMap {
     
+    protected MonitorImages img;
 
     protected int NumCellX, NumCellY; //numero di celle sulle x e sulle y
     protected float CellWidth, CellHeight; //largezza e altezza celle
@@ -54,12 +55,12 @@ public abstract class MonitorGenMap {
     protected int maxduration; // massima durata temporale di attività del robot nell scena
     protected ClipsConsole console;    // istanza della console clips     
     
-    protected HashMap<String,BufferedImage> images; // hashmap delle immagini
-    protected HashMap<String,BufferedImage> colors; // hashmap delle immagini
+   
     protected String[] setKeyMap; // array dei possibili valori di scene corrispondenti alle 
                                 // chiavi di accesso per l'hash map delle immagini
     protected String[] setKeyColor; // set di chiavi colori disponibili 
     protected int NumPerson; // numero di persone attualmente inserite
+    protected int MaxNumPerson ; // numero massimo di persone rappresentabili
     protected String personName; //chiave che identifa le persona all'interno dell'hashmap
     protected int [] agentposition; // posizione attuale dell'agente all'inizio dello scenario
     protected int[] defaultagentposition; // posizione iniziale di default dell'agente
@@ -72,25 +73,7 @@ public abstract class MonitorGenMap {
         Carica le immagini del progetto e genera l'array di stringhe che possono essere
         utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
     */
-    
-    protected void loadImages() {
-        // carico le icone per la selezione dei contenuti della mappa
         
-        HashMap<String,BufferedImage> mapicons;
-        mapicons = (HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapImg();
-        this.images = mapicons;
-        this.images.remove("informed");
-        this.images.remove("undiscovered");
-        this.setKeyMap=MonitorImages.getInstance().getSetKeyMap();
-        
-        // carico le icone per i colori 
-        HashMap<String,BufferedImage> coloricons;
-        coloricons=(HashMap<String,BufferedImage>) MonitorImages.getInstance().getMapColor();
-        this.colors=coloricons;
-        this.setKeyColor=MonitorImages.getInstance().getSetKeyColor();
-        
-    }
-    
     
     /*
      *   Metodo per l'inizializzazione del modello della mappa e la posizione iniziale dell'agente
@@ -299,14 +282,7 @@ public abstract class MonitorGenMap {
         this.mode=mode;
     }
     
-    public void setMapImg(HashMap<String,BufferedImage> map){
-        this.images=map;
-    }
-    
-    public void setMapColor(HashMap<String,BufferedImage>  map){
-        this.colors=map;
-    }
-    
+
     public void setKeyMap(String [] keys){
     
         this.setKeyMap=keys;
@@ -372,13 +348,7 @@ public abstract class MonitorGenMap {
       return this.NumCellY;
     }
             
-    public HashMap<String,BufferedImage> getImages(){
-        return this.images;
-    }
-    
-    public HashMap<String,BufferedImage> getColors(){
-        return this.colors;
-    }
+
 
     public String[] getSetKey(){
     
@@ -420,15 +390,11 @@ public abstract class MonitorGenMap {
         
             protected int row;
             protected int column;
-            protected String path;
-            protected int stepStart;
             protected int step;
             
-            public StepMove(int r , int c , String p, int st , int s){
+            public StepMove(int r , int c, int s){
                 this.row=r;
                 this.column=c;
-                this.path=p;
-                this.stepStart=st;
                 this.step=s;
             }
             
@@ -441,18 +407,12 @@ public abstract class MonitorGenMap {
                 return column;
             }
             
-            public String getPath(){
-                return path;
-            }
         
             public int getStep(){
             
                 return step;
             }
             
-            public int getStepStart(){
-                return stepStart;
-            }
             
             
             public void setRow(int nr){
@@ -463,18 +423,49 @@ public abstract class MonitorGenMap {
                 this.column=nc;
             }
             
-            public void getPath(String np){
-                this.path=np;
-            }
         
-            public void getStep(int ns){
+            public void setStep(int ns){
             
                 this.step=ns;
             }
             
-            public void getStepStart(int nss){
-                this.stepStart=nss;
+            
+        }
+    
+        protected class Path{
+        
+            protected String name;
+            protected int startStep;
+            protected int lastStep;
+            protected LinkedList<StepMove> move;
+            
+            public Path(String name , int startStep ){
+            
+                this.name=name;
+                this.startStep=startStep;
+                this.lastStep=startStep;
+                move = new LinkedList<StepMove>();
+            
             }
+            
+            public LinkedList<StepMove> getMoves(){
+        
+                return this.move;
+            }
+            
+            public void AddMove(int r , int c , String p , int s){
+            
+                int step = startStep+s;
+                move.add(new StepMove(r,c,step));
+                this.lastStep=step;
+            }
+            
+            public void RemoveLast(){
+            
+                this.move.removeLast();
+                this.lastStep= this.move.getLast().step;
+            }
+            
         }
     
     /*
@@ -489,15 +480,16 @@ public abstract class MonitorGenMap {
     
     protected class Person{
     
-        protected LinkedList<StepMove> move;
+        
         protected String associatedColor;
-        protected ArrayList<String> paths;
-    
+        protected LinkedList<Path> paths;
+        protected int numPath;
+        
         public Person(String color){
         
             this.associatedColor=color;
-            this.move=new LinkedList<StepMove>();
-            this.paths= new ArrayList<String>();
+            paths= new LinkedList<Path> (); 
+            this.numPath=0;
         }
         
 
@@ -507,16 +499,47 @@ public abstract class MonitorGenMap {
             return this.associatedColor;
         }
     
-        public LinkedList<StepMove> getMoves(){
+        public LinkedList<Path> getPaths(){
         
-            return this.move;
+            return this.paths;
         }
         
-        public ArrayList<String> getPaths(){
-            
-            return this.paths;
-        }  
+        
+        public void AddPath(int waitTime){
+            String name = this.associatedColor + "_" + this.numPath;
+            int startStep;
+            if(this.numPath>0){
+                startStep = this.paths.getLast().lastStep + waitTime +1;
+            }
+            else{
+                startStep = waitTime +1;
+            }
+            paths.add(new Path(name,startStep));
+            this.numPath++;    
+       }
     
+        
+        public void RemovePath(int i){
+            Path s = this.paths.get(i);
+            if(i>0){
+                int offset = s.lastStep-s.startStep;
+                for(int j=i+1;j<this.paths.size();j++){
+                    Path succ = this.paths.get(j);
+                    ListIterator<StepMove> it = succ.move.listIterator();
+                    while(it.hasNext()){
+                        StepMove move = it.next();
+                        move.setStep(move.step-offset);
+                        succ.lastStep = move.step;
+                    }
+                    String[] split = succ.name.split("_");
+                    String color = split[0];
+                    succ.name= color + "_" + (j-1);
+                    
+                }
+            }
+        }
+        
+        
     }
    
     
@@ -545,24 +568,33 @@ public abstract class MonitorGenMap {
     
     
     /*
-    *  Restituisce l'indice della posizione della Person che occupa attualemnte quella 
+    *  Restituisce il path della persona che attualmente che occupa attualemnte quella 
     *   cella oppure restituisce -1 in caso la cella sia libera.
     *   @param x : numero di riga della cella
     *   @param y : numero di colonna della cella
+    *   @param 
     */
     
-    public int CheckBusyStartCellFromPerson(int x , int y){
-        int position = 0;
+    public String CheckBusyCellFromPerson(int x , int y , int Step){
+        String pathname ;
         ListIterator<Person> it = this.Persons.listIterator();
         Person p = null;
         while(it.hasNext()){
            p = it.next();
-           if(p.getMoves().getFirst().getRow()==x && p.getMoves().getFirst().getColumn()==y ){
-               return position;
+           ListIterator<Path> itp = p.paths.listIterator();
+           Path succ= null;
+           while(itp.hasNext()){
+               succ = itp.next();
+               if(succ.startStep>=Step && succ.lastStep<=Step ){
+                   break;
+               }
            }
-           position++;
+           int offset = Step - succ.startStep;
+           if(succ.move.get(offset).getRow()==x && succ.move.get(offset).getColumn()==y ){
+               return succ.name;
+           }
        }
-       return -1;
+       return "empty";
         
     }
     
@@ -661,7 +693,12 @@ public abstract class MonitorGenMap {
         if(param==-1){
             ListIterator<Person> it = this.Persons.listIterator();
             while(it.hasNext()){
-                int numStepPerson = it.next().move.size();
+                ListIterator<Path> itp = it.next().paths.listIterator();
+                int numStepPerson=0;
+                while(itp.hasNext()){
+                    int numStepPath = itp.next().move.size();
+                    numStepPerson +=numStepPath;
+                }
                 if(numStepPerson>maxStep){
                     maxStep=numStepPerson;
                 }
@@ -673,7 +710,13 @@ public abstract class MonitorGenMap {
         else{
         
             Person paramPerson = this.Persons.get(param);
-            maxStep = paramPerson.move.size();
+            ListIterator<Path> itp = paramPerson.paths.listIterator();
+            int numStepPerson=0;
+                while(itp.hasNext()){
+                    int numStepPath = itp.next().move.size();
+                    numStepPerson +=numStepPath;
+            }
+           list = new String[numStepPerson];     
         }
         
         list = new String[maxStep];
@@ -1033,6 +1076,33 @@ public abstract class MonitorGenMap {
     
     
     /*
+    * Crea un nuovo path e lo aggiunge alla lista dei path della persona indicata. L'aggiunta del path
+    * comporta sempre l'inserimento di una move che determina lo stato iniziale per il nuovo path da
+    * eseguire. Un path viene etichettato attraverso una label che risulta composta nel seguente modo :
+    * (color_numPathPerson)
+    * @param color : colore associato alla person a cui si vuole aggiungere il path
+    * @param numPathPerson : numero identificativo del nuovo path
+    * @param xstartStep : riga della cella iniziale del path
+    * @param ystartStep : colonna della cella iniziale del path
+    * @param waitStep : tempo di attesa dalla fine del path precedente
+    */
+    
+    public int AddNewPathToPerson(String color , int NumPathPerson , int xStartStep , int yStartStep, int waitStep){
+    
+        final int Success = 0;
+        final int illegalStartCell = 1;
+        final int illegalPerson = 2;
+        
+        if(){
+        
+        
+        
+        }
+    
+        
+    }
+    
+    /*
     * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
     * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
     * lista dei movimenti 
@@ -1041,7 +1111,7 @@ public abstract class MonitorGenMap {
     * @param p : persona a cui aggiungere la move
     */
 
-    public int UpdateMoveCell(int x, int y, String color){
+    public int UpdateMoveCell(int x, int y, String color , String path ){
     
         final int Success = 0;
         final int IllegalPosition = 1;
@@ -1055,10 +1125,9 @@ public abstract class MonitorGenMap {
              StepMove s = p.getMoves().getLast();
              // distanza di manhattam e check sulla attraversabilità della cella
              if(this.ManhattamDistance(s.getRow(),s.getColumn(), x, y)==1 && this.PersonPositionIsValid(scene[x][y])){
-                 String pathName = "P"+ p.getPaths().get(p.getPaths().size()-1);
                  int start = s.getStepStart();
                  int step = p.getMoves().getLast().getStep()+1;
-                 p.getMoves().addLast(new StepMove(x,y, pathName , start , step));
+                 p.getMoves().addLast(new StepMove(x,y, path , start , step));
                  return Success;
              }
              else{
@@ -1144,7 +1213,7 @@ public abstract class MonitorGenMap {
             }
             
             // ho ancora disponibilita di colori per indicare le person
-            if(this.NumPerson<this.colors.size()){          
+            if(this.NumPerson<this.MaxNumPerson){          
                     this.NumPerson++;
                     this.Persons.add(new Person(color));
                     String path ="P"+ this.Persons.getLast().getPaths().size();

@@ -61,7 +61,6 @@ public class MonitorImages {
     private void init(){
         console = ClipsConsole.getInstance();
         map_img = new HashMap<String, BufferedImage>();
-        colors = new HashMap<String, BufferedImage>();
         setKeyColor = null;
         setKeyMap = null;
     }

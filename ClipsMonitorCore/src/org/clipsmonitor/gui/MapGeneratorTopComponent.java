@@ -59,14 +59,15 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     // Var Declaration
     private RescueGenMap model;
+    private MonitorImages img;
     private HashMap<String,BufferedImage> icons;
     private HashMap<String,BufferedImage> colors;
-    private HashMap<String,BufferedImage> colorsActive;
     private ClipsConsole console;
     private JFileChooser fc;
     private JFileChooser save;
     private String state;
     private int [] actualPosClicked;
+    private String actualPath;
     
     public MapGeneratorTopComponent() {
         
@@ -76,17 +77,14 @@ public final class MapGeneratorTopComponent extends TopComponent {
         setName(Bundle.CTL_MapGeneratorTopComponent());
         setToolTipText(Bundle.HINT_MapGeneratorTopComponent());
         model = RescueGenMap.getInstance();
-        model.setMapImg((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapImg());
-        model.setMapColor((HashMap<String, BufferedImage>) MonitorImages.getInstance().getMapColor());
-        model.setKeyMap(MonitorImages.getInstance().getSetKeyMap());
-        model.setKeyColor(MonitorImages.getInstance().getSetKeyColor());
+        img = MonitorImages.getInstance();
         int x =Integer.parseInt(this.XButton.getText());
         int y =Integer.parseInt(this.YButton.getText());
-        icons= model.getImages();
-        colors=model.getColors();
         actualPosClicked = new int [2];
         actualPosClicked[0]=(x/2)+1;
         actualPosClicked[1]=(y/2)+1;
+        actualPath = "";
+        this.WaitTime.setText("0");
         this.initComboBox();
         this.MakePersonList();
         this.MakeStepList(-1);
@@ -167,6 +165,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         jScrollPane1 = new javax.swing.JScrollPane();
         PersonsList = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
+        WaitTime = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -318,7 +318,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 7, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
@@ -464,6 +464,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel4.text")); // NOI18N
 
+        WaitTime.setText(org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.WaitTime.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jLabel6.text")); // NOI18N
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -492,7 +496,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
                         .addGap(21, 21, 21)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(WaitTime, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)))
                     .addComponent(jLabel5))
                 .addContainerGap())
         );
@@ -509,14 +515,21 @@ public final class MapGeneratorTopComponent extends TopComponent {
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AddPersonButton)
-                    .addComponent(AddPathButton))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(DeletePersonButton)
-                    .addComponent(RemovePathButton))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(AddPersonButton)
+                            .addComponent(AddPathButton))
+                        .addGap(12, 12, 12)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(DeletePersonButton)
+                            .addComponent(RemovePathButton)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(WaitTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(26, 26, 26)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -674,11 +687,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
         boolean checkButton = this.MapButton.isSelected();
-        HashMap<String,BufferedImage> toChange = this.icons;
         if(!checkButton){
-            toChange = this.colors;
             setState(InsertionOptionComboBox.getSelectedItem().toString());
-            this.updateLabel(state,toChange);
+            this.updateLabel(state);
             int pos = model.findPosByColor(state);
             if(pos!=-1){
                 String[][] move = model.getMoveCellMap(pos,-1);
@@ -694,7 +705,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
         else{
             setState(InsertionOptionComboBox.getSelectedItem().toString());
-            this.updateLabel(state,toChange);
+            this.updateLabel(state);
         }
         Icons.repaint();
     }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
@@ -818,6 +829,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
             this.MakeStepList(-1);
             this.MakeMoveList(pos,-1);
             this.MakePathList(pos);
+            this.InsertionOptionComboBox.setSelectedItem(color);
+            this.updateLabel(color);
         }
         else{
             this.MakePersonList();
@@ -855,6 +868,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JButton RemovePathButton;
     private javax.swing.JButton SaveButton;
     private javax.swing.JList StepList;
+    private javax.swing.JTextField WaitTime;
     private javax.swing.JTextField XButton;
     private javax.swing.JLabel XLabel;
     private javax.swing.JTextField YButton;
@@ -864,6 +878,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -899,22 +914,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     private void InitMapComboBox(){
     
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKey(),this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
     }
     
     private void InitColorComboBox(){
         
         
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(colors,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),colors);
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKeyColor(),this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
      }
-    
-    private void InitColorActiveComboBox(){
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(colorsActive,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),colorsActive);
-    
-    }
+   
     
     
     /*
@@ -923,10 +933,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
     * @param map : hashmap da cui prelevare le immagini
     */
     
-    protected void updateLabel(String name, HashMap<String,BufferedImage> map ) {
+    protected void updateLabel(String name) {
         
         try{
-            ImageIcon icon = new ImageIcon (map.get(name));
+            ImageIcon icon = new ImageIcon (img.getImage(name));
             Image image = icon.getImage(); // transform it
             int width = this.Icons.getWidth();
             int height = this.Icons.getHeight();
@@ -1013,8 +1023,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     private void initComboBox(){
         
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(icons,this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString(),icons);
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKey(),this.InsertionOptionComboBox, this.Icons);
+        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
         
     }
     
