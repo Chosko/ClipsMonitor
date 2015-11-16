@@ -453,17 +453,18 @@ public abstract class MonitorGenMap {
                 return this.move;
             }
             
-            public void AddMove(int r , int c , String p){
-            
-                int step = lastStep+1;
+            public void AddMove(int r , int c ){
+                
+                int step = (this.move.size()==0) ? startStep : lastStep+1;  
                 move.add(new StepMove(r,c,step));
                 this.lastStep=step;
             }
             
             public void RemoveLast(){
-            
-                this.move.removeLast();
-                this.lastStep= this.move.getLast().step;
+                if(this.move.size()>1){
+                    this.move.removeLast();
+                    this.lastStep= this.move.getLast().step;
+                }
             }
             
         }
@@ -506,38 +507,25 @@ public abstract class MonitorGenMap {
         
         
         public void AddPath(int waitTime){
-            String name = this.associatedColor + "_" + this.numPath;
+            String name = this.associatedColor + "_" + this.paths.size();
             int startStep;
-            if(this.numPath>0){
+            if(this.paths.size()>0){
                 startStep = this.paths.getLast().lastStep + waitTime +1;
             }
             else{
-                startStep = waitTime +1;
+                startStep = waitTime;
             }
-            paths.add(new Path(name,startStep));
-            this.numPath++;    
+            paths.add(new Path(name,startStep));  
        }
     
         
-        public void RemovePath(int i){
-            Path s = this.paths.get(i);
-            if(i>0){
-                int offset = s.lastStep-s.startStep;
-                for(int j=i+1;j<this.paths.size();j++){
-                    Path succ = this.paths.get(j);
-                    ListIterator<StepMove> it = succ.move.listIterator();
-                    while(it.hasNext()){
-                        StepMove move = it.next();
-                        move.setStep(move.step-offset);
-                        succ.lastStep = move.step;
-                    }
-                    String[] split = succ.name.split("_");
-                    String color = split[0];
-                    succ.name= color + "_" + (j-1);
-                    
+        public void RemoveLastPath(){
+            
+            if(this.paths.size()>1){
+                this.paths.removeLast();
                 }
-            }
         }
+        
         
         
     }
@@ -550,7 +538,11 @@ public abstract class MonitorGenMap {
     */
     
     public Path getPathByName(String name){
-    
+        
+        if(name.equals("empty")){
+        
+            return null;
+        }
         String [] nameSplit = name.split("_");
         String color = nameSplit[0];
         Person p = this.findByColor(color);
@@ -558,6 +550,24 @@ public abstract class MonitorGenMap {
         Path result = p.paths.get(numPath);
         return result;
     }
+    
+    /*
+    * Restituisce l'ultima occorrenza di path associata alla persona con l'index i 
+    */
+    
+    public String getLastPathOfPerson(String state){
+    
+        String pathName = "empty";
+        int pos = this.findPosByColor(state);
+        if(pos!=-1){
+            Person p = this.Persons.get(pos);
+            pathName = p.paths.getLast().name;
+        
+        }
+        
+        return pathName;
+    }
+    
     
     /*
     *   Metodo che resistuisce l'indice della persona associata al colore nella linkedList 
@@ -590,7 +600,6 @@ public abstract class MonitorGenMap {
     */
     
     public String CheckBusyCellFromPerson(int x , int y , int Step){
-        String pathname ;
         ListIterator<Person> it = this.Persons.listIterator();
         Person p = null;
         while(it.hasNext()){
@@ -599,13 +608,17 @@ public abstract class MonitorGenMap {
            Path succ= null;
            while(itp.hasNext()){
                succ = itp.next();
-               if(succ.startStep>=Step && succ.lastStep<=Step ){
+               if(succ.startStep<=Step && succ.lastStep>=Step ){
                    break;
                }
+               
            }
+           
            int offset = Step - succ.startStep;
-           if(succ.move.get(offset).getRow()==x && succ.move.get(offset).getColumn()==y ){
-               return succ.name;
+           if(offset<succ.move.size()){
+                if(succ.move.get(offset).getRow()==x && succ.move.get(offset).getColumn()==y ){
+                    return succ.name;
+                }
            }
        }
        return "empty";
@@ -881,18 +894,17 @@ public abstract class MonitorGenMap {
     * @param color : colore temporaneo 
     */
     
-    public String[][] getTmpMoveMap(int x , int y , String path){
+    public String[][] getTmpMoveMap(int x , int y , String color){
     
         String [][] newmap = new String[this.NumCellX][this.NumCellY];
-        String result;
-        Path pathres = this.getPathByName(path);
+        
+       
         
         for(int i = 0 ; i<newmap.length;i++){
         
             for(int j=0;j<newmap[0].length;j++){
-                int stepToSearch = pathres.startStep;
-                
-                if(!(result=this.CheckBusyCellFromPerson(i, j,stepToSearch)).equals("empty")){
+                String result=this.CheckBusyCellFromPerson(i, j, 0);
+                if(!(result.equals("empty"))){
                     String [] resultSplit = result.split("_");
                     newmap[i][j]=resultSplit[0];
                 }
@@ -902,8 +914,7 @@ public abstract class MonitorGenMap {
             }
         }
     
-        String [] resultSplit = path.split("_");
-        newmap[x][y]=resultSplit[0];  
+        newmap[x][y]=color;  
         return newmap;
         
     }
@@ -926,6 +937,11 @@ public abstract class MonitorGenMap {
                 newmap[i][j]="";
             }
         }
+        
+        if(paramPath.equals("empty")){
+            return newmap;
+        }
+        
         // caso di richiesta di uno specifico step
         if(paramPath.equals("none")){
             ListIterator<Person> it = this.Persons.listIterator();
@@ -1138,24 +1154,39 @@ public abstract class MonitorGenMap {
     * eseguire. Un path viene etichettato attraverso una label che risulta composta nel seguente modo :
     * (color_numPathPerson)
     * @param color : colore associato alla person a cui si vuole aggiungere il path
-    * @param numPathPerson : numero identificativo del nuovo path
     * @param xstartStep : riga della cella iniziale del path
     * @param ystartStep : colonna della cella iniziale del path
     * @param waitStep : tempo di attesa dalla fine del path precedente
     */
     
-    public int AddNewPathToPerson(String color , int NumPathPerson , int xStartStep , int yStartStep, int waitStep){
+    public int AddNewPathToPerson(String color, int xStartStep , int yStartStep, int waitStep){
     
         final int Success = 0;
-        final int illegalStartCell = 1;
-        final int illegalPerson = 2;
+        final int IllegalStartCell = 1;
+        final int IllegalPerson = 2;
+        final int PersonOverride = 3;
+        Person p = this.findByColor(color);
+        if(p==null){
+            return IllegalPerson ;
         
-        if(){
-        
-        
-            return Success;
         }
-    
+        int start = p.paths.getLast().lastStep + waitStep+1;
+        String result = this.CheckBusyCellFromPerson(xStartStep,yStartStep,start);
+        
+        if(result.equals("empty")){
+            if(this.PersonPositionIsValid(scene[xStartStep][yStartStep])){
+                p.AddPath(waitStep);
+                p.paths.getLast().AddMove(xStartStep, yStartStep);
+                return Success;
+            }
+            else{
+                return IllegalStartCell;
+            }
+        }
+        else{
+        
+            return PersonOverride;
+        }
        
     }
     
@@ -1174,6 +1205,7 @@ public abstract class MonitorGenMap {
         final int IllegalPosition = 1;
         final int UnavaibleCellScenario = 2;
         final int PersonOverride = 3;
+        final int LastMoveRemove = 4;
         
         String [] pathSplit = path.split("_");
         String color = pathSplit[0];
@@ -1192,12 +1224,12 @@ public abstract class MonitorGenMap {
              // distanza di manhattam e check sulla attraversabilità della cella
              if(this.ManhattamDistance(s.getRow(),s.getColumn(), x, y)==1 && this.PersonPositionIsValid(scene[x][y]) ){
                  
-                 p.AddMove(x, y, path);
+                 p.AddMove(x, y);
                  return Success;
              }
              else if(this.ManhattamDistance(s.getRow(),s.getColumn(), x, y)==0){
                  p.RemoveLast();
-                 return Success;
+                 return LastMoveRemove;
              }
              else{
                  return UnavaibleCellScenario ;
@@ -1248,7 +1280,7 @@ public abstract class MonitorGenMap {
 
     
     
-    public int AddNewPerson( int x , int y , String color ){
+    public int AddNewPerson( int x , int y , String color , int waitTime ){
     
         final int Success = 0;
         final int IllegalPosition = 1 ;
@@ -1288,10 +1320,10 @@ public abstract class MonitorGenMap {
             if(this.NumPerson<this.MaxNumPerson){          
                     this.NumPerson++;
                     this.Persons.add(new Person(color));
-                    String path ="P"+ this.Persons.getLast().getPaths().size();
-                    this.Persons.getLast().getPaths().add(path);
-                    this.Persons.getLast().getMoves().add(new StepMove(x,y,path,0,0));
+                    this.Persons.getLast().AddPath(waitTime);
+                    
                     if(this.PersonPositionIsValid(move[x][y])){
+                        this.Persons.getLast().paths.getLast().AddMove(x, y);
                         String background = move[x][y];
                         move[x][y]=background + "_" + personName + "_" + color;
                     }
@@ -1313,6 +1345,34 @@ public abstract class MonitorGenMap {
         }
     }
     
+    /*
+    * Rimuove l'ultimo path aggiunto ad una persona e restuisce un intero equivalente
+    * al risultato ottenuto.
+    * @param color  colore assegnato alla persona
+    */
+    
+    public int RemoveLastPath(String color){
+       
+       final int Success = 0;
+       final int PersonNotFound = 1;
+       final int FirstPathRemove = 2;
+               
+       Person p = this.findByColor(color);
+       if(p!=null){
+       
+           if(p.paths.size()>1){
+               p.RemoveLastPath();
+               return Success;
+           }
+           else{
+               return FirstPathRemove;
+           }
+       }
+       else{
+           return PersonNotFound;
+       }
+    
+    }
     
     
     //  METODI PER SAVE E LOAD DELLA MAPPA
