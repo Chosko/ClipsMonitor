@@ -29,7 +29,7 @@ public class RescueGenMap extends MonitorGenMap {
     private static RescueFacts facts;
     
     
-    private String direction; // direzione iniziale del robot
+    
     private String loaded; // stato iniziale del robot
     
     /*

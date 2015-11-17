@@ -30,6 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorImages;
+import org.clipsmonitor.core.ProjectDirectory;
 import org.clipsmonitor.monitor2015.RescueAgentMap;
 import org.clipsmonitor.monitor2015.RescueEnvMap;
 import org.clipsmonitor.monitor2015.RescueModel;
@@ -73,6 +74,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     RescueModel model;
     MonitorCore core;
     File projectDirectory;
+    ProjectDirectory directory;
     
     @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
@@ -83,7 +85,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         setToolTipText(Bundle.HINT_ControlsTopComponent());
         putClientProperty(TopComponent.PROP_MAXIMIZATION_DISABLED, Boolean.TRUE);
         this.setShortcut();
-    
+        this.directory.setProjectDirectory(projectDirectory);
     }
 
     
@@ -740,6 +742,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                 if(dir.exists() && dir.isDirectory()){
                     dirFound = true;
                     this.projectDirectory = dir;
+                    directory = ProjectDirectory.getIstance(dir);
+                    
                 }
             }
             catch(IOException ex){
@@ -772,6 +776,11 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
     }
     
+    public File getProjectDirectory(){
+    
+        return this.projectDirectory;
+    
+    }
     
     public static void infoBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);

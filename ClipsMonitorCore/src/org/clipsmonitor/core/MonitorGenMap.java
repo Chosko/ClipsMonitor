@@ -68,7 +68,7 @@ public abstract class MonitorGenMap {
     protected String defaulagentcondition; // stringa di default utilizzata per inizializzare la scena
                                            // formata come background_keyagentdefault
     
-    
+    protected String direction; // direzione iniziale del robot
     /*
         Carica le immagini del progetto e genera l'array di stringhe che possono essere
         utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
@@ -448,6 +448,15 @@ public abstract class MonitorGenMap {
             
             }
             
+            private Path(String name , int startStep,int lastStep){
+            
+                this.name=name;
+                this.startStep=startStep;
+                this.lastStep=lastStep;
+                move= new LinkedList<StepMove>();
+            
+            }
+            
             public LinkedList<StepMove> getMoves(){
         
                 return this.move;
@@ -459,6 +468,7 @@ public abstract class MonitorGenMap {
                 move.add(new StepMove(r,c,step));
                 this.lastStep=step;
             }
+            
             
             public void RemoveLast(){
                 if(this.move.size()>1){
@@ -484,13 +494,11 @@ public abstract class MonitorGenMap {
         
         protected String associatedColor;
         protected LinkedList<Path> paths;
-        protected int numPath;
         
         public Person(String color){
         
             this.associatedColor=color;
-            paths= new LinkedList<Path> (); 
-            this.numPath=0;
+            paths= new LinkedList<Path> ();
         }
         
 
@@ -518,6 +526,12 @@ public abstract class MonitorGenMap {
             paths.add(new Path(name,startStep));  
        }
     
+        private void InsertPath(String name,int startStep , int lastStep){
+      
+            paths.add(new Path(name,startStep,lastStep));
+       
+      
+        } 
         
         public void RemoveLastPath(){
             
@@ -1378,45 +1392,94 @@ public abstract class MonitorGenMap {
     //  METODI PER SAVE E LOAD DELLA MAPPA
     
 
+    /*
+    *  Scrive su un file di testo la scena sviluppata tramite tool grafico
+    */
     
+    public String SaveFiles(File directory)throws JSONException{
+        
+        String consoleOutput = "";
+        consoleOutput += this.WriteSceneOnFile(directory);
+        consoleOutput += this.WriteHistoryOnFile(directory);
+        return consoleOutput ;
+        
+        
+    }
     
-    public String exportScene(File file) throws JSONException {
+    private String WriteSceneOnFile(File directory) throws JSONException {
         //richiamo l'export della scena il quale mi dará una stringa con tutto il codice clips corrispondente
         String sceneFile = this.exportScene();
-        //richiamo l'export della history il quale mi dará una stringa con tutto il codice clips corrispondente
-        String historyFile = this.exportHistory();
-        String dirpath="";
-        String parentpath="";
+
+        String DirName="";
+        String Parent="";
         String consoleOutput = ""; 
         
         try{
-            dirpath = file.getName();
-            parentpath=file.getParent();
+            DirName = directory.getName();
+            Parent=directory.getParent();
              // creazione nuovo file
-               
-                //scrivo il file della mappa
-                Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt"), sceneFile.getBytes());
-                consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_RealMap.txt \n");
+            String infoMapPath = Parent + File.separator + DirName + File.separator + DirName +"_RealMap.txt";
+            //scrivo il file della mappa
+            Files.write(Paths.get(infoMapPath), sceneFile.getBytes());
+            consoleOutput +="File creato \n" + Paths.get(infoMapPath);
 
-                if (historyFile.length() > 0) //scrivo il file della history solo se sono
-                {                               //sono state aggiunte persone alla scena
-                    Files.write(Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt"), historyFile.getBytes());
-                 consoleOutput +="File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath +"_History.txt \n");
-                }
-                //scrivo il file json con la mappa scritta
-                this.saveJSONMap(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json");
-                consoleOutput += "File creato \n" + Paths.get(parentpath + File.separator + dirpath + File.separator + dirpath + "_InfoMappa.json + \n");
+            String JSONMapPath = Parent + File.separator + DirName + File.separator + DirName + "_InfoMap.json"; 
+            //scrivo il file json con la mappa scritta
+            this.saveJSONMap(JSONMapPath);
+            consoleOutput += "File creato \n" + Paths.get(JSONMapPath);
 
           
             
         }
         catch(IOException err){
-            ClipsConsole.getInstance().error(err);
+            console.error(err);
         }
         
        return consoleOutput;          
        
     }
+    
+    /*
+    * Scrive su file di testo la history sviluppata mediante il tool move all'interno del generatore
+    */
+    
+    private String WriteHistoryOnFile(File directory) throws JSONException {
+    
+        String historyFile = this.exportHistory();
+        String DirName="";
+        String Parent="";
+        String consoleOutput = ""; 
+        
+        try{
+            DirName = directory.getName();
+            Parent=directory.getParent();
+             // creazione nuovo file
+                
+                if (historyFile.length() > 0) //scrivo il file della history solo se sono
+                {                               //sono state aggiunte persone alla scena
+                    String HistoryPath = Parent + File.separator + DirName + File.separator + DirName +"_History.txt";
+                    Files.write(Paths.get(HistoryPath), historyFile.getBytes());
+                    consoleOutput +="File creato \n" + Paths.get(HistoryPath);
+                }
+                //scrivo il file json con la mappa scritta
+                String JSONMovePath = Parent + File.separator + DirName + File.separator + DirName + "_InfoMove.json";
+                boolean result = this.saveJSONMoves(JSONMovePath);
+                if(result){
+                    consoleOutput += "File creato \n" + Paths.get(JSONMovePath);
+                }
+                
+
+          
+            
+        }
+        catch(IOException err){
+            console.error(err);
+        }
+        
+       return consoleOutput;
+    
+    }
+    
     
     /*
     * Questo metdo utilizza dati strutturati JSON per il salvataggio della scena. La struttura 
@@ -1434,21 +1497,22 @@ public abstract class MonitorGenMap {
             JSONObject info = new JSONObject();
             info.put("cell_x", this.getNumx());
             info.put("cell_y", this.getNumy());
-
+            info.put("robot_x_default", this.defaultagentposition[0]);
+            info.put("robot_y_default", this.defaultagentposition[1]);
             //ciclo sulla matrice degli stati per creare la struttura
-            JSONArray ArrayCell = new JSONArray();
+            JSONArray ArrayCells = new JSONArray();
             for (int i = 0; i < this.getNumx(); i++) {
                 for (int j = 0; j < this.getNumy(); j++) {
-                    JSONObject cella = new JSONObject();
-                    cella.put("x", i);
-                    cella.put("y", j);
-                    cella.put("stato",scene[i][j]);
+                    JSONObject cell = new JSONObject();
+                    cell.put("x", i);
+                    cell.put("y", j);
+                    cell.put("stato",scene[i][j]);
                     //salvo solo l'intero dello stato che viene
                     //scenepato internamente;
-                    ArrayCell.put(cella);
+                    ArrayCells.put(cell);
                 }
             }
-            info.put("celle", ArrayCell);
+            info.put("celle", ArrayCells);
             //salvo le informazioni in un file JSON della scenea
             Files.write(Paths.get(nome), info.toString().getBytes());
         } catch (IOException ex) {
@@ -1458,16 +1522,26 @@ public abstract class MonitorGenMap {
         return true;
     }
 
+    public void LoadFiles(File directory) throws ParseException{
+    
+        String jsonMapPath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMap.json";
+        String jsonMovePath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMove.json";
+        File jsonMap = new File (jsonMapPath);
+        File jsonMove = new File (jsonMovePath);
+        
+        this.LoadScene(jsonMap);
+        this.LoadMoves(jsonMove);
+    }
     
     /*
      * Metodo per il caricamnento di una scena a partire da un file JSON precedentemente creato
      * Viene costruita la mappa e popolata dai valori contenuti nel JSON.
      * @param jsonFile : il file JSON da cui eseguire il load 
     */
-    
+   
     
     @SuppressWarnings("UnnecessaryUnboxing")
-    public void load_scene(File jsonFile) throws ParseException {
+    private void LoadScene(File jsonFile) throws ParseException {
         //creo una nuova istanza di scena
        
        
@@ -1481,7 +1555,7 @@ public abstract class MonitorGenMap {
             JSONObject json = new JSONObject(jsonstring);
             //leggo il numero di celle dalla radice del JSON
             
-            System.out.println(json.get("cell_x").toString());
+            
             
             int NumCellX = Integer.parseInt(json.get("cell_x").toString());
             int NumCellY = Integer.parseInt(json.get("cell_y").toString());
@@ -1494,26 +1568,137 @@ public abstract class MonitorGenMap {
             for (int i =0 ; i<arrayCelle.length();i++) {
                 //ciclo su ogni cella e setto il valore della cella letta nella scena
                 JSONObject cell = arrayCelle.getJSONObject(i);
-                int x = Integer.parseInt(cell.get("x").toString());
-                int y = Integer.parseInt(cell.get("y").toString());;
-                String stato = cell.get("stato").toString();
+                int x = cell.getInt("x");
+                int y = cell.getInt("y");
+                String stato = cell.getString("stato");
                 
                 this.setCell (x,y,stato);
+                if(stato.contains("agent")){
+                    this.SetRobotParams(stato, x, y);
+                }
+                this.defaultagentposition=new int []{json.getInt("robot_x_default"),json.getInt("robot_y_default")};
             }
+            
         } catch (JSONException ex) {
-            //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
-            ClipsConsole.getInstance().error(ex);
+            
+            console.error(ex);
         } catch (IOException ex) {
-            //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
-            ClipsConsole.getInstance().error(ex);
+            console.error(ex);
         } catch (NumberFormatException ex) {
-            //Logger.getLogger(MapGeneratorLoader.class.getName()).log(Level.SEVERE, null, ex);
-            ClipsConsole.getInstance().error(ex);
+            console.error(ex);
         }
        
         
     }
 
+    /*
+    * Genera un file JSON corrispondente alla lista linkata salvata per le move fino ad ora definite
+    * per la history. Il JSON viene utilizzato per semplificare il caricamente della history e dello
+    * scenario.
+    *@param name : nome del file su cui scrivere il JSON 
+    */
+    
+    private boolean saveJSONMoves(String name) throws JSONException{
+    
+        try{
+            JSONObject Info = new JSONObject();
+            JSONArray PersonsArray =  new JSONArray();
+            for(int i=0;i<this.Persons.size();i++){
+                Person p = this.Persons.get(i);
+                JSONObject person = new JSONObject();
+                person.put("color", p.associatedColor);
+                JSONArray paths = new JSONArray();
+                for(int j=0;j<p.paths.size();j++){
+                    Path pts = p.paths.get(j);
+                    JSONObject path = new JSONObject();
+                    path.put("name", pts.name);
+                    path.put("startStep", pts.startStep);
+                    path.put("lastStep", pts.lastStep);
+                    JSONArray moves = new JSONArray();
+                    for(int k=0;k<pts.move.size();k++){
+                        JSONObject move = new JSONObject();
+                        StepMove s = pts.move.get(k);
+                        move.put("row", s.row);
+                        move.put("column", s.column);
+                        move.put("step", s.step);
+                        moves.put(move);
+                    }
+                   path.put("moves",moves);
+                   paths.put(path);
+                }
+                person.put("paths", paths);
+                PersonsArray.put(person);
+            }
+            
+            Info.put("personList",PersonsArray);
+            
+            Files.write(Paths.get(name), Info.toString().getBytes());
+            return true;
+        }
+        catch(IOException err){
+            console.error(err.getMessage());
+            return false;
+        }
+    }
+    
+    /*
+    * Esegue il load della linkedList delle person partendo da un file JSON precedentemente creato.
+    * Il file viene convertito nuovamente in un oggetto JSON e parsificato secondo la struttura 
+    * definita dal metodo LoadMoves sopra
+    * @param jsonFile : file jsonFile da cui eseguire il load
+    */
+    
+    
+    public void LoadMoves(File jsonFile) throws ParseException{
+    
+        try {
+            //converto il file in un oggetto JSON
+            FileReader jsonreader = new FileReader(jsonFile);
+            char[] chars = new char[(int) jsonFile.length()];
+            jsonreader.read(chars);
+            String jsonstring = new String(chars);
+            jsonreader.close();
+            JSONObject json = new JSONObject(jsonstring);
+            
+            this.Persons=new LinkedList<Person>();
+            
+            //estraggo il JSONArray dalla radice
+            JSONArray arrayPersons = json.getJSONArray("personList");
+            for (int i =0 ; i<arrayPersons.length();i++) {
+
+                JSONObject person = arrayPersons.getJSONObject(i);
+                String color = person.getString("color");
+                Person p = new Person(color);
+                JSONArray arrayPaths = person.getJSONArray("paths");
+                for(int j=0;j<arrayPaths.length();j++){
+                    JSONObject path = arrayPaths.getJSONObject(j);
+                    String pathName = path.getString("name");
+                    int startStep = path.getInt("startStep");
+                    int lastStep = path.getInt("lastStep");
+                    p.paths.add(new Path(pathName,startStep,lastStep));
+                    JSONArray arrayMoves = path.getJSONArray("moves");
+                    for(int k=0;k<arrayMoves.length();k++){
+                        JSONObject move = arrayMoves.getJSONObject(k);
+                        int row = move.getInt("row");
+                        int column = move.getInt("column");
+                        int step = move.getInt("step");
+                        p.paths.getLast().move.add(new StepMove(row,column,step));
+                    }
+                }
+              this.Persons.add(p);
+            }
+        } catch (JSONException ex) {
+            
+            console.error(ex);
+        } catch (IOException ex) {
+            console.error(ex);
+        } catch (NumberFormatException ex) {
+            console.error(ex);
+        }
+    
+    }
+    
+    
     /*
     * metodo che converte lo stream di file in un oggetto JSON
     */
