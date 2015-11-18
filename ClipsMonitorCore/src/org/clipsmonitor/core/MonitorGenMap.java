@@ -75,13 +75,18 @@ public abstract class MonitorGenMap {
     */
         
     
-    /*
-     *   Metodo per l'inizializzazione del modello della mappa e la posizione iniziale dell'agente
-     *   @param  numCellX : numero di righe
-     *   @param  numCellY : numero di colonne
-     *   @param  mapWidth : larghezza in pixel della mappa
-     *   @param  mapHeight : altezza in pixel della mappa
-    */
+    
+    /**
+     * Metodo per l'inizializzazione del modello della mappa in base al numero di celle
+     * e alla dimensione totale dell'area di visualizzazione della mappa. Inoltre il metodo
+     * setta la posizione iniziale dell'agente
+     *   
+     * @param  numCellX : numero di righe
+     * @param  numCellY : numero di colonne
+     * @param  mapWidth : larghezza in pixel della mappa
+     * @param  mapHeight : altezza in pixel della mappa
+     */
+    
     
     public void initModelMap(int NumCellX, int NumCellY, float MapWidth, float MapHeight){
     
@@ -105,10 +110,13 @@ public abstract class MonitorGenMap {
     }
     
     
-    /*
-        Metodo per il ridimensionamento delle celle a seguito della modifica della dimensione della
-        griglia.
-    */
+    /**
+     * Metodo per il ridimensionamento delle celle a seguito della modifica della dimensione della
+     * griglia.
+     * 
+     * @param NumCellX
+     * @param NumCellY 
+     */
     
     public void resize(int NumCellX, int NumCellY) {
     //creo una scena con la nuova dimensione
@@ -148,23 +156,31 @@ public abstract class MonitorGenMap {
 
     }
         
-    /*
-     *   Metodo per il disegno della scena utilizzando i valori in stringhe della mappa.le mappe
-     *  sono di due tipologie per cui devono essere riempite in maniera distinta.
-     *  @param g : per effettuare il draw del pannello
-     *  @param MapWidth : larghezza in pixel del pannello della mappa
-     *  @param MapHeight : altezza in pixel del pannello della mappa
-     *  @param type : tipologia di mappa di cui si deve eseguire il disegno
+    /**
+    * Metodo per il disegno della scena utilizzando i valori in stringhe della mappa.le mappe
+    * sono di due tipologie per cui devono essere riempite in maniera distinta. Per prima cosa
+    * viene eseguito il controllo su quale matrice bisogna costruire.
+    * 
+    * @param g : per effettuare il draw del pannello
+    * @param MapWidth : larghezza in pixel del pannello della mappa
+    * @param MapHeight : altezza in pixel del pannello della mappa
+    * @param type : tipologia di mappa di cui si deve eseguire il disegno
     */
     
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight,String type) {
 
-        
-        BufferedImage[][] icons = this.makeIconMatrix(type);
+        BufferedImage[][] icons;
+        if(type.equals("scene")){
+          icons  = this.makeIconMapMatrix();
+        }
+        else{
+          icons = this.makeIconMoveMatrix();
+        }
         
         //aggiorno le dimensioni della finestra
         this.MapWidth = MapWidth;
         this.MapHeight = MapHeight;
+        
         //calcolo la larghezza delle celle
         CellWidth = (MapWidth - 20) / NumCellX;
         CellHeight = (MapHeight - 20) / NumCellY;
@@ -207,10 +223,11 @@ public abstract class MonitorGenMap {
    
     
     
-    /*
-    *   Metodo per clonare le mappe di stringhe, viene utilizzato per trasportare la scena
-    *   all'interno della mappa di move per ottenere una nuova copia su cui lavorare
-    *   @param map : mappa in input da clonare
+    /**
+    * Metodo per clonare le mappe di stringhe, viene utilizzato per trasportare la scena
+    * all'interno della mappa di move per ottenere una nuova copia su cui lavorare
+    * 
+    * @param map : mappa in input da clonare
     */
     
     public String[][] clone(String [][] map){
@@ -231,9 +248,13 @@ public abstract class MonitorGenMap {
    
     
     
-    /*
-    *  Verifica se la posizione in pixel (x,y) ottenuta dal click sul mouse, risulta valida e in caso affermativo 
-    *  resistuisce la cella corrispondente  alle coordinate  
+    /**
+    * Verifica se la posizione in pixel (x,y) ottenuta dal click sul mouse, risulta valida e in caso affermativo 
+    * resistuisce la cella corrispondente  alle coordinate  
+    *
+    * @param x : coordinata x del pixel cliccato
+    * @param y : coordinata y del pixel cliccato
+    * @return : array indicante riga e colonna della cella corrispondente alle coordinate in pixel
     */
     
     public int[] getCellPosition(int x, int y){
@@ -255,6 +276,11 @@ public abstract class MonitorGenMap {
     
     //  SET E GET
   
+    /**
+     * 
+     * @param NumCellX
+     * @param NumCellY 
+     */
     
     public void setNumCell(int NumCellX, int NumCellY) {
         this.NumCellX = NumCellX;
@@ -262,41 +288,76 @@ public abstract class MonitorGenMap {
         
     }
 
+    /**
+     * 
+     * @param x
+     * @param y
+     * @param value 
+     */
+    
     public void setCell(int x, int y, String value) {
         scene[x][y] = value;
     }
 
+    /**
+     * 
+     * @param MapWidth
+     * @param MapHeight 
+     */
+    
     public void setSizeScreen(float MapWidth, float MapHeight) {
         this.MapHeight = MapHeight;
         this.MapWidth = MapWidth;
     }
+    
+    /**
+     * 
+     * @param max_dur 
+     */
     
     public void setMaxDuration(int max_dur){
     
         this.maxduration=max_dur;
     }
     
+    /**
+     * 
+     * @param mode 
+     */
     
     public void setMode(String mode){
     
         this.mode=mode;
     }
     
+    
+    /**
+     * 
+     * @param keys 
+     */
 
     public void setKeyMap(String [] keys){
     
         this.setKeyMap=keys;
     }
     
+    /**
+     * 
+     * @param keys 
+     */
+    
     public void setKeyColor(String [] keys){
     
        this.setKeyColor=keys;
     }   
     
-    /*
-    *   Copia una delle mappe in input sulla mappa attiva di modo che venga visualizzata
-    *   successivamente soltanto la mappa attiva
-    */
+    
+    /**
+     * Copia una delle mappe in input sulla mappa attiva di modo che venga visualizzata
+     * successivamente soltanto la mappa attiva
+     * 
+     * @param map  mappa di stringhe da copiare sulla active per la visualizzazione
+     */
     
     public void CopyToActive(String[][] map){
     
@@ -304,11 +365,11 @@ public abstract class MonitorGenMap {
     }
   
     
-    
-    /*
+    /**
     * Copia la nuova scena come base per le nuove move in modo da far coincidere
     * la mappa dello scenario con la mappa in cui si determinano le moves
     */
+    
     
     public void CopySceneToMove(){
     
@@ -329,36 +390,68 @@ public abstract class MonitorGenMap {
         this.move = this.loadMoveonMap(scene, cellMove);
     }
     
+    /**
+     * 
+     * @return 
+     */
     
     public String[][] getScene(){
     
         return this.scene;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    
     public String[][] getMove(){
     
         return this.move;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    
     public int getNumx(){
       return this.NumCellX;
     }
+    
+    /**
+     * 
+     * @return 
+     */
     
     public int getNumy(){
       return this.NumCellY;
     }
             
-
+    /**
+     * 
+     * @return 
+     */
 
     public String[] getSetKey(){
     
         return this.setKeyMap;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    
     public String[] getSetKeyColor(){
     
         return this.setKeyColor;
     }
+    
+    /**
+     * 
+     * @return 
+     */
     
     public String getMode(){
     
@@ -380,10 +473,10 @@ public abstract class MonitorGenMap {
     // Metodi per l'utilizzo del generatore della history dei movimenti 
     
     
-    /*
-     *  Classe utilizzata per memorizzare i movimenti che possono essere eseguiti
-     *  da agenti che si trovano a condividere l'ambiente con l'agente robotico.
-     *  Ogni istanza di StepMove descrive la posizione di un agente ad un certo step
+    /**
+    * Classe utilizzata per memorizzare i movimenti che possono essere eseguiti
+    * da agenti che si trovano a condividere l'ambiente con l'agente robotico.
+    * Ogni istanza di StepMove descrive la posizione di un agente ad un certo step
     */
         
     protected class StepMove{
@@ -1039,19 +1132,17 @@ public abstract class MonitorGenMap {
         return newmap;
     }
     
-    /*
-    * Metodo per la verifica e la rimozione delle Move non piu valide a seguito di un 
-    * resize della mappa.Il metodo scorre la lista linkata e rimuove tutte le move
-    * a partire dalla prima occorrenza non può valida. Se ad un certo step la move non è
-    * valida non lo saranno più tutte quelle successivamente create
-    */
-    
+/** 
+* Metodo per la verifica e la rimozione delle Move non piu valide a seguito di un 
+* resize della mappa.Il metodo scorre la lista linkata e rimuove tutte le move
+* a partire dalla prima occorrenza non può valida. Se ad un certo step la move non è
+* valida non lo saranno più tutte quelle successivamente create 
+*/
     
     public void RemoveStepAfterResize(){
     
         ListIterator<Person> it = this.Persons.listIterator();
         while(it.hasNext()){
-        
             Person p = it.next();
             ListIterator<Path> itPath = p.paths.listIterator();
             while(itPath.hasNext()){
@@ -1078,7 +1169,7 @@ public abstract class MonitorGenMap {
     
     }
     
-        /*
+     /**
     * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna interi corrispondenti
     * ad un particolare conclusione dell'esecuzione. L'aggiornamento viene sostanzialmente separato
     * in tre casi (richiesta di una posizione dell'agente robotico , richiesta di una nuova posizione iniziale
@@ -1162,7 +1253,7 @@ public abstract class MonitorGenMap {
     }
     
     
-    /*
+    /** 
     * Crea un nuovo path e lo aggiunge alla lista dei path della persona indicata. L'aggiunta del path
     * comporta sempre l'inserimento di una move che determina lo stato iniziale per il nuovo path da
     * eseguire. Un path viene etichettato attraverso una label che risulta composta nel seguente modo :
@@ -1204,7 +1295,7 @@ public abstract class MonitorGenMap {
        
     }
     
-    /*
+    /**
     * Questo metodo genera l'aggiornamento delle celle della mappa del generatore in modalità
     * move, determinando quali movimenti sono possibili per un agente e in tal caso aggiorna la
     * lista dei movimenti 
@@ -1260,7 +1351,7 @@ public abstract class MonitorGenMap {
     }
     
     
-    /*
+    /**
     * Rimuove una persona in base al colore ad esso assegnata
     * @param color : colore rappresentante la persona da rimuovere
     * @return boolean : verifica se la rimozione è avvenuta correttamente
@@ -1284,9 +1375,9 @@ public abstract class MonitorGenMap {
     
     
     
-    /*
-    *  Aggiunge una nuova persona allo scenario dichiarandone il colore associato
-    *  e la posizione di partenza
+    /**
+    * Aggiunge una nuova persona allo scenario dichiarandone il colore associato
+    * e la posizione di partenza
     * @param x : riga della cella iniziale
     * @param y : colonna della cella iniziale
     * @param color : colore da associare
@@ -1359,7 +1450,7 @@ public abstract class MonitorGenMap {
         }
     }
     
-    /*
+    /**
     * Rimuove l'ultimo path aggiunto ad una persona e restuisce un intero equivalente
     * al risultato ottenuto.
     * @param color  colore assegnato alla persona
@@ -1392,9 +1483,13 @@ public abstract class MonitorGenMap {
     //  METODI PER SAVE E LOAD DELLA MAPPA
     
 
-    /*
-    *  Scrive su un file di testo la scena sviluppata tramite tool grafico
-    */
+    /**
+     * Scrive su un file di testo la scena sviluppata tramite tool grafico
+     * 
+     * @param directory : su cui salvare i file di RealMap e history con rispettivi JSON 
+     * @return consoleOutput con il feedback delle operazioni di scrittura dei file
+     * @throws JSONException 
+     */
     
     public String SaveFiles(File directory)throws JSONException{
         
@@ -1405,6 +1500,13 @@ public abstract class MonitorGenMap {
         
         
     }
+    
+    /**
+     * 
+     * @param directory
+     * @return
+     * @throws JSONException 
+     */
     
     private String WriteSceneOnFile(File directory) throws JSONException {
         //richiamo l'export della scena il quale mi dará una stringa con tutto il codice clips corrispondente
@@ -1439,9 +1541,13 @@ public abstract class MonitorGenMap {
        
     }
     
-    /*
-    * Scrive su file di testo la history sviluppata mediante il tool move all'interno del generatore
-    */
+    /**
+     * Scrive su file di testo la history sviluppata mediante il tool move all'interno del generatore
+     * 
+     * @param directory
+     * @return
+     * @throws JSONException 
+     */
     
     private String WriteHistoryOnFile(File directory) throws JSONException {
     
@@ -1481,10 +1587,11 @@ public abstract class MonitorGenMap {
     }
     
     
-    /*
+    /**
     * Questo metdo utilizza dati strutturati JSON per il salvataggio della scena. La struttura 
     * dati JSON cosi restituita viene successivamente utilizzata per il caricamento della mappa
     * cosi da poter essere modificata in un secondo momento.
+    *
     * @param nome : rappresenta il nome del file su cui eseguire il salvataggio
     * @return boolean : valuta se la scrittura sul JSON è stata eseguita correttamente
     */
@@ -1749,8 +1856,10 @@ public abstract class MonitorGenMap {
     * Genera le icone per il disegno delle mappe 
     */
     
-    public abstract BufferedImage[][] makeIconMatrix(String type);
+    public abstract BufferedImage[][] makeIconMapMatrix();
     
+    
+    public abstract BufferedImage[][] makeIconMoveMatrix();
     
     /*
     *  Verifica le condizioni imposte alla posizione del robot
