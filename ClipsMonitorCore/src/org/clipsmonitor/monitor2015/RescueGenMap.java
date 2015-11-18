@@ -56,7 +56,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.loaded = "unloaded";
         this.maxduration = 100;
         this.mode = "scene";
-        this.personName = "person_rescuer";
+        this.personName = "person";
         this.defaulagentcondition = "gate_agent_north_unloaded";
         this.defaultagentposition = new int[2];
         this.defaultagentposition[0] = 3;
@@ -82,6 +82,8 @@ public class RescueGenMap extends MonitorGenMap {
      *
      * @param scene matrice di stringe che dovrà essere riempita
      */
+    
+    
     @Override
     public void initScene(String[][] scene) {
 
@@ -125,6 +127,34 @@ public class RescueGenMap extends MonitorGenMap {
         history += "( pos-c " + this.agentposition[1] + ")";
         history += "(direction " + this.direction + ")) \n\n";
 
+        Path[] paths = this.getPaths(-1);
+        
+        for(Path elem : paths){
+            
+            String name = elem.getName();
+            String person = name.substring(0,name.indexOf("_"));
+            int step = elem.getStartStep();
+            history += RescueFacts.PersonMove.getPersonMove(step, person,name);
+        }
+        
+        history +="\n";
+        
+        
+        
+        for(Path elem : paths){
+            String name = elem.getName();
+            String person = name.substring(0,name.indexOf("_"));
+            int step = elem.getStartStep();
+            LinkedList<StepMove> slist = elem.getMoves(); 
+            for( StepMove s : slist){
+                int idstep = s.getStep() - step;
+                history += "( move-path " + name + " " + idstep + " " + person 
+                            + " " + s.getRow() + " " + s.getColumn() + " ) \n"; 
+            
+            }
+        
+        }
+        
         return history;
     }
 

@@ -1072,7 +1072,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     private void MakePathList(int paramPerson){
     
-        String [] list = model.getPaths(paramPerson);
+        String [] list = model.getStringPaths(paramPerson);
         if(list==null){
             list = new String[1];
             list[0]="";

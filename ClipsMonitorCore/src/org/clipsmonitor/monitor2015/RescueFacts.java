@@ -334,7 +334,7 @@ public final class RescueFacts{
                 "(" + PersonMove.STEP.slot     + " " + step    +   ")" +
                 "(" + PersonMove.IDENT.slot    + " " + ident   +   ")" +
                 "(" + PersonMove.PATH.slot     + " " + path    +   ")" +
-                ")";
+                ")\n";
 
         return person;
 
