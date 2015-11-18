@@ -127,8 +127,6 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 if (executionMode != ex_mode_RUN) {
                     this.suspend();
                 }
-                this.setChanged();
-                this.notifyObservers("repaint");
             }
             // Aggiorna le penalità
             dispose();

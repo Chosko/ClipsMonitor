@@ -25,7 +25,9 @@ public class RescueEnvMap extends MonitorMap implements Observer {
     private ClipsCore core;
     
     private final String UNKNOWN_COLOR = "#000000";
-    private final String UNDISCOVERED_COLOR = "rgba(0,0,0,0.3)";
+    private final String DISCOVERED_COLOR = "rgba(0,255,0,0.3)";
+    private final String CHECKED_COLOR = "rgba(255,255,0,0.3)";
+    private final String CLEAR_COLOR = "rgba(182,20,91,0.3)";
     
     // HashMap che attribuisce ad ogni tipo di cella un codice univoco.
     // L'attribuzione è effettuata nel costruttore.
@@ -130,16 +132,16 @@ public class RescueEnvMap extends MonitorMap implements Observer {
                 map[r][c] += "_injured";
             }
 
-            if (discovered.equals("no")) {
-                map[r][c] += "+" + UNDISCOVERED_COLOR;
+            if (discovered.equals("yes")) {
+                map[r][c] += "+" + DISCOVERED_COLOR;
             }
 
             if (checked.equals("yes")) {
-                map[r][c] += "+checked";
+                map[r][c] += "+" + CHECKED_COLOR;
             }
 
             if (clear.equals("yes")) {
-                map[r][c] += "+clear";
+                map[r][c] += "+" + CLEAR_COLOR;
             }
         }
     }

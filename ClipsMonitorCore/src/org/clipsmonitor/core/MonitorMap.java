@@ -37,8 +37,12 @@ public abstract class MonitorMap extends Observable implements Observer {
         } else if (advice.equals("disposeDone")) {
             onDispose();
         }
-        else if(arg == "clearApp"){
+        else if(arg.equals("clearApp")){
             this.clear();
+        }
+        else if(arg.equals("actionDone")){
+            this.setChanged();
+            this.notifyObservers("repaint");
         }
     }
     

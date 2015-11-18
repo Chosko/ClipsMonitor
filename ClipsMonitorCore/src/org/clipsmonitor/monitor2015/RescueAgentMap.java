@@ -32,7 +32,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     private Dimension dim;
     
     private String projectDirectory;
-    private final String UNKNOWN_COLOR = "#000000";
+    private final String UNKNOWN_COLOR = "#333333";
     private final String SOUND_COLOR = "rgba(0,70,255,0.3)";
 
     /**
@@ -116,7 +116,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             }
 
             // Se contiene debris e injured è unknwon
-            else if(contains.equals("debris") && injured.equals("unknown")) {
+            if(injured.equals("unknown")) {
                 map[r][c] += "+question_mark";
             }
 
