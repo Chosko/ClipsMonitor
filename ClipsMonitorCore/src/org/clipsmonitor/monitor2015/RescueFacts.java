@@ -325,6 +325,8 @@ public final class RescueFacts{
             return FACT_NAME;
         }
         
+        
+        
         public static String getPersonMove(int step, String ident , String path){
         
             String person = "";

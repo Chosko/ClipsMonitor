@@ -15,7 +15,7 @@ import org.clipsmonitor.core.MonitorMap;
 
 /**
  * L'implementazione della classe ClipsView specifica per il progetto Monitor
- * 2012/2013
+ * 2014/2015
  *
  * @author Violanti Luca, Varesano Marco, Busso Marco, Cotrino Roberto Edited
  * by: Enrico Mensa, Matteo Madeddu, Davide Dell'Anna, Ruben Caliandro
