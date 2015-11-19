@@ -34,6 +34,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     private String projectDirectory;
     private final String UNKNOWN_COLOR = "#333333";
     private final String SOUND_COLOR = "rgba(0,70,255,0.3)";
+    private final String WHITE = "#ffffff";
 
     /**
      * È il costruttore da chiamare nel main per avviare l'intero sistema, apre
@@ -82,8 +83,8 @@ public class RescueAgentMap extends MonitorMap implements Observer {
      */
     @Override
     public void updateMap() throws CLIPSError {
-        updateAgentStatus();
         updateKCells();
+        updateAgentStatus();
 //        updatePersonStatus();
         // debugMap();
     }
@@ -105,13 +106,15 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             String sound = fact[RescueFacts.KCell.SOUND.index()];
             
             // Inseriamo nella mappa ciò che contiene
-            if(c != agentC || r != agentR){
-                map[r][c] = contains;
-                
-                // Se è unknown, sostituiamo con un nero
-                if(contains.equals("unknown")){
-                    map[r][c] = UNKNOWN_COLOR;
-                }
+            map[r][c] = contains;
+            
+            if(contains.equals("robot")){
+                map[r][c] = WHITE;
+            }
+            
+            // Se è unknown, sostituiamo con un nero
+            if(contains.equals("unknown")){
+                map[r][c] = UNKNOWN_COLOR;
             }
             
 
@@ -136,7 +139,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         console.debug("Acquisizione posizione dell'agente...");
         int r = model.getRow() - 1;
         int c = model.getColumn() - 1;
-        map[r][c] = "agent_" + model.getDirection() + "_" + model.getMode();
+        map[r][c] = map[r][c] + "+agent_" + model.getDirection() + "_" + model.getMode();
     }
 //
 //    private void updatePersonStatus() throws CLIPSError{
