@@ -34,6 +34,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     private String projectDirectory;
     private final String UNKNOWN_COLOR = "#333333";
     private final String SOUND_COLOR = "rgba(0,70,255,0.3)";
+    private final String WHITE = "#ffffff";
 
     /**
      * È il costruttore da chiamare nel main per avviare l'intero sistema, apre
@@ -84,7 +85,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     public void updateMap() throws CLIPSError {
         updateKCells();
         updateAgentStatus();
-        updatePersonStatus();
+//        updatePersonStatus();
         // debugMap();
     }
 
@@ -98,6 +99,8 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
             int c = new Integer(fact[RescueFacts.KCell.POSC.index()]) - 1;
             int r = new Integer(fact[RescueFacts.KCell.POSR.index()]) - 1;
+            int agentR = model.getRow() - 1;
+            int agentC = model.getColumn() - 1;
             String contains = fact[RescueFacts.KCell.CONTAINS.index()];
             String injured = fact[RescueFacts.KCell.INJURED.index()];
             String sound = fact[RescueFacts.KCell.SOUND.index()];
@@ -105,17 +108,22 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             // Inseriamo nella mappa ciò che contiene
             map[r][c] = contains;
             
+            if(contains.equals("robot")){
+                map[r][c] = WHITE;
+            }
+            
             // Se è unknown, sostituiamo con un nero
             if(contains.equals("unknown")){
                 map[r][c] = UNKNOWN_COLOR;
             }
+            
 
             // Se contiene debris e injured è yes
             if (contains.equals("debris") && injured.equals("yes")) {
                 map[r][c] += "_injured";
             }
 
-            // Se contiene debris e injured è unknwon
+            // Se injured è unknwon
             if(injured.equals("unknown")) {
                 map[r][c] += "+question_mark";
             }
@@ -134,15 +142,16 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         map[r - 1][c - 1] = "agent_" + model.getKDirection() + "_" + model.getKMode();
     }
 
-    private void updatePersonStatus() throws CLIPSError{
-        ArrayList<int[]> personPositions = model.getPersonPositions();
-        
-        for (int[] person : personPositions) {
-            int r = person[0];
-            int c = person[1];
-            map[r - 1][c - 1] = map[r - 1][c - 1] + "+person";
-        }
-    }
+//
+//    private void updatePersonStatus() throws CLIPSError{
+//        ArrayList<int[]> personPositions = model.getPersonPositions();
+//        
+//        for (int[] person : personPositions) {
+//            int r = person[0];
+//            int c = person[1];
+//            map[r - 1][c - 1] = map[r - 1][c - 1] + "+person";
+//        }
+//    }
     
     @Override
     public BufferedImage[][] getIconMatrix() {
