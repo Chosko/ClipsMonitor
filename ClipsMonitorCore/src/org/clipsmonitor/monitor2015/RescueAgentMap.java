@@ -129,9 +129,9 @@ public class RescueAgentMap extends MonitorMap implements Observer {
 
     private void updateAgentStatus() throws CLIPSError{
         console.debug("Acquisizione posizione dell'agente...");
-        int r = model.getRow();
-        int c = model.getColumn();
-        map[r - 1][c - 1] = "agent_" + model.getDirection() + "_" + model.getMode();
+        int r = model.getKRow();
+        int c = model.getKColumn();
+        map[r - 1][c - 1] = "agent_" + model.getKDirection() + "_" + model.getKMode();
     }
 
     private void updatePersonStatus() throws CLIPSError{

@@ -24,6 +24,14 @@ public class RescueModel extends MonitorModel {
     private String direction;
     private String mode;
     private String loaded; // presenza di un carico
+    private String kdirection;
+    private String kmode;
+    private String kloaded; // presenza di un carico
+    private int krow;
+    private int kcolumn;
+    private int kstep;
+    private int ktime;
+    
     private ClipsConsole console;
     private static RescueModel instance;
     private String advise;
@@ -62,6 +70,13 @@ public class RescueModel extends MonitorModel {
             instance.console = null;
             instance.row = 0;
             instance.column = 0;
+            instance.krow = 0;
+            instance.kcolumn = 0;
+            instance.kdirection = null;
+            instance.kmode = null;
+            instance.kloaded = null;
+            instance.kstep = 0;
+            instance.ktime = 0;
             instance.personPositions = null;
             instance = null;
         }
@@ -151,6 +166,9 @@ public class RescueModel extends MonitorModel {
         // Update the agent
         updateAgent();
         
+        // Update the agent's perception about itself
+        updateKAgent();
+        
         // Update the other agents
         updatePeople();
         
@@ -173,6 +191,20 @@ public class RescueModel extends MonitorModel {
             direction = robot[RescueFacts.AgentStatus.DIRECTION.index()];
             loaded = robot[RescueFacts.AgentStatus.LOADED.index()];
             mode = loaded.equals("yes") ? "loaded" : "unloaded";
+        }
+    }
+    
+    
+    private void updateKAgent() throws CLIPSError{
+        String[] robot = core.findFact("AGENT", RescueFacts.KAgent.factName(), "TRUE", RescueFacts.KAgent.slotsArray());
+        if (robot[0] != null) { //Se hai trovato il fatto
+            kstep = new Integer(robot[RescueFacts.KAgent.STEP.index()]);
+            ktime = new Integer(robot[RescueFacts.KAgent.TIME.index()]);
+            krow = new Integer(robot[RescueFacts.KAgent.POSR.index()]);
+            kcolumn = new Integer(robot[RescueFacts.KAgent.POSC.index()]);
+            kdirection = robot[RescueFacts.KAgent.DIRECTION.index()];
+            kloaded = robot[RescueFacts.KAgent.LOADED.index()];
+            kmode = kloaded.equals("yes") ? "loaded" : "unloaded";
         }
     }
     
@@ -246,9 +278,28 @@ public class RescueModel extends MonitorModel {
         return this.advise;
     }
     
-    public synchronized String getDirection() {
+    public String getDirection() {
         return direction;
     }
+    
+    public String getKDirection() {
+        return kdirection;
+    }
+    
+    public String getKLoaded() {
+        return kloaded;
+    }
 
+    public String getKMode() {
+        return kmode;
+    }
+    
+    public int getKRow(){
+        return krow;
+    }
+    
+    public int getKColumn(){
+        return kcolumn;
+    }
 
 }

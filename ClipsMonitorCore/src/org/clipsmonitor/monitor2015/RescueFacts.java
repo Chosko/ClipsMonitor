@@ -138,7 +138,46 @@ public final class RescueFacts{
     }
 
     
-    
+    public enum KAgent implements RescueFact {
+        STEP(0, "step"),
+        TIME(1, "time"),
+        POSR(2, "pos-r"),
+        POSC(3, "pos-c"),
+        DIRECTION(4, "direction"),
+        LOADED(5, "loaded");
+
+        private static final String FACT_NAME = "K-agent";
+        private final int index;
+        private final String slot;
+
+        KAgent(int index, String slot) {
+            this.index = index;
+            this.slot = slot;
+        }
+
+        @Override
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public String slot() {
+            return slot;
+        }
+
+        public static String[] slotsArray() {
+            RescueFact[] fact = values();
+            String[] slots = new String[fact.length];
+            for (RescueFact slot : fact) {
+                slots[slot.index()] = slot.slot();
+            }
+            return slots;
+        }
+
+        public static String factName() {
+            return FACT_NAME;
+        }
+    }
     
     
     public enum AgentStatus implements RescueFact{
