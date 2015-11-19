@@ -109,7 +109,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
             this.map.addObserver(this);
         }
         else if(arg.equals("repaint")){
-            this.mapPanel.repaint();
+            this.repaintIfNeeded();
         }
         else if(arg.equals("initializeMap")){
             this.initializeMap();
@@ -124,6 +124,13 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         else if(arg == "startApp"){
             this.init();
         }
+    }
+    
+    private void repaintIfNeeded(){
+        if(map.getVersion() > lastUpdate){
+            this.mapPanel.repaint();
+        }
+        lastUpdate = map.getVersion();
     }
     
     

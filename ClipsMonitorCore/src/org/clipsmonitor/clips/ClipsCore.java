@@ -517,7 +517,7 @@ public class ClipsCore {
      * @param dest
      * @throws IOException
      */
-    private static void copyFileUsingFileStreams(File source, File dest) {
+    private synchronized static void copyFileUsingFileStreams(File source, File dest) {
         ClipsConsole console = ClipsConsole.getInstance();
         InputStream input = null;
         OutputStream output = null;

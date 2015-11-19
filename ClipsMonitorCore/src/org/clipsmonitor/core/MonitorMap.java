@@ -22,6 +22,7 @@ public abstract class MonitorMap extends Observable implements Observer {
     protected String[][] map;
     private String[][] oldMap;
     private BufferedImage[][] iconMatrix;
+    private int version;
     protected RescueModel model;
     protected MonitorImages images;
     protected ClipsConsole console;
@@ -66,6 +67,7 @@ public abstract class MonitorMap extends Observable implements Observer {
         updateOldMap();
         refreshMap();
         updateIconMatrix();
+        version++;
     };
     
     /**
@@ -92,7 +94,12 @@ public abstract class MonitorMap extends Observable implements Observer {
             }
         }
         updateIconMatrix();
+        version = 0;
     };
+    
+    public int getVersion(){
+        return version;
+    }
     
     public final int[] getSize() {
         int[] size = null;
