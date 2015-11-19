@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
+import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorImages;
@@ -39,6 +40,7 @@ import org.openide.LifecycleManager;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.modules.InstalledFileLocator;
+import org.openide.util.Exceptions;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -412,7 +414,11 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.registerMap("envMap", new RescueEnvMap(projectDirectory.getAbsolutePath()));
         model.registerMap("agentMap", new RescueAgentMap(projectDirectory.getAbsolutePath()));
         core = MonitorCore.getInstance();
-        model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
+        try {
+            model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
+        } catch (CLIPSError ex) {
+            Exceptions.printStackTrace(ex);
+        }
         model.setMode(MonitorModel.ex_mode_START);
         model.execute();
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed

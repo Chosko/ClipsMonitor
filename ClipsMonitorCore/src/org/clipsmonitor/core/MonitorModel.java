@@ -170,9 +170,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
      * file relativi all'environment (envs/envFolder_name)
      */
     
-    public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) {
+    public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) throws CLIPSError {
         /*inizializza l'ambiente clips caricando i vari file*/
         core.initialize(projectDirectory, strategyFolder_name, envsFolder_name);
+        this.InjectExecutionRules();
         console.debug("Clips Environment created and ready to run");
         /*effettua una reset di clips dopo aver caricato i file e
          carica le info iniziali dei file clips, per poi terminare la fase di setup*/
@@ -275,6 +276,39 @@ public abstract class MonitorModel extends Observable implements Runnable {
     }
 
 
+    public void InjectExecutionRules() throws CLIPSError{
+    
+        String defruleBeginStep = "(defrule begin-step "            +
+                                    "(declare (salience 100))"       +
+                                    "(status (step ?s))"             +
+                                    "(not (exec-mode (step ?s)))"    +
+                                                      "  => "        +
+                                    "(assert (exec-mode (step ?s)))" +
+                                                             ")";
+
+            
+            String defruleRetractExecMode = "(defrule retract-exec-mode " +
+                                            "  (declare (salience 100))" +
+                                            "  ?exec <- (exec-mode (step ?old-s))" +
+                                            "  (status (step ?act-s))" +
+                                            "  (last-perc (step ?act-s))" +
+                                            "  (test (> ?act-s ?old-s))" +
+                                            "  => " +
+                                            "  (retract ?exec)" +
+                                            "  (halt)" +
+                                            ")";
+            
+            
+            boolean check = core.build("AGENT", defruleBeginStep);
+            boolean check2 = core.build("AGENT", defruleRetractExecMode);
+            if(check && check2){
+                console.debug("Injection rule done");
+            }
+            else{
+               console.error("Injection failed");
+            }
+    }
+    
     /**
      * metodo per ottenere il punteggio dell'agente totalizzato a seguito delle
      * sue azioni

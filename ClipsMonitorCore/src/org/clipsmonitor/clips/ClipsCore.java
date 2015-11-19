@@ -154,6 +154,8 @@ public class ClipsCore {
                 dest.deleteOnExit(); //imposto la cancellazione automatica del file temporaneo all'uscita dall'applicazione
             }
         }
+        
+        
     }
     
     /**
@@ -183,6 +185,28 @@ public class ClipsCore {
         return result;
     }
 
+    
+    public synchronized boolean build(String module , String eval) throws CLIPSError{
+    
+
+        if(module == null) {
+            return clips.build(eval);
+        }
+        boolean isModuleOk = true;
+        PrimitiveValue fc = clips.eval("(get-focus)");
+        String focus = fc.toString();
+        if (!focus.equals(module)) {
+            isModuleOk = false;
+            clips.eval("(focus " + module + ")");
+        }
+        boolean result = clips.build(eval);
+        if (!isModuleOk) {
+            clips.eval("(pop-focus)");
+        }
+        return result;
+    
+    }
+    
     /**
      * Resetta l'Environment Clips: cancella tutti i facts presenti nella WM e
      * asserisce tutti i facts dichiarati negli initial
@@ -476,6 +500,7 @@ public class ClipsCore {
      */
     public synchronized boolean defrule(String module, String rule) {
         try{
+            
             PrimitiveValue val = evaluate(module, rule);
             return !val.toString().equalsIgnoreCase("FALSE");
         }
