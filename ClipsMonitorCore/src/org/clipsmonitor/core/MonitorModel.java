@@ -298,10 +298,27 @@ public abstract class MonitorModel extends Observable implements Runnable {
                                             "  (halt)" +
                                             ")";
             
+            String defruleInitialSituation = "(defrule initial-situation " +
+                                            " (declare (salience 50))" +
+                                            " (init-agent (done yes))" +
+                                            "  => " +
+                                            "(assert (stop-exec yes))" +
+                                            "(halt)" +
+                                            ")";
+           
+            String defruleRetractStopExec = "(defrule retract-stop-exec" +
+                                            "  (declare (salience 50))" +
+                                            "  ?stop <-(stop-exec yes)" +
+                                            "  => " +
+                                            "  (retract ?stop)" +
+                                            ")";
+            
             
             boolean check = core.build("AGENT", defruleBeginStep);
             boolean check2 = core.build("AGENT", defruleRetractExecMode);
-            if(check && check2){
+            boolean check3 = core.build("AGENT", defruleInitialSituation);
+            boolean check4 = core.build("AGENT", defruleRetractStopExec);
+            if(check && check2 && check3 && check4){
                 console.debug("Injection rule done");
             }
             else{
