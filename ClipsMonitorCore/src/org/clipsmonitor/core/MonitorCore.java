@@ -11,7 +11,8 @@ import org.clipsmonitor.clips.ClipsCore;
 
 /**
  *
- * @author Ruben
+ * @author Ruben Caliandro
+ * 
  */
 public final class MonitorCore {
     private static MonitorCore instance;
