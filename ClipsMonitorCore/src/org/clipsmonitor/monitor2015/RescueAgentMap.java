@@ -122,7 +122,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
 
             // Se c'è il suono
             if (sound.equals("yes")) {
-                map[r][c] += "+" + SOUND_COLOR;
+                map[r][c] += "+sound";
             }
         }
     }
@@ -131,7 +131,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         console.debug("Acquisizione posizione dell'agente...");
         int r = model.getRow();
         int c = model.getColumn();
-        map[r - 1][c - 1] = map[r - 1][c - 1] + "+agent_" + model.getDirection() + "_" + model.getMode();
+        map[r - 1][c - 1] = "agent_" + model.getDirection() + "_" + model.getMode();
     }
 
     private void updatePersonStatus() throws CLIPSError{

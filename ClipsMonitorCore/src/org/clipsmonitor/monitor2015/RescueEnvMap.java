@@ -133,15 +133,15 @@ public class RescueEnvMap extends MonitorMap implements Observer {
             }
 
             if (discovered.equals("yes")) {
-                map[r][c] += "+" + DISCOVERED_COLOR;
+                map[r][c] += "+discovered";
             }
 
             if (checked.equals("yes")) {
-                map[r][c] += "+" + CHECKED_COLOR;
+                map[r][c] += "+checked";
             }
 
             if (clear.equals("yes")) {
-                map[r][c] += "+" + CLEAR_COLOR;
+                map[r][c] += "+clear";
             }
         }
     }
