@@ -109,6 +109,8 @@ public class RescueModel extends MonitorModel {
             /* Eseguiamo un passo fino a quando il fatto init-agent viene dichiarato
              * con lo slot (done yes): il mondo è pronto.
              */
+           
+            
             long run_feedback;
             String[] initAgent;
             do {
@@ -118,7 +120,6 @@ public class RescueModel extends MonitorModel {
             /* Facciamo ancora un core.run(1) per allinearci al nostro step.
              * Questo è molto specifico a come funziona il nostro codice.
              */
-            core.run(1);
 
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
             for (MonitorMap map : maps.values()) {
