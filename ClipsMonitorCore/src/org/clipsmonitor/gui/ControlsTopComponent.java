@@ -409,8 +409,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         String envsFolder_name = envsSelector.getSelectedItem().toString(); //La cartella di env scelta
         model = RescueModel.getInstance();
         model.addObserver(this);
-        model.registerMap("envMap", new RescueEnvMap(projectDirectory.getAbsolutePath()));
-        model.registerMap("agentMap", new RescueAgentMap(projectDirectory.getAbsolutePath()));
+        model.registerMap("envMap", new RescueEnvMap());
+        model.registerMap("agentMap", new RescueAgentMap());
         core = MonitorCore.getInstance();
         model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
         model.setMode(MonitorModel.ex_mode_START);

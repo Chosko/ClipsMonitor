@@ -26,6 +26,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
     protected MonitorMap map;
     protected String target;
     protected ClipsConsole console;
+    private int lastUpdate;
     
     public MapTopComponent(){
         initComponents();
@@ -48,6 +49,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
         this.mapPanel = null;
         this.containerPanel.removeAll();
         this.containerPanel.repaint();
+        this.lastUpdate = -1;
     }
     
     /**
@@ -224,7 +226,6 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
 
                 }
             }
-
         }
     }
 }
