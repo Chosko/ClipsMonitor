@@ -99,8 +99,6 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
             int c = new Integer(fact[RescueFacts.KCell.POSC.index()]) - 1;
             int r = new Integer(fact[RescueFacts.KCell.POSR.index()]) - 1;
-            int agentR = model.getRow() - 1;
-            int agentC = model.getColumn() - 1;
             String contains = fact[RescueFacts.KCell.CONTAINS.index()];
             String injured = fact[RescueFacts.KCell.INJURED.index()];
             String sound = fact[RescueFacts.KCell.SOUND.index()];
@@ -137,9 +135,9 @@ public class RescueAgentMap extends MonitorMap implements Observer {
 
     private void updateAgentStatus() throws CLIPSError{
         console.debug("Acquisizione posizione dell'agente...");
-        int r = model.getKRow();
-        int c = model.getKColumn();
-        map[r - 1][c - 1] = "agent_" + model.getKDirection() + "_" + model.getKMode();
+        int r = model.getKRow() - 1;
+        int c = model.getKColumn() - 1;
+        map[r][c] = map[r][c] + "+agent_" + model.getKDirection() + "_" + model.getKMode();
     }
 
 //
