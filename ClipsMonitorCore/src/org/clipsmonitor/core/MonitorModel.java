@@ -64,8 +64,6 @@ public abstract class MonitorModel extends Observable implements Runnable {
         
         String[] arrayPercept = {"step"};
         String[] current;
-        Integer actual;
-        Integer prec;
         String[] done = {"no"};;
         
         try {
@@ -83,25 +81,19 @@ public abstract class MonitorModel extends Observable implements Runnable {
                        
                         current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
 
-                        /* Se lo stato last-perc non esiste, allora lo stato attuale viene impostato a -1
-                         Diversamente viene impostato allo stato di last-perc. Questo viene fatto per poter
-                         completare uno step ""sporcato"" dal click di una runOne e riallinearsi con le azioni
-                         necessarie ad arrivare alla prossima percezione del mondo (conseguente azione).
-                         */
-                        actual = current[0] == null ? -1 : new Integer(current[0]);
-                        this.step=actual;
-                        prec = actual;
+                        
+                        
                         
                         /* Lo stato precedente viene inizalizzato al valore dello stato attuale
                          Fino a che lo stato precedente è uguale allo stato attuale, allora
                          proseguo (devo arrivare alla prossima percezione, facendo una run.
                          */
-                        while (prec.equals(actual) && done[0].equals("no")) {
-                            core.run(1);
-                            current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                            actual = current[0] == null ? -1 : new Integer(current[0]);
+                                             
+                            core.run();
                             done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
-                        }
+                        
+                        
+                        
                         
                        break;
                     case ex_mode_RUNN:
