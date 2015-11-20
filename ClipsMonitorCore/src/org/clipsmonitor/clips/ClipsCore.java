@@ -3,6 +3,7 @@ package org.clipsmonitor.clips;
 import net.sf.clipsrules.jni.Environment;
 import net.sf.clipsrules.jni.MultifieldValue;
 import net.sf.clipsrules.jni.PrimitiveValue;
+import net.sf.clipsrules.jni.FactAddressValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -273,7 +274,9 @@ public class ClipsCore {
             result = new String[facts.size()][slots.length];
             for (int i = 0; i < facts.size(); i++) {
                 for (int j = 0; j < slots.length; j++) {
-                    result[i][j] = ((FactAddressValue)facts.get(i)).getFactSlot(slots[j]).toString();
+                    FactAddressValue fact = (FactAddressValue) facts.get(i);
+                    String slot = fact.getFactSlot(slots[j]).toString();
+                    result[i][j] = slot;
                 }
             }
         }

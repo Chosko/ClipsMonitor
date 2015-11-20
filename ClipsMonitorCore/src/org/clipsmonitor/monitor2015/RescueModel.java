@@ -173,6 +173,9 @@ public class RescueModel extends MonitorModel {
 
         // Update the simulation status
         updateStatus();
+        
+        this.setChanged();
+        this.notifyObservers("repaint");
     }
 
     private void updateAgent() throws CLIPSError{
