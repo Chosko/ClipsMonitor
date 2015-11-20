@@ -387,9 +387,7 @@ public final class RescueFacts{
         POSC (1, "pos-c"),
         CONTAINS(2, "contains"),
         INJURED (3, "injured"),
-        SOUND (4, "sound"),
-        CHECKED (5, "checked"), 
-        CLEAR(6, "clear");
+        SOUND (4, "sound");
         
         private static final String FACT_NAME = "K-cell";
         private final int index;
