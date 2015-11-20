@@ -295,5 +295,112 @@ public class RescueModel extends MonitorModel {
     public int getKColumn(){
         return kcolumn;
     }
+    
+    @Override
+    public void injectExecutionRules() throws CLIPSError{
+        super.injectExecutionRules();
+        
+        String overrideExecTemplate = "" +
+            "(deftemplate override-exec \n" +
+            "  (slot step) \n" +
+            "  (slot action  \n" +
+            "    (allowed-values \n" +
+            "      forward turnright turnleft\n" +
+            "      drill load_debris unload_debris\n" +
+            "      wait inform done\n" +
+            "    )\n" +
+            "  )\n" +
+            "  (slot param1)\n" +
+            "  (slot param2)\n" +
+            "  (slot param3)\n" +
+            ")\n";
+        
+        String overrideExecRule = "" + 
+            "(defrule override-exec\n" +
+            "  (declare (salience 1))\n" +
+            "  (status (step ?s))\n" +
+            "  ?exec <- (exec (step ?s))\n" +
+            "  ?override <- (override-exec (step ?s)(action ?a)(param1 ?p1)(param2 ?p2)(param3 ?p3))\n" +
+            "  =>\n" +
+            "  (retract ?exec)\n" +
+            "  (retract ?override)\n" +
+            "  (assert (exec (step ?s)(action ?a)(param1 ?p1)(param2 ?p2)(param3 ?p3)))\n" +
+            ")";
+        
+        boolean check = core.build("AGENT", overrideExecTemplate);
+        boolean check2 = core.build("AGENT", overrideExecRule);
+        if (check && check2) {
+            console.debug("Injected override exec rule");
+        } else {
+            console.error("Injection of override exec rule failed");
+        }
+    }
 
+    public void actionForward() {
+        assertOverrideExec("forward", null, null, null);
+    }
+
+    public void actionTurnLeft() {
+        assertOverrideExec("turnleft", null, null, null);
+    }
+
+    public void actionTurnRight() {
+        assertOverrideExec("turnright", null, null, null);
+    }
+
+    public void actionWait() {
+        assertOverrideExec("wait", null, null, null);
+    }
+
+    public void actionLoadNorth() {
+        String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
+        assertOverrideExec(action, krow + 1, kcolumn, null);
+    }
+    
+    public void actionLoadEast() {
+        String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
+        assertOverrideExec(action, krow, kcolumn + 1, null);
+    }
+    
+    public void actionLoadWest() {
+        String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
+        assertOverrideExec(action, krow, kcolumn - 1, null);
+    }
+    
+    public void actionLoadSouth() {
+        String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
+        assertOverrideExec(action, krow -1 , kcolumn, null);
+    }
+
+    public void actionDrillNorth() {
+        assertOverrideExec("drill", krow + 1, kcolumn, null);
+    }
+    
+    public void actionDrillEast() {
+        assertOverrideExec("drill", krow, kcolumn + 1, null);
+    }
+    
+    public void actionDrillWest() {
+        assertOverrideExec("drill", krow, kcolumn - 1, null);
+    }
+    
+    public void actionDrillSouth() {
+        assertOverrideExec("drill", krow -1 , kcolumn, null);
+    }
+    
+    private void assertOverrideExec(String action, Object param1, Object param2, Object param3){
+        String cmd = "(assert (override-exec (action " + action + ")(step " + step + ")";
+        if(param1 != null){
+            cmd += "(param1 " + param1 + ")";
+        }
+        if(param2 != null){
+            cmd += "(param2 " + param2 + ")";
+        }
+        if(param3 != null){
+            cmd += "(param3 " + param3 + ")";
+        }
+        cmd += "))";
+        console.info("Sending action: " + action);
+        evalComandLine(cmd);
+    }
 }

@@ -5,6 +5,11 @@
  */
 package org.clipsmonitor.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -76,6 +81,7 @@ public final class EnvMapTopComponent extends MapTopComponent {
         // TODO add custom code on component closing
     }
 
+    @Override
     void writeProperties(java.util.Properties p) {
         // better to version settings since initial version as advocated at
         // http://wiki.apidesign.org/wiki/PropertyFiles
@@ -83,6 +89,7 @@ public final class EnvMapTopComponent extends MapTopComponent {
         // TODO store your settings
     }
 
+    @Override
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version

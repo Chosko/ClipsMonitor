@@ -466,6 +466,115 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "step");
     loadDefaultFileButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "start");
     resetButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_X,InputEvent.CTRL_MASK), "reset");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.SHIFT_MASK), "forward");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK), "left");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK), "right");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK), "wait");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK), "drill-north");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK), "drill-west");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK), "drill-east");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.ALT_MASK), "drill-south");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-north");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-west");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-east");
+    stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-south");
+    
+
+    stepButton.getActionMap().put("forward", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionForward();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("left", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionTurnLeft();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("right", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionTurnRight();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("wait", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionWait();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("load-north", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionLoadNorth();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("load-west", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionLoadWest();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("load-east", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionLoadEast();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("load-south", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionLoadSouth();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("drill-north", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionDrillNorth();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("drill-west", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionDrillWest();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("drill-east", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionDrillEast();
+            stepButton.doClick();
+        }
+    });
+
+    stepButton.getActionMap().put("drill-south", new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.actionDrillSouth();
+            stepButton.doClick();
+        }
+    });
 
     runButton.getActionMap().put("run", new AbstractAction() {
         @Override

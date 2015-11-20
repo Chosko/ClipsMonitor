@@ -173,7 +173,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) throws CLIPSError {
         /*inizializza l'ambiente clips caricando i vari file*/
         core.initialize(projectDirectory, strategyFolder_name, envsFolder_name);
-        this.InjectExecutionRules();
+        this.injectExecutionRules();
         console.debug("Clips Environment created and ready to run");
         /*effettua una reset di clips dopo aver caricato i file e
          carica le info iniziali dei file clips, per poi terminare la fase di setup*/
@@ -276,7 +276,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     }
 
 
-    public void InjectExecutionRules() throws CLIPSError{
+    public void injectExecutionRules() throws CLIPSError{
     
         String defruleBeginStep = "(defrule begin-step "            +
                                     "(declare (salience 100))"       +
