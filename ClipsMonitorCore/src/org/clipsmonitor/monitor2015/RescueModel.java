@@ -111,15 +111,8 @@ public class RescueModel extends MonitorModel {
              */
            
             
-            long run_feedback;
-            String[] initAgent;
-            do {
-                run_feedback = core.run(1);
-                initAgent = core.findFact("AGENT", "init-agent", "TRUE", new String[]{"done"});
-            } while (run_feedback == 1 && (initAgent[0] == null || !initAgent[0].equals("yes")));
-            /* Facciamo ancora un core.run(1) per allinearci al nostro step.
-             * Questo è molto specifico a come funziona il nostro codice.
-             */
+            core.run();
+            
 
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
             for (MonitorMap map : maps.values()) {
