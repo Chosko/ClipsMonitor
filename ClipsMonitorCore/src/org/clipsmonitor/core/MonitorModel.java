@@ -234,16 +234,13 @@ public abstract class MonitorModel extends Observable implements Runnable {
  
     public String evalComandLine(String command) {
         String result = "";
-        ConsoleOutputCapturer rec = new ConsoleOutputCapturer();
         try{
-            
-            rec.start();
             result = core.evaluateOutput(null, command);
-            String output = rec.stop();
-            console.info(output);
+            if(result.length() > 0){
+                console.clips(result);
+            }
         }
         catch(CLIPSError ex){
-            console.error(rec.stop());
             console.error(ex);
         }
         this.setChanged();

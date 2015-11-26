@@ -109,6 +109,7 @@ public class ClipsCore {
 
         for (File clpFile : str_listOfFiles) {
             try {
+                router.startRec();
                 String fileName = clpFile.getName();
                 String extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 if (!clpFile.isHidden() && !clpFile.getName().startsWith(".") && (extension.equalsIgnoreCase("clp") || extension.equalsIgnoreCase("txt"))) {
@@ -117,13 +118,16 @@ public class ClipsCore {
                     console.debug("Loading in CLIPS the file: " + path);
                     clips.load(path); //carica ogni file
                 }
+                router.stopRec();
+                String out = router.getStdout();
+                if(out.length() > 0){
+                    console.clips(router.getStdout());
+                }
             } catch (CLIPSError e) {
-                console.error(e);
+                router.stopRec();
+                console.error(router.getStdout());
             }
         }
-
-        router = new RouterDialog("routerCore");
-        clips.addRouter(router);
 
         /* ------- Spostiamo nella cartella della strategia i file presi dalla cartella ENV -------- */
         File env_folder = new File(projectDirectory + File.separator + "envs" + File.separator + envsFolder_name); //Recupera la lista dei file nella cartella della strategia scelta
@@ -185,7 +189,6 @@ public class ClipsCore {
         }
         return result;
     }
-
     
     public synchronized boolean build(String module , String eval) throws CLIPSError{
     
@@ -411,11 +414,12 @@ public class ClipsCore {
             String focus = fc.toString();
             String eval = "(facts)";
             evaluate(focus, eval);
+            router.stopRec();
         }
         catch(CLIPSError ex){
-            console.error(ex);
+            router.stopRec();
+            console.error(router.getStdout());
         }
-        router.stopRec();
         return router.getStdout();
     }
 
@@ -433,11 +437,12 @@ public class ClipsCore {
             String focus = fc.toString();
             String eval = "(agenda)";
             evaluate(focus, eval);
+            router.stopRec();
         }
         catch(CLIPSError ex){
-            console.error(ex);
+            router.stopRec();
+            console.error(router.getStdout());
         }
-        router.stopRec();
         return router.getStdout();
     }
 
@@ -557,12 +562,12 @@ public class ClipsCore {
         router.startRec();
         try{
             this.evaluate(module, command);
+            router.stopRec();
         }
         catch(CLIPSError er){
             router.stopRec();
-            throw er;
+            throw new CLIPSError(er.getModule(), er.getCode(), router.getStdout());
         }
-        router.stopRec();
         return router.getStdout();
     }
     

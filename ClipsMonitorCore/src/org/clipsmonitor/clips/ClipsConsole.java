@@ -7,6 +7,7 @@ package org.clipsmonitor.clips;
 
 import java.util.LinkedList;
 import java.util.Observable;
+import net.sf.clipsrules.jni.CLIPSError;
 
 /**
  * Implementation of a console for CLIPSJNI
@@ -68,6 +69,11 @@ public class ClipsConsole extends Observable {
      */
     private boolean active;
     
+    /**
+     * The prompt string (CLIPS >) 
+     */
+    private String prompt;
+    
     // Log levels
     private boolean logDebug;
     private boolean logError;
@@ -95,6 +101,7 @@ public class ClipsConsole extends Observable {
         logWarn = true;
         logInfo = true;
         unstableWarnSent = false;
+        prompt = clips.getPrompt();
         append(LogLevel.LOG, clips.getBanner());
         internal("ClipsConsole initialized");
     }
@@ -316,12 +323,18 @@ public class ClipsConsole extends Observable {
      * @param log The object to log
      */
     public void error(Object log) {
-        String logString = "[ERROR] " + log;
-        if(log instanceof Throwable){
+        String logString = "[ERROR] ";
+        if(log instanceof CLIPSError){
+            logString += ((CLIPSError)log).getMessage();
+        }
+        else if(log instanceof Throwable && !(log instanceof CLIPSError)){
             StackTraceElement[] st = ((Throwable) log).getStackTrace();
             for (int i = 0; i < st.length; i++) {
                 logString += "\n  at " + st[i].toString();
             }
+        }
+        else{
+            logString += log;
         }
         System.out.println(logString);
         this.append(LogLevel.ERROR, logString);
@@ -474,7 +487,7 @@ public class ClipsConsole extends Observable {
      * Return the CLIPS> prompt
      */
     public String getPrompt(){
-        return clips.getPrompt();
+        return prompt;
     }
     
     /**
