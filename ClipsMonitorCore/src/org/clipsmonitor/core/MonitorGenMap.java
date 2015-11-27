@@ -803,12 +803,12 @@ public abstract class MonitorGenMap {
      *   @paramStep : paramStep>-1  indica il numero dello step da cui prelevare tutti le move definite
      *                paramStep==-1 indica la richieste delle move per tutti gli step
      */
-    public String[] getListMove(int paramPerson, int paramStep) {
+    public String[] getListMove(int paramPerson, int paramStep, String paramPath) {
 
         String[] list = null;
         ArrayList<String> moveslist = new ArrayList<String>();
         // richiesta della lista completa degli step;
-        if (paramPerson == -1 && paramStep == -1) {
+        if (paramPerson == -1 && paramStep == -1 && paramPath.equals("all")) {
 
             ListIterator<Person> it = this.Persons.listIterator();
             while (it.hasNext()) {
@@ -827,49 +827,65 @@ public abstract class MonitorGenMap {
                 }
             }
         }
+        else{
+          // richiesta della lista completa delle move in un determinato step
+          if (paramStep > -1) {
+              ListIterator<Person> itPerson = this.Persons.listIterator();
+              while (itPerson.hasNext()) {
+                  Person p = itPerson.next();
+                  ListIterator<Path> itPath = p.paths.listIterator();
+                  Path succ = null;
+                  while (itPath.hasNext()) {
+                      succ = itPath.next();
+                      if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
+                          break;
+                      }
+                  }
+                  int offset = paramStep - succ.startStep;
+                  if (succ.move.size() > paramStep) {
+                      StepMove s = succ.move.get(paramStep);
+                      String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
+                              + "\t (" + s.row + "," + s.column + ")";
+                      moveslist.add(move);
+                  }
 
-        // richiesta della lista completa delle move in un determinato step
-        if (paramPerson == -1 && paramStep > -1) {
-            ListIterator<Person> itPerson = this.Persons.listIterator();
-            while (itPerson.hasNext()) {
-                Person p = itPerson.next();
-                ListIterator<Path> itPath = p.paths.listIterator();
-                Path succ = null;
-                while (itPath.hasNext()) {
-                    succ = itPath.next();
-                    if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
-                        break;
-                    }
-                }
-                int offset = paramStep - succ.startStep;
-                if (succ.move.size() > paramStep) {
-                    StepMove s = succ.move.get(paramStep);
-                    String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                            + "\t (" + s.row + "," + s.column + ")";
-                    moveslist.add(move);
-                }
+              }
+          }
 
-            }
+          // richiesta della lista delle move eseguita da una determinata persona
+          else if (paramPerson > -1) {
+
+              Person p = this.Persons.get(paramPerson);
+              ListIterator<Path> itPath = p.paths.listIterator();
+              while (itPath.hasNext()) {
+                  Path succ = itPath.next();
+                  ListIterator<StepMove> moves = succ.move.listIterator();
+                  while (moves.hasNext()) {
+                      StepMove s = moves.next();
+                      String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
+                              + "\t (" + s.row + "," + s.column + ")";
+                      moveslist.add(move);
+                  }
+              }
+
+          }
+          // richiesta della lista delle move eseguite all'interno di un determinato path
+          else{
+              Path succ = this.getPathByName(paramPath);
+              String[] split = paramPath.split("_");
+              Person p = this.findByColor(split[0]);
+              ListIterator<StepMove> moves = succ.move.listIterator();
+              while (moves.hasNext()) {
+                  StepMove s = moves.next();
+                  String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
+                          + "\t (" + s.row + "," + s.column + ")";
+                  moveslist.add(move);
+              }
+          
+          }
+        
         }
-
-        // richiesta della lista delle move eseguita da una determinata persona
-        if (paramPerson > -1 && paramStep == -1) {
-
-            Person p = this.Persons.get(paramPerson);
-            ListIterator<Path> itPath = p.paths.listIterator();
-            while (itPath.hasNext()) {
-                Path succ = itPath.next();
-                ListIterator<StepMove> moves = succ.move.listIterator();
-                while (moves.hasNext()) {
-                    StepMove s = moves.next();
-                    String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                            + "\t (" + s.row + "," + s.column + ")";
-                    moveslist.add(move);
-                }
-            }
-
-        }
-
+        
         list = new String[moveslist.size()];
         list = moveslist.toArray(list);
         return list;
@@ -1180,7 +1196,7 @@ public abstract class MonitorGenMap {
 
                     int separate = scene[x][y].indexOf("_");
                     String background = scene[x][y].substring(0, separate);
-                    scene[x][y] = background + state;
+                    scene[x][y] = background + "_" + state;
                 }
             } // si richiedono modifiche alla scena diverse da tipologie di state agent
             else {

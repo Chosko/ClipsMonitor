@@ -182,7 +182,7 @@ public abstract class MapTopComponent extends TopComponent implements Observer {
             this.map = map;
         }
        
-       
+        
         
 
         @Override
