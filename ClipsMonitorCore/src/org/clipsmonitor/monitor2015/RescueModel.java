@@ -37,6 +37,7 @@ public class RescueModel extends MonitorModel {
     private String advise;
     private Map<String, MonitorMap> maps;
     private ArrayList<int[]> personPositions;
+    private ArrayList<int[]> kpersonPositions;
     
     /*costanti enumerative intere per un uso più immediato delle posizioni all'interno 
      degli array che definiscono i fatti di tipo (real-cell)*/
@@ -78,6 +79,7 @@ public class RescueModel extends MonitorModel {
             instance.kstep = 0;
             instance.ktime = 0;
             instance.personPositions = null;
+            instance.kpersonPositions = null;
             instance = null;
         }
     }
@@ -92,6 +94,7 @@ public class RescueModel extends MonitorModel {
         MonitorCore.getInstance().registerModel(this);
         maps = new HashMap<String, MonitorMap>();
         personPositions = new ArrayList<int[]>();
+        kpersonPositions = new ArrayList<int[]>();
     }
 
     /**
@@ -165,6 +168,7 @@ public class RescueModel extends MonitorModel {
         
         // Update the other agents
         updatePeople();
+        updateKPeople();
         
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
@@ -205,8 +209,10 @@ public class RescueModel extends MonitorModel {
         }
     }
     
+    
+    
     private void updatePeople() throws CLIPSError{
-        console.debug("Acquisizione posizione degli altri agenti...");
+        console.debug("Acquisizione posizione degli altri agenti per EnvMap...");
         String[][] persons = core.findAllFacts("ENV", RescueFacts.PersonStatus.factName(), "TRUE", RescueFacts.PersonStatus.slotsArray());
         personPositions.clear();
         if (persons != null) {
@@ -220,6 +226,24 @@ public class RescueModel extends MonitorModel {
         }
     }
 
+    
+    
+    private void updateKPeople() throws CLIPSError{
+        console.debug("Acquisizione posizione degli altri agenti per agentMap...");
+        String[][] persons = core.findAllFacts("AGENT", RescueFacts.KPerson.factName(), "= ?f:step " + this.step, RescueFacts.KPerson.slotsArray());
+        kpersonPositions.clear();
+        if (persons != null) {
+            for (int i = 0; i < persons.length; i++) {
+                if(persons[i][0] != null){
+                    int r = new Integer(persons[i][RescueFacts.KPerson.POSR.index()]);
+                    int c = new Integer(persons[i][RescueFacts.KPerson.POSC.index()]);
+                    kpersonPositions.add(new int[]{r, c});
+                }
+            }
+        }
+    }
+    
+    
     private void updateStatus() throws CLIPSError{
         String[] status = core.findFact("MAIN", RescueFacts.Status.factName(), "TRUE", RescueFacts.Status.slotsArray());
         if (status[0] != null) {
@@ -234,6 +258,11 @@ public class RescueModel extends MonitorModel {
         return personPositions;
     }
 
+    public ArrayList<int[]> getKPersonPostions(){
+    
+      return kpersonPositions;
+    }
+    
     @Override
     protected boolean hasDone() {
         // ritorna true se time>=maxduration o se result non è "no" e quindi è "disaster" o "done"

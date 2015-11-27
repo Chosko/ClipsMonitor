@@ -266,14 +266,15 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public synchronized String[][] findAllFacts(String module, String template, String conditions, String[] slots) throws CLIPSError {
+    public synchronized String[][] findAllFacts(String module, String template, String conditions, String[] slots)  {
+        router.startRec();
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
-        MultifieldValue facts = (MultifieldValue) evaluate(module, eval);
         String[][] result = null;
         try{
+            MultifieldValue facts = (MultifieldValue) evaluate(module, eval);
             result = new String[facts.size()][slots.length];
             for (int i = 0; i < facts.size(); i++) {
                 for (int j = 0; j < slots.length; j++) {
@@ -285,6 +286,10 @@ public class ClipsCore {
         }
         catch (NullPointerException ex) {
             console.error("Impossible to find fact: " + template + " with conditions: " + conditions + " in module " + module);
+        }
+        catch(CLIPSError ex){
+          router.stopRec();
+          console.error(router.getStdout());
         }
         return result;
     }

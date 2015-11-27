@@ -1,5 +1,6 @@
 package org.clipsmonitor.monitor2015;
 
+import java.util.ArrayList;
 import java.util.Observer;
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.core.MonitorMap;
@@ -63,6 +64,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     public void refreshMap() throws CLIPSError {
         updateKCells();
         updateAgentStatus();
+        updatePersonStatus();
         // debugMap("k-cell");
     }
 
@@ -115,6 +117,18 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         int r = model.getKRow() - 1;
         int c = model.getKColumn() - 1;
         map[r][c] = map[r][c] + "+agent_" + model.getKDirection() + "_" + model.getKMode();
+    }
+    
+    
+    public void updatePersonStatus() throws CLIPSError{
+        console.debug("Acquisizione posizione degli altri agenti...");
+        ArrayList<int[]> personPositions = model.getKPersonPostions();
+        
+        for (int[] person : personPositions) {
+            int r = person[0] - 1;
+            int c = person[1] - 1;
+            map[r][c] = map[r][c] + "+person";
+        }
     }
 }
 
