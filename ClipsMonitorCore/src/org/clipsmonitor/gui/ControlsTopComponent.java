@@ -816,7 +816,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             Integer step = model.getStep();
             Integer time = model.getTime();
             Integer leftTime = model.getMaxDuration() - model.getTime();
-            Integer score = model.getScore();
+            Double score = model.getScore();
             this.getTimeTextField().setText(time.toString());
             this.getLeftTimeTextField().setText(leftTime.toString());
             this.getStepTextField().setText(step.toString());

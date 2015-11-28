@@ -41,7 +41,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     protected Integer maxduration;
     protected String result;
     protected int row, column;
-    protected int score;
+    protected double score;
     protected int durlastact;
     
     
@@ -335,7 +335,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
      *
      * @return il punteggio come intero
      */
-    public synchronized int getScore() {
+    public synchronized double getScore() {
         return score;
     }
 

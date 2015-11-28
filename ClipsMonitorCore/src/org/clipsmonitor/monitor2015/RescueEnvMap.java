@@ -26,7 +26,7 @@ public class RescueEnvMap extends MonitorMap implements Observer {
     protected void onDispose() {
         console.debug("Dispose effettuato");
         String result = model.getResult();
-        int score = model.getScore();
+        double score = model.getScore();
         @SuppressWarnings("UnusedAssignment")
         String advise = "";
         if (result.equals("disaster")) {

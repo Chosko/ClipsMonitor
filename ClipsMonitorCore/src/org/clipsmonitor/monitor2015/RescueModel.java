@@ -109,7 +109,6 @@ public class RescueModel extends MonitorModel {
         result = "no";
         time = 0;
         step = 0;
-        maxduration = Integer.MAX_VALUE;
         offsetPosition.put("north",new int[]{1,0});
         offsetPosition.put("south",new int[]{-1,0});
         offsetPosition.put("east",new int[]{0,1});
@@ -292,7 +291,7 @@ public class RescueModel extends MonitorModel {
     @Override
     protected void dispose() {
         try{
-            score = new Integer(core.findOrderedFact("MAIN", "penalty"));
+            score = new Double(core.findOrderedFact("MAIN", "penalty"));
         }
         catch(CLIPSError ex){
             console.error(ex);
