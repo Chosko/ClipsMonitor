@@ -26,12 +26,13 @@ public class RescueModel extends MonitorModel {
     private String loaded; // presenza di un carico
     private String kdirection;
     private String kmode;
+    private boolean bumped;
     private String kloaded; // presenza di un carico
     private int krow;
     private int kcolumn;
     private int kstep;
     private int ktime;
-    
+    private Map<String,int[]> offsetPosition;
     private ClipsConsole console;
     private static RescueModel instance;
     private String advise;
@@ -73,6 +74,7 @@ public class RescueModel extends MonitorModel {
             instance.column = 0;
             instance.krow = 0;
             instance.kcolumn = 0;
+            instance.bumped=false;
             instance.kdirection = null;
             instance.kmode = null;
             instance.kloaded = null;
@@ -80,6 +82,7 @@ public class RescueModel extends MonitorModel {
             instance.ktime = 0;
             instance.personPositions = null;
             instance.kpersonPositions = null;
+            instance.offsetPosition = null;
             instance = null;
         }
     }
@@ -95,6 +98,7 @@ public class RescueModel extends MonitorModel {
         maps = new HashMap<String, MonitorMap>();
         personPositions = new ArrayList<int[]>();
         kpersonPositions = new ArrayList<int[]>();
+        offsetPosition = new HashMap<String,int[]>();
     }
 
     /**
@@ -106,6 +110,11 @@ public class RescueModel extends MonitorModel {
         time = 0;
         step = 0;
         maxduration = Integer.MAX_VALUE;
+        offsetPosition.put("north",new int[]{1,0});
+        offsetPosition.put("south",new int[]{-1,0});
+        offsetPosition.put("east",new int[]{0,1});
+        offsetPosition.put("west",new int[]{0,-1});
+        
         try {
             console.debug("Esecuzione degli step necessari ad aspettare che l'agente sia pronto.");
             
@@ -169,6 +178,7 @@ public class RescueModel extends MonitorModel {
         // Update the other agents
         updatePeople();
         updateKPeople();
+        checkBumpCondition();
         
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
@@ -242,6 +252,16 @@ public class RescueModel extends MonitorModel {
             }
         }
     }
+    
+    private void checkBumpCondition() throws CLIPSError{
+      
+      console.debug("Controllo di evento bump...");
+      boolean bumped = false;
+      String[][] bump = core.findAllFacts("AGENT",RescueFacts.SpecialCondition.factName(),"TRUE", RescueFacts.SpecialCondition.slotsArray());
+      this.bumped= bump.length!=0 ? true: false;
+      
+    }
+    
     
     
     private void updateStatus() throws CLIPSError{
@@ -326,6 +346,15 @@ public class RescueModel extends MonitorModel {
     
     public int getKColumn(){
         return kcolumn;
+    }
+    
+    public boolean getBumped(){
+    
+        return bumped;
+    }
+    
+    public Map<String,int[]> getOffset(){
+      return this.offsetPosition;
     }
     
     @Override

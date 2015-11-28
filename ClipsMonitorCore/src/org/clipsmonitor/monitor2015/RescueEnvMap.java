@@ -74,8 +74,8 @@ public class RescueEnvMap extends MonitorMap implements Observer {
     @Override
     protected void refreshMap() throws CLIPSError {
         updateCells();
-        updateAgentStatus();
         updatePersonStatus();
+        updateAgentStatus();
         // debugMap("cell");
     }
 
@@ -127,6 +127,10 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         int r = model.getRow() - 1;
         int c = model.getColumn() - 1;
         map[r][c] = map[r][c] + "+agent_" + model.getDirection() + "_" + model.getMode();
+        if(model.getBumped()){
+          int [] offset = model.getOffset().get(model.getDirection());
+          map[r + offset[0]][c + offset[1]] = map[r + offset[0]][c + offset[1]] + "+bump";
+        }
     }
 
 

@@ -63,8 +63,8 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     @Override
     public void refreshMap() throws CLIPSError {
         updateKCells();
-        updateAgentStatus();
         updatePersonStatus();
+        updateAgentStatus();
         // debugMap("k-cell");
     }
 
@@ -117,7 +117,13 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         int r = model.getKRow() - 1;
         int c = model.getKColumn() - 1;
         map[r][c] = map[r][c] + "+agent_" + model.getKDirection() + "_" + model.getKMode();
+        if(model.getBumped()){
+          int [] offset = model.getOffset().get(model.getKDirection());
+          map[r + offset[0]][c + offset[1]] = map[r + offset[0]][c + offset[1]] + "+bump";
+        }
+        
     }
+    
     
     
     public void updatePersonStatus() throws CLIPSError{

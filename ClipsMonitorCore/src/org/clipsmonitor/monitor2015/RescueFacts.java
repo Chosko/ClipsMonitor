@@ -462,6 +462,45 @@ public final class RescueFacts{
             return FACT_NAME;
         }
       
+ 
+        }
+        
+        public enum SpecialCondition implements RescueFact{
+    
+        BUMPED(0, "bumped");
+        
+
+        private static final String FACT_NAME = "special-condition";
+        private final int index;
+        private final String slot;
+
+        SpecialCondition(int index, String slot) {
+            this.index = index;
+            this.slot = slot;
+        }
+
+        @Override
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public String slot() {
+            return slot;
+        }
+
+        public static String[] slotsArray() {
+            RescueFact[] fact = values();
+            String[] slots = new String[fact.length];
+            for (RescueFact slot : fact) {
+                slots[slot.index()] = slot.slot();
+            }
+            return slots;
+        }
+
+        public static String factName() {
+            return FACT_NAME;
+        }
        
     }
     
