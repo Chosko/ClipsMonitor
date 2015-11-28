@@ -187,7 +187,7 @@ public class RescueModel extends MonitorModel {
 
         // Update the simulation status
         updateStatus();
-        
+        dispose();
         this.setChanged();
         this.notifyObservers("repaint");
     }
