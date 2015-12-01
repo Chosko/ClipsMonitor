@@ -20,19 +20,20 @@ import javax.swing.JPanel;
  * @author Marco Corona
  * 
  * Questa classe viene utilizzata come supporto per la creazione all'interno del generatore di mappe 
- * per renderizzare il Combo box per la selezione delle opzioni di scelta e le relative icone di preview.
+ * per renderizzare il Combo box per la selezione delle opzioni di scelta e le relative icone di preview(nel
+ * caso in cui il combobox serva ad ottenere una preview).
  * Il renderer avviene utilizzando un HashMap contenente le coppie <etichetta,icona>  
  */
 
 public class ComboBoxRenderer extends JPanel {
     
     
-    /*
-    Costruttore della Classe ComboBoxRenderer
-    @args:
-      -iconsMap: HashMap per popolare l'oggetto JcomboBox
-      -jcomboicons : l'oggetto JcomboBox su cui inserire le opzioni
-      -icons : l'oggetto JLabel su cui inserire le icone di preview
+    /**
+    * Costruttore della Classe ComboBoxRenderer per il MapGenerator
+    * @args:
+    * -iconsMap: HashMap per popolare l'oggetto JcomboBox
+    * -jcomboicons : l'oggetto JcomboBox su cui inserire le opzioni
+    * -icons : l'oggetto JLabel su cui inserire le icone di preview
     */
 
 
@@ -56,6 +57,25 @@ public class ComboBoxRenderer extends JPanel {
         
     }
 
+    /**
+     * Costruttore della classe ComboboxRenderer per renderizzare il combobox utilizzato per
+     * la ricerca nel consoleTopComponent
+     * 
+     * @param keys - elenco dei possibili argomenti su cui eseguire la ricerca
+     * @param jcombobox - il combobox a cui aggiornare il modello
+     */
+    
+   public ComboBoxRenderer(String [] keys, JComboBox<String> jcombobox ){
+   
+     super(new BorderLayout());
+     
+     Arrays.sort(keys);
+     ComboBoxModel<String> jcombostrings = new DefaultComboBoxModel<String>(keys);
+     jcombobox.setModel(jcombostrings);
+     jcombobox.setSelectedIndex(0);
+     
+   
+   }
 
 }
     
