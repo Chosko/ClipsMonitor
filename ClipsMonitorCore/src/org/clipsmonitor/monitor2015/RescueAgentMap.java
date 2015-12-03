@@ -81,6 +81,9 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             String contains = fact[RescueFacts.KCell.CONTAINS.index()];
             String injured = fact[RescueFacts.KCell.INJURED.index()];
             String sound = fact[RescueFacts.KCell.SOUND.index()];
+            String discovered = fact[RescueFacts.KCell.DISCOVERED.index()];
+            String checked = fact[RescueFacts.KCell.CHECKED.index()];
+            String clear = fact[RescueFacts.KCell.CLEAR.index()];
             
             // Inseriamo nella mappa ciò che contiene
             map[r][c] = contains;
@@ -108,6 +111,18 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             // Se c'è il suono
             if (sound.equals("yes")) {
                 map[r][c] += "+sound";
+            }
+            
+            if (discovered.equals("yes")) {
+                map[r][c] += "+discovered";
+            }
+
+            if (checked.equals("yes")) {
+                map[r][c] += "+checked";
+            }
+
+            if (clear.equals("yes")) {
+                map[r][c] += "+clear";
             }
         }
     }

@@ -90,11 +90,11 @@ public class RescueEnvMap extends MonitorMap implements Observer {
             int r = new Integer(fact[RescueFacts.Cell.POSR.index()]) - 1;
             String contains = fact[RescueFacts.Cell.CONTAINS.index()];
             String injured = fact[RescueFacts.Cell.INJURED.index()];
+            String previous = fact[RescueFacts.Cell.PREVIOUS.index()];
             String discovered = fact[RescueFacts.Cell.DISCOVERED.index()];
             String checked = fact[RescueFacts.Cell.CHECKED.index()];
             String clear = fact[RescueFacts.Cell.CLEAR.index()];
-            String previous = fact[RescueFacts.Cell.PREVIOUS.index()];
-
+            
             //caso di default preleviamo il valore dello slot contains e lo applichiamo alla mappa
             map[r][c] = contains;  
             

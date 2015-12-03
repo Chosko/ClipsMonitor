@@ -9,7 +9,7 @@ import net.sf.clipsrules.jni.Router;
 /**
  *
  * @author piovel Edited by: @author Violanti Luca, Varesano Marco, Busso Marco,
- * Cotrino Roberto
+ * Cotrino Roberto, Ruben Caliandro , Marco Corona
  */
 class RouterDialog extends Router {
 
@@ -44,7 +44,16 @@ class RouterDialog extends Router {
     @Override
     public synchronized void print(String routerName, String printString) {
         if (rec) {
-            if(routerName.equals("wdisplay") || routerName.equals("wclips") || routerName.equals("werror")){
+            if(
+              routerName.equals("stdout") ||
+              routerName.equals("stdin") ||
+              routerName.equals("wwarning") ||
+              routerName.equals("werror") ||
+              routerName.equals("wtrace") ||
+              routerName.equals("wdialog") ||
+              routerName.equals("wclips") ||
+              routerName.equals("wdisplay")
+                ){
                 stdout = stdout + printString;
             }
         }

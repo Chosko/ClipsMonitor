@@ -30,12 +30,10 @@ public class MonitorImages {
     private static MonitorImages instance;
 
     private Map<String, BufferedImage> map_img;
-// <<<<<<< HEAD
-// =======
     private Map<String,BufferedImage> colors;
     private String [] setKeyMap;
     private String [] setKeyColor;
-// >>>>>>> thexeon
+
     private ClipsConsole console;
  
     public static final int DEFAULT_IMG_SIZE = 170;
