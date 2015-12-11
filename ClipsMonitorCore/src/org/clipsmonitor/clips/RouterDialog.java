@@ -31,7 +31,20 @@ class RouterDialog extends Router {
      */
     @Override
     public synchronized boolean query(String routerName) {
-        return routerName.equals("wdisplay") || routerName.equals("wclips") || routerName.equals("werror");
+      
+        boolean wstdout = routerName.equals("stdout");
+        boolean wstdin =  routerName.equals("stdin");
+        boolean wwarning = routerName.equals("wwarning");
+        boolean werror = routerName.equals("werror");
+        boolean wtrace = routerName.equals("wtrace");
+        boolean wdialog = routerName.equals("wdialog");
+        boolean wclips = routerName.equals("wclips");
+        boolean wdisplay = routerName.equals("wdisplay");
+                
+        return  wstdout|| wstdin || wwarning || werror
+                || wtrace || wdialog || wclips || wdisplay;
+                
+        
     }
     
     /**
@@ -44,19 +57,23 @@ class RouterDialog extends Router {
     @Override
     public synchronized void print(String routerName, String printString) {
         if (rec) {
+            boolean wstdout = routerName.equals("stdout");
+            boolean wstdin =  routerName.equals("stdin");
+            boolean wwarning = routerName.equals("wwarning");
+            boolean werror = routerName.equals("werror");
+            boolean wtrace = routerName.equals("wtrace");
+            boolean wdialog = routerName.equals("wdialog");
+            boolean wclips = routerName.equals("wclips");
+            boolean wdisplay = routerName.equals("wdisplay");
+
             if(
-              routerName.equals("stdout") ||
-              routerName.equals("stdin") ||
-              routerName.equals("wwarning") ||
-              routerName.equals("werror") ||
-              routerName.equals("wtrace") ||
-              routerName.equals("wdialog") ||
-              routerName.equals("wclips") ||
-              routerName.equals("wdisplay")
+              wstdout|| wstdin || wwarning || werror
+                || wtrace || wdialog || wclips || wdisplay
                 ){
                 stdout = stdout + printString;
             }
         }
+        
     }
 
     public synchronized String getStdout() {

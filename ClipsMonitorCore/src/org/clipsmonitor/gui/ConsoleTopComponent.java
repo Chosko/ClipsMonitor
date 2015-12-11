@@ -256,10 +256,11 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(12, 12, 12)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(FindButton)
-          .addComponent(SearchText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(SearchModeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(SearchText, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(FindButton)
+            .addComponent(SearchModeCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE))
     );
@@ -280,7 +281,8 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         if(jTextPane1.isEditable() && isCursorPositionValid()){
             if(!evt.isControlDown() && !evt.isShiftDown() && evt.getKeyCode() == KeyEvent.VK_ENTER){
                 // Submit command!
-                String cmd = this.currentCmd;
+
+              String cmd = this.currentCmd;
                 
                 
                 // save on CmdHistory

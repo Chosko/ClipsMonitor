@@ -19,7 +19,7 @@ import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  *
- * @author Marco Corona 
+ * @author Marco Corona, Ruben Caliandro 
  * 
  * Questa classe viene utilizzata come supporto per la visualizzazione sia dell'ambiente 
  * sia come supporto alla creazione delle mappe mediante il generatore.

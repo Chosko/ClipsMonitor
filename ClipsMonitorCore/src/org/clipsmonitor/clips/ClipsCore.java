@@ -318,6 +318,7 @@ public class ClipsCore {
         String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
         String[][] result = null;
+        
         try {
             result = new String[facts.size()][slots.length];
             for (int i = 0; i < facts.size(); i++) {
@@ -589,4 +590,38 @@ public class ClipsCore {
         router.stopRec();
         return router.getStdout();
     }
+
+    
+ 
+  public String getFactList(String query) {
+    router.startRec();
+        try{
+            PrimitiveValue fc = clips.eval("(get-focus)");
+            String focus = fc.toString();
+            String eval = "(find-all-facts ((?f " + query + ")) TRUE )";
+            evaluate(focus, eval);
+            router.stopRec();
+        }
+        catch(CLIPSError ex){
+            router.stopRec();
+            console.error(router.getStdout());
+        }
+        return router.getStdout();
+  }
+
+  public void RecFromRouter(){
+  
+    router.startRec();
+  }
+  
+  public void StopRecFromRouter(){
+  
+    router.stopRec();
+  }
+
+  public String GetStdoutFromRouter(){
+  
+      return router.getStdout();
+  }
+
 }

@@ -70,6 +70,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
             
             
             while (!hasDone()) {
+              
+              
                 
                 switch (executionMode) {
                     
@@ -80,24 +82,25 @@ public abstract class MonitorModel extends Observable implements Runnable {
                     case ex_mode_RUN:
                        
                         current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-
-                        
-                        
-                        
-                        /* Lo stato precedente viene inizalizzato al valore dello stato attuale
-                         Fino a che lo stato precedente è uguale allo stato attuale, allora
-                         proseguo (devo arrivare alla prossima percezione, facendo una run.
-                         */
-                                             
+                            core.RecFromRouter();
                             core.run();
+                            core.StopRecFromRouter();
+                            if(!core.GetStdoutFromRouter().equals("")){
+                                console.clips(core.GetStdoutFromRouter());
+                            }
                             done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
-                        
+                            
                         
                         
                         
                        break;
                     case ex_mode_RUNN:
+                        core.RecFromRouter();
                         core.run(paramMode);
+                        core.StopRecFromRouter();
+                        if(!core.GetStdoutFromRouter().equals("")){
+                            console.clips(core.GetStdoutFromRouter());
+                        }
                         break;
                     case ex_mode_START:
                         started = true;
@@ -114,21 +117,24 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 
                 /* 
                     solo in fase di run non si richiede la suspend 
-                
                 */
+               
+                
                 if (executionMode != ex_mode_RUN) {
                     this.suspend();
                 }
             }
-            // Aggiorna le penalità
+            
+// Aggiorna le penalità
             dispose();
             this.setChanged();
             this.notifyObservers("disposeDone");
-        
+            
         } catch (NumberFormatException ex) {
             console.error(ex);
         } catch(CLIPSError ex) {
-            console.error(ex);
+            core.StopRecFromRouter();
+            console.error(core.GetStdoutFromRouter());
         }
     }
 
@@ -195,6 +201,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
         return core.getFactList();
     }
 
+    public synchronized String getFactList(String query){
+        return core.getFactList(query);
+    }
+    
     /**
      * Equivalente alla funzione agenda di Clips. Restituisce la lista delle
      * regole attualmente attivabili, in ordine di priorita' di attivazione.
@@ -315,6 +325,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
                                             "  => " +
                                             "  (retract ?stop)" +
                                             ")";
+            
             
             
             boolean check = core.build("AGENT", defruleBeginStep);
