@@ -32,6 +32,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public static final int ex_mode_RUN = 4;
     public static final int ex_mode_RUNN = 5;
     public static final int ex_mode_STOP = 6;
+    public static final int ex_mode_BREAK = 7;
     
     
     //  variabili di esecuzione del modello
@@ -65,7 +66,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
         String[] arrayPercept = {"step"};
         String[] current;
         String[] done = {"no"};;
-        
+        int actualStep=-1;
         try {
             
             
@@ -77,7 +78,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
                     
                     
                     case ex_mode_STEP: 
+                      
+                        actualStep=step;
                         
+                    case ex_mode_BREAK:  
                         
                     case ex_mode_RUN:
                        
@@ -89,9 +93,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
                                 console.clips(core.GetStdoutFromRouter());
                             }
                             done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
-                            
-                        
-                        
+                               
                         
                        break;
                     case ex_mode_RUNN:
@@ -120,8 +122,15 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 */
                
                 
-                if (executionMode != ex_mode_RUN) {
+                if (executionMode == ex_mode_BREAK ) {
                     this.suspend();
+                }
+                if(executionMode == ex_mode_STEP && actualStep!=step ){
+                  this.suspend();
+                }
+                
+                if(executionMode == ex_mode_RUNN || executionMode == ex_mode_START || executionMode == ex_mode_STOP ){
+                  this.suspend();
                 }
             }
             

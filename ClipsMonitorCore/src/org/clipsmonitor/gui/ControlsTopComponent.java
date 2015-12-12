@@ -119,6 +119,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     jButton1 = new javax.swing.JButton();
     PenaltiesTextField = new javax.swing.JTextField();
     jLabel1 = new javax.swing.JLabel();
+    BreakButton = new javax.swing.JButton();
 
     org.openide.awt.Mnemonics.setLocalizedText(strategyLabel, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.strategyLabel.text")); // NOI18N
 
@@ -250,11 +251,19 @@ public final class ControlsTopComponent extends TopComponent implements Observer
       }
     });
 
+    PenaltiesTextField.setEditable(false);
     PenaltiesTextField.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
     PenaltiesTextField.setText(org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.PenaltiesTextField.text")); // NOI18N
-    PenaltiesTextField.setEnabled(false);
 
     org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jLabel1.text")); // NOI18N
+
+    org.openide.awt.Mnemonics.setLocalizedText(BreakButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.BreakButton.text")); // NOI18N
+    BreakButton.setEnabled(false);
+    BreakButton.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        BreakButtonActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
     controlPanel.setLayout(controlPanelLayout);
@@ -294,9 +303,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
           .addComponent(timeLeftTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-          .addComponent(stepButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(runOneButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+          .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+          .addComponent(runOneButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+          .addComponent(BreakButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(loadDefaultFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -334,7 +344,9 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jLabel1)
-          .addComponent(PenaltiesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(PenaltiesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(BreakButton)))
         .addContainerGap())
     );
 
@@ -418,6 +430,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         runButton.setEnabled(true);
         runOneButton.setEnabled(true);
         stepButton.setEnabled(true);
+        BreakButton.setEnabled(true);
         resetButton.setEnabled(true);
         CLPSelector.setEnabled(false);
         envsSelector.setEnabled(false);
@@ -464,6 +477,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private void runOneButtonKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyTyped
 
     }//GEN-LAST:event_runOneButtonKeyTyped
+
+  private void BreakButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BreakButtonActionPerformed
+        disableButtons();
+        model.setMode(MonitorModel.ex_mode_BREAK);
+        model.resume();
+        //model.step();
+        enableButtons();
+  }//GEN-LAST:event_BreakButtonActionPerformed
 
     private void setShortcut() {
     /**
@@ -629,6 +650,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }
     
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton BreakButton;
   private javax.swing.JComboBox CLPSelector;
   private javax.swing.JTextField PenaltiesTextField;
   private javax.swing.JPanel controlPanel;
@@ -791,12 +813,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         this.runButton.setEnabled(true);
         this.runOneButton.setEnabled(true);
         this.stepButton.setEnabled(true);
+        this.BreakButton.setEnabled(true);
     }
 
     private void disableButtons(){
         this.runButton.setEnabled(false);
         this.runOneButton.setEnabled(false);
         this.stepButton.setEnabled(false);
+        this.BreakButton.setEnabled(false);
     }
 
     @Override
