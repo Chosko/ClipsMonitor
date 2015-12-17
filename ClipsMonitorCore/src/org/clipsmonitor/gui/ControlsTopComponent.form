@@ -18,7 +18,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <Component id="controlPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -35,28 +35,22 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="envLabel" alignment="1" max="32767" attributes="0"/>
+                      <Component id="strategyLabel" alignment="1" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="strategyLabel" min="-2" max="-2" attributes="0"/>
-                                      <Component id="envLabel" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="envsSelector" pref="55" max="32767" attributes="0"/>
-                                      <Component id="CLPSelector" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="envLabel3" min="-2" pref="90" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              </Group>
-                              <Component id="jButton1" alignment="0" max="32767" attributes="0"/>
+                              <Component id="envLabel3" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
+                              <Component id="CLPSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                              <Component id="envsSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="envLabel2" min="-2" max="-2" attributes="0"/>
                               <Component id="envLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -64,76 +58,82 @@
                           </Group>
                           <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="PenaltiesTextField" max="32767" attributes="0"/>
-                      <Component id="timeTextField" alignment="0" pref="89" max="32767" attributes="0"/>
-                      <Component id="stepTextField" alignment="0" pref="89" max="32767" attributes="0"/>
-                      <Component id="timeLeftTextField" alignment="0" pref="89" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="stepButton" alignment="0" pref="84" max="32767" attributes="0"/>
-                      <Component id="runButton" alignment="0" pref="84" max="32767" attributes="0"/>
-                      <Component id="runOneButton" alignment="0" pref="84" max="32767" attributes="0"/>
-                      <Component id="BreakButton" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="loadDefaultFileButton" min="-2" pref="84" max="-2" attributes="0"/>
-                      <Component id="resetButton" alignment="0" min="-2" pref="84" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="PenaltiesTextField" pref="83" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="stepTextField" alignment="0" pref="83" max="32767" attributes="0"/>
+                          <Component id="timeTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="timeLeftTextField" alignment="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="stepButton" alignment="0" pref="84" max="32767" attributes="0"/>
+                              <Component id="runButton" alignment="0" pref="84" max="32767" attributes="0"/>
+                              <Component id="runOneButton" alignment="0" pref="84" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="loadDefaultFileButton" max="32767" attributes="0"/>
+                              <Component id="resetButton" pref="125" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="BreakButton" min="-2" pref="84" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jButton1" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="runButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="timeLeftTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="strategyLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="CLPSelector" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="strategyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="runOneButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="timeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="envLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envsSelector" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="CLPSelector" alignment="0" min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <Component id="loadDefaultFileButton" max="32767" attributes="0"/>
+                      <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="envLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="envLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="PenaltiesTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BreakButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="envsSelector" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="PenaltiesTextField" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="BreakButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -205,9 +205,9 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="runOneButtonActionPerformed"/>
+            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="runOneButtonKeyTyped"/>
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="runOneButtonKeyPressed"/>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="runOneButtonKeyReleased"/>
-            <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="runOneButtonKeyTyped"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="runButton">
