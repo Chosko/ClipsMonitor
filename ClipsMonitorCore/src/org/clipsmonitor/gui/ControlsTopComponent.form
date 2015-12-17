@@ -37,16 +37,11 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="envLabel" alignment="1" max="32767" attributes="0"/>
+                      <Component id="envLabel" alignment="1" pref="125" max="32767" attributes="0"/>
                       <Component id="strategyLabel" alignment="1" max="32767" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="envLabel3" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
-                              <Component id="CLPSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                              <Component id="envsSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="envLabel3" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
+                      <Component id="CLPSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                      <Component id="envsSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -65,11 +60,9 @@
                   </Group>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                       <Component id="PenaltiesTextField" pref="83" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="stepTextField" alignment="0" pref="83" max="32767" attributes="0"/>
-                          <Component id="timeTextField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="timeLeftTextField" alignment="0" max="32767" attributes="0"/>
-                      </Group>
+                      <Component id="stepTextField" alignment="0" pref="83" max="32767" attributes="0"/>
+                      <Component id="timeTextField" alignment="0" max="32767" attributes="0"/>
+                      <Component id="timeLeftTextField" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -80,9 +73,9 @@
                               <Component id="runOneButton" alignment="0" pref="84" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="resetButton" max="32767" attributes="0"/>
                               <Component id="loadDefaultFileButton" max="32767" attributes="0"/>
-                              <Component id="resetButton" pref="125" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -107,11 +100,13 @@
                               <Component id="strategyLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="runOneButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="timeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="CLPSelector" alignment="0" min="-2" pref="25" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="runOneButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="timeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="envLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
