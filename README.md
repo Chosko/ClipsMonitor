@@ -14,13 +14,15 @@ Prima di installare ClipsMonitor assicurati di avere installato la libreria nati
 
 #### Installa ClipsMonitor
 
-[Qui puoi trovare l'installer](TODO) per la tua piattaforma.
+[Scarica l'ultima versione di questo repository](https://github.com/Chosko/ClipsMonitor/releases)
+
+Puoi trovare l'installer per la tua piattaforma nella cartella dist.
 
 Se la tua piattaforma non è presente, dovrai clonare questo progetto e compilarlo con Netbeans.
 
 #### Scarica il progetto di prova
 
-Al primo avvio di verrà chiesto di indicare la cartella del tuo progetto. Per cominciare subito a vedere come funziona ClipsMonitor puoi scaricare il [progetto di prova](TODO).
+Al primo avvio di verrà chiesto di indicare la cartella del tuo progetto. Per cominciare subito a vedere come funziona ClipsMonitor puoi scaricare il [progetto di prova](https://github.com/Chosko/ClipsMonitor/raw/master/RescueTest.zip).
 
 ## Features
 
@@ -110,7 +112,7 @@ Con questo tool puoi anche gestire le persone e i path che verranno esportati ne
 
 #### Configura il tuo progetto
 
-Quando sei pronto per cominciare con il progetto reale, devi configurarlo in modo che abbia la stessa forma del [progetto di prova](TODO).
+Quando sei pronto per cominciare con il progetto reale, devi configurarlo in modo che abbia la stessa forma del [progetto di prova](https://github.com/Chosko/ClipsMonitor/raw/master/RescueTest.zip).
 
 La struttura delle directory deve essere fatta in questo modo:
 
