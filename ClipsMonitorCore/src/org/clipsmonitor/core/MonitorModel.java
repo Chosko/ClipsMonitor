@@ -23,7 +23,6 @@ public abstract class MonitorModel extends Observable implements Runnable {
     protected ClipsCore core;
     private int executionMode;
     private ClipsConsole console;
-    private boolean started = false;
     private final Thread t;
     private int paramMode = 1;
     public static final int ex_mode_START = 1;
@@ -33,10 +32,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public static final int ex_mode_RUNN = 5;
     public static final int ex_mode_STOP = 6;
     public static final int ex_mode_BREAK = 7;
-    
-    
+
+
     //  variabili di esecuzione del modello
-    
+
     protected Integer time;
     protected Integer step;
     protected Integer maxduration;
@@ -44,8 +43,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
     protected int row, column;
     protected double score;
     protected int durlastact;
-    
-    
+
+
     /**
      * costruttore del modello.
      */
@@ -59,43 +58,30 @@ public abstract class MonitorModel extends Observable implements Runnable {
      * vedere il metodo execute().
      *
      */
-    
+
     @Override
     public void run() {
-        
+        String clipsMonitorFact = "";
         String[] arrayPercept = {"step"};
-        String[] current;
-        String[] done = {"no"};;
-        int actualStep=-1;
+        String[] done = {"no"};
         try {
-            
-            
+
+
             while (!hasDone()) {
-              
-              
-                
+
+
+
                 switch (executionMode) {
-                    
-                    
-                    case ex_mode_STEP: 
-                      
-                        actualStep=step;
-                        
-                    case ex_mode_BREAK:  
-                        
+                    case ex_mode_STEP:
+                    case ex_mode_BREAK:
                     case ex_mode_RUN:
-                       
-                        current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
-                            core.RecFromRouter();
-                            core.run();
-                            core.StopRecFromRouter();
-                            if(!core.GetStdoutFromRouter().equals("")){
-                                console.clips(core.GetStdoutFromRouter());
-                            }
-                            done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
-                               
-                        
-                       break;
+                        core.RecFromRouter();
+                        core.run();
+                        core.StopRecFromRouter();
+                        if(!core.GetStdoutFromRouter().equals("")){
+                            console.clips(core.GetStdoutFromRouter());
+                        }
+                        break;
                     case ex_mode_RUNN:
                         core.RecFromRouter();
                         core.run(paramMode);
@@ -105,40 +91,43 @@ public abstract class MonitorModel extends Observable implements Runnable {
                         }
                         break;
                     case ex_mode_START:
-                        started = true;
-                        break;
                     case ex_mode_STOP:
-                        
-                        break;
                     default:
+                        break;
 
                 }
+                done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
+                clipsMonitorFact = core.findOrderedFact("AGENT", "clips-monitor");
+
                 action();
                 this.setChanged();
                 this.notifyObservers("actionDone");
-                
-                /* 
-                    solo in fase di run non si richiede la suspend 
+
+                console.debug("clipsMonitorFacts: " + clipsMonitorFact);
+
+                /*
+                    solo in fase di run non si richiede la suspend
                 */
-               
-                
-                if (executionMode == ex_mode_BREAK ) {
+
+                if (clipsMonitorFact.equals("stop")){
                     this.suspend();
                 }
-                if(executionMode == ex_mode_STEP && actualStep!=step ){
-                  this.suspend();
+                else if(executionMode == ex_mode_BREAK){
+                    this.suspend();
                 }
-                
-                if(executionMode == ex_mode_RUNN || executionMode == ex_mode_START || executionMode == ex_mode_STOP ){
+                else if(executionMode == ex_mode_STEP && clipsMonitorFact.equals("step-done")){
+                    this.suspend();
+                }
+                else if(executionMode == ex_mode_STOP || executionMode == ex_mode_RUNN){
                   this.suspend();
                 }
             }
-            
+
 // Aggiorna le penalità
             dispose();
             this.setChanged();
             this.notifyObservers("disposeDone");
-            
+
         } catch (NumberFormatException ex) {
             console.error(ex);
         } catch(CLIPSError ex) {
@@ -147,8 +136,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
         }
     }
 
-    
-    
+
+
     /**
      * Esegue l'ambiente su un nuovo thread. Meglio a livello di prestazioni
      * rispetto al metodo run() perchè sfrutta il multithread.
@@ -169,8 +158,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
         this.executionMode = mode;
     }
 
-    
-    
+
+
     public synchronized void setMode(int mode, int param) {
         this.executionMode = mode;
         this.paramMode = param;
@@ -184,7 +173,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
      * @param envsFolder_name Nome della cartella in CLP che contiene tutti i
      * file relativi all'environment (envs/envFolder_name)
      */
-    
+
     public void startCore(String projectDirectory, String strategyFolder_name, String envsFolder_name) throws CLIPSError {
         /*inizializza l'ambiente clips caricando i vari file*/
         core.initialize(projectDirectory, strategyFolder_name, envsFolder_name);
@@ -213,7 +202,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public synchronized String getFactList(String query){
         return core.getFactList(query);
     }
-    
+
     /**
      * Equivalente alla funzione agenda di Clips. Restituisce la lista delle
      * regole attualmente attivabili, in ordine di priorita' di attivazione.
@@ -232,7 +221,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public synchronized String[] getFocusStack(){
         return core.getFocusStack();
     }
-    
+
     /**
      * riprende il thread sospeso tramite il metodo suspend()
      *
@@ -250,7 +239,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     private void suspend() {
         t.suspend();
     }
- 
+
     public String evalComandLine(String command) {
         String result = "";
         try{
@@ -291,64 +280,78 @@ public abstract class MonitorModel extends Observable implements Runnable {
         this.setChanged();
         this.notifyObservers("startApp");
     }
-    
+
     public int getExecutionMode(){
-    
+
         return this.executionMode;
     }
 
 
     public void injectExecutionRules() throws CLIPSError{
-    
-        String defruleBeginStep = "(defrule begin-step "            +
-                                    "(declare (salience 100))"       +
-                                    "(status (step ?s))"             +
-                                    "(not (exec-mode (step ?s)))"    +
-                                                      "  => "        +
-                                    "(assert (exec-mode (step ?s)))" +
-                                                             ")";
 
-            
-            String defruleRetractExecMode = "(defrule retract-exec-mode " +
-                                            "  (declare (salience 100))" +
-                                            "  ?exec <- (exec-mode (step ?old-s))" +
-                                            "  (status (step ?act-s))" +
-                                            "  (last-perc (step ?act-s))" +
-                                            "  (test (> ?act-s ?old-s))" +
-                                            "  => " +
-                                            "  (retract ?exec)" +
-                                            "  (halt)" +
-                                            ")";
-            
-            String defruleInitialSituation = "(defrule initial-situation " +
-                                            " (declare (salience 50))" +
-                                            " (init-agent (done yes))" +
-                                            "  => " +
-                                            "(assert (stop-exec yes))" +
-                                            "(halt)" +
-                                            ")";
-           
-            String defruleRetractStopExec = "(defrule retract-stop-exec" +
-                                            "  (declare (salience 50))" +
-                                            "  ?stop <-(stop-exec yes)" +
-                                            "  => " +
-                                            "  (retract ?stop)" +
-                                            ")";
-            
-            
-            
-            boolean check = core.build("AGENT", defruleBeginStep);
-            boolean check2 = core.build("AGENT", defruleRetractExecMode);
-            boolean check3 = core.build("AGENT", defruleInitialSituation);
-            boolean check4 = core.build("AGENT", defruleRetractStopExec);
-            if(check && check2 && check3 && check4){
-                console.debug("Injection rule done");
-            }
-            else{
-               console.error("Injection failed");
-            }
+        String defruleStepDone = "(defrule clips-monitor-step-done "            +
+                                      "(declare (salience 1000))"                +
+                                      "(status (step ?s))"                      +
+                                      "(last-perc (step ?s))"                   +
+                                      "(not (clips-monitor step-done))"         +
+                                      "(not (clips-monitor-step started))"      +
+                                        "=>"                                    +
+                                      "(assert (clips-monitor step-done))"      +
+                                      "(halt)"                                  +
+                                  ")";
+
+        String defruleStepStarted =  "(defrule clips-monitor-step-started "     +
+                                      "(declare (salience 1000))"               +
+                                      "?step-done <- (clips-monitor step-done)" +
+                                        "=>"                                    +
+                                      "(retract ?step-done)"                    +
+                                      "(assert (clips-monitor-step started))"   +
+                                      "(halt)"                                  +
+                                  ")";
+
+
+
+        String defruleRetractStepStarted = "(defrule clips-monitor-retract-step-started " +
+                                        "  (declare (salience 1000))"           +
+                                        "  ?step-started <- (clips-monitor-step started)"  +
+                                        "  (last-perc (step ?old-s))"           +
+                                        "  (status (step ?act-s))"              +
+                                        "  (test (> ?act-s ?old-s))"            +
+                                        "  => "                                 +
+                                        "  (retract ?step-started)"             +
+                                        ")";
+
+        String defruleInitialStop =     "(defrule clips-monitor-initial"        +
+                                        " (declare (salience 1000))"            +
+                                        " (init-agent (done yes))"              +
+                                        " (not (clips-monitor stop))"           +
+                                        " (not (clips-monitor-initial done))"   +
+                                        "  => "                                 +
+                                        "  (assert (clips-monitor stop))"       +
+                                        "  (assert (clips-monitor-initial done))"+
+                                        "  (halt)"                              +
+                                        ")";
+
+        String defruleRetractStop =     "(defrule clips-monitor-retract-initial"+
+                                        "  (declare (salience 1000))"           +
+                                        "  ?stop <-(clips-monitor stop)"        +
+                                        "  => "                                 +
+                                        "  (retract ?stop)"                     +
+                                        ")";
+
+        boolean check = core.build("AGENT", defruleStepDone);
+        boolean check2 = core.build("AGENT", defruleStepStarted);
+        boolean check3 = core.build("AGENT", defruleRetractStepStarted);
+        boolean check4 = core.build("AGENT", defruleInitialStop);
+        boolean check5 = core.build("AGENT", defruleRetractStop);
+        if(check && check2 && check3 && check4 && check5){
+            console.debug("Injection rule done");
+        }
+        else{
+           console.error("Injection failed");
+        }
     }
-    
+
     /**
      * metodo per ottenere il punteggio dell'agente totalizzato a seguito delle
      * sue azioni
@@ -403,23 +406,23 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public synchronized int getDurLastAct() {
         return durlastact;
     }
-    
+
     /*metodo per ottenere la riga in cui si trova il robot
      @return il valore della riga intero
     */
-    
+
     public synchronized Integer getRow() {
         return row;
     }
-    
+
     /*metodo per ottenere la colonna in cui si trova il robot
      @return il valore della colonna intero
     */
-    
+
     public synchronized Integer getColumn() {
         return column;
     }
-    
+
     protected void setup(){
         initModel();
     }
@@ -432,7 +435,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
             console.error(ex);
         }
     }
-    
+
     // PARTE ASTRATTA
 
     /**
@@ -452,18 +455,18 @@ public abstract class MonitorModel extends Observable implements Runnable {
 
    /*
      Metodo per l'inizializzazione del modello in base al contenuto dei file
-     clips caricati 
+     clips caricati
     */
-    
+
     protected abstract void initModel();
-    
+
     /*
-     Esegue l'aggiornamento della matrice di stringhe che descrive le celle 
+     Esegue l'aggiornamento della matrice di stringhe che descrive le celle
      dell'ambiente, in base alla valutazione dei fatti prodotti dal motore di
-    Clips 
+    Clips
     */
-    
+
     protected abstract void updateModel() throws CLIPSError;
-    
-    
+
+
 }
