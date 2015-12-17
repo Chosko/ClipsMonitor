@@ -7,22 +7,28 @@ modificabile e riutilizzabile anche per altri progetti simili.
 
 ## Per cominciare
 
-#### Installa CLIPSJNI2
+#### 1. Installa CLIPSJNI2
 
 Prima di installare ClipsMonitor assicurati di avere installato la libreria nativa [CLIPSJNI2](https://github.com/Chosko/CLIPSJNI)
 (è diversa da CLIPSJNI originale!) nel tuo sistema operativo. Le istruzioni sono contenute nel README del repository.
 
-#### Installa ClipsMonitor
+#### 2. Installa ClipsMonitor
 
 [Scarica l'ultima versione di questo repository](https://github.com/Chosko/ClipsMonitor/releases)
 
-Puoi trovare l'installer per la tua piattaforma nella cartella dist.
+Una volta scaricato, trovi nella cartella **dist** gli installer.
 
-Se la tua piattaforma non è presente, dovrai clonare questo progetto e compilarlo con Netbeans.
+Se un installer per la tua piattaforma non è presente, sei obbligato a far partire il progetto dal codice sorgente, utilizzando NetBeans.
 
-#### Scarica il progetto di prova
+#### 3. Scarica il progetto di prova
 
-Al primo avvio di verrà chiesto di indicare la cartella del tuo progetto. Per cominciare subito a vedere come funziona ClipsMonitor puoi scaricare il [progetto di prova](https://github.com/Chosko/ClipsMonitor/raw/master/RescueTest.zip).
+Il [progetto di prova](https://github.com/Chosko/ClipsMonitor/raw/master/RescueTest.zip) è utile per vedere come funziona ClipsMonitor senza dover configurare un progetto da zero. [Scaricalo](https://github.com/Chosko/ClipsMonitor/raw/master/RescueTest.zip) ed estrailo in una cartella del tuo PC.
+
+#### 4. Avvia ClipsMonitor
+
+Al primo avvio di verrà chiesto di indicare la cartella del tuo progetto. Seleziona il progetto di prova.
+
+> NB: è possibile che al primo avvio non compaiano i comandi di ClipsMonitor. Se succede basta andare sul menù e selezionare `Windows > Reset Windows`
 
 ## Features
 
@@ -108,6 +114,33 @@ Con questo tool puoi anche gestire le persone e i path che verranno esportati ne
 
 ![Map generator](snapshots/mapgenerator.png)
 
+#### Shortcuts
+
+**Azioni base**
+
+* **CTRL+R**: Run
+* **CTRL+T**: Run(1)
+* **CTRL+S**: Step
+* **CTRL+B**: Break
+
+**Inviare comandi all'agente**
+
+* **CTRL+ALT+W**: Send action -> forward
+* **CTRL+ALT+A**: Send action -> turnleft
+* **CTRL+ALT+D**: Send action -> turnright
+* **CTRL+ALT+S**: Send action -> wait
+* **CTRL+SHIFT+W**: Send action -> drill north
+* **CTRL+SHIFT+A**: Send action -> drill west
+* **CTRL+SHIFT+D**: Send action -> drill east
+* **CTRL+SHIFT+S**: Send action -> drill south
+* **CTRL+SHIFT+ALT+W**: Send action -> load (or unload) north
+* **CTRL+SHIFT+ALT+A**: Send action -> load (or unload) west
+* **CTRL+SHIFT+ALT+D**: Send action -> load (or unload) east
+* **CTRL+SHIFT+ALT+S**: Send action -> load (or unload) south
+
+> NB: Tutte le shortcut funzionano solo se la finestra **Controls** è visibile.
+
+
 ## Setup
 
 #### Configura il tuo progetto
@@ -136,3 +169,19 @@ La struttura delle directory deve essere fatta in questo modo:
 ```
 
 La cartella `img` puoi copiarla integralmente dal progetto di prova.
+
+## Contribuire a ClipsMonitor
+
+Chiunque può contribuire a ClipsMonitor.
+
+Se vuoi segnalare un problema o hai una richiesta, [apri una issue su GitHub](https://github.com/Chosko/ClipsMonitor/issues).
+
+Se invece vuoi contribuire modificando il codice, fai un fork del progetto e a modifiche ultimate [crea una pull request](https://github.com/Chosko/ClipsMonitor/pulls)
+
+NB: non verranno accettate modifiche che sono *dipendenti dall'implementazione personale* del progetto CLIPS.
+
+Riceveranno una priorità massima tutte le modifiche che mirano a:
+
+* **risolvere bug**
+* **implementare nuove funzionalità** indipendenti dal singolo progetto CLIPS
+* **astrarre** i componenti di ClipsMonitor dall'implementazione del progetto CLIPS  
