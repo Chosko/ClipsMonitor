@@ -17,7 +17,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.logging.Level;
@@ -1116,32 +1115,64 @@ public abstract class MonitorGenMap {
      * certo step la move non è valida non lo saranno più tutte quelle
      * successivamente create
      */
-    public void RemoveStepAfterResize() {
-
+    public int [] RemoveStepAfterResize() {
+        
+        int [] pos = new int [2];
         ListIterator<Person> it = this.Persons.listIterator();
         while (it.hasNext()) {
             Person p = it.next();
             ListIterator<Path> itPath = p.paths.listIterator();
             while (itPath.hasNext()) {
-                Path succ = itPath.next();
-                ListIterator<StepMove> its = succ.move.listIterator();
-                StepMove s = its.next();;
+                Path actual = itPath.next();
+                ListIterator<StepMove> its = actual.move.listIterator();
+                StepMove s = its.next();
+                boolean flag = false;
                 while (its.hasNext()) {
-                    if (s.getRow() < 0 || s.getRow() > this.NumCellX || s.getColumn() < 0 || s.getColumn() > this.NumCellY) {
-                        break;
+                    if (s.getRow() < 0 || s.getRow() > this.NumCellX || s.getColumn() < 0 || s.getColumn() > this.NumCellY
+                         || !this.PersonPositionIsValid(this.scene[s.getRow()][s.getColumn()])) {
+                      flag = true;  
+                      break;
                     }
                     s = its.next();
                 }
+               if(flag){
+                  
+                  int end = its.nextIndex();
+                  
+                  for(int index = actual.move.size()-1;index>=end-1;index--){
+                    actual.move.remove(index);
+                  }
+                  
 
-                while (its.hasNext()) {
-                    succ.move.remove(s);
-                    s = its.next();
-                }
-
+                  if(itPath.hasNext()){
+                    ListIterator<Path> its2 = p.paths.listIterator(itPath.nextIndex());
+                    while(its2.hasNext()){
+                      Path succ = its2.next();
+                      succ.move.addFirst(actual.getMoves().getLast());
+                      succ.move.getFirst().setStep(succ.startStep);
+                      ListIterator<StepMove> its3 = succ.move.listIterator(1);
+                      int steps = succ.startStep;
+                      while(its3.hasNext()){
+                        its3.next().setStep(steps++);
+                      }
+                   }
+                 }
+               }
             }
-
+            
+            
+            if(p.paths.getFirst().move.isEmpty()){
+              this.RemoveLastPath(p.associatedColor);
+              this.Remove(p.associatedColor);
+            }
+            else{
+              StepMove s = p.paths.getLast().getMoves().getLast();
+              pos[0]=s.row;
+              pos[1]=s.column;
+            }
         }
-
+        
+        return pos;
     }
 
     /**
@@ -1292,7 +1323,8 @@ public abstract class MonitorGenMap {
                 return PersonOverride;
             }
             // distanza di manhattam e check sulla attraversabilità della cella
-            if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 && this.PersonPositionIsValid(scene[x][y])) {
+            if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 && 
+                    this.PersonPositionIsValid(scene[x][y])) {
 
                 p.AddMove(x, y);
                 return Success;

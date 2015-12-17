@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileFilter;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -613,8 +614,24 @@ public final class MapGeneratorTopComponent extends TopComponent {
             int num_col = Integer.parseInt(this.YButton.getText());
             int max_dur = Integer.parseInt(this.MaxDur.getText());
             if (num_row >= 5 && num_col >= 5 && max_dur>0) {
-
-                updateMap(num_row,num_col,max_dur);
+                if(!this.model.getEmptyPerson()){
+                   String message = "La modifica della griglia può causare l'eliminazione"
+                   + "dei movimenti inseriti in modalità move. Continuare?";
+                   if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Resize",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION);
+                   {
+                     updateMap(num_row,num_col,max_dur);
+                     model.RemoveStepAfterResize();
+                     
+                   } 
+                }
+                else{
+                  updateMap(num_row,num_col,max_dur);
+                }
+                PreviewMap.repaint();
+                this.MakePersonList();
+                this.MakeStepList(-1);
+                this.MakeMoveList(-1,-1,"all");
+                this.setListEnable();
             }
             else{
                 console.error("Input non valido: Verificare che la griglia sia almeno di dimensione 5x5 ");
