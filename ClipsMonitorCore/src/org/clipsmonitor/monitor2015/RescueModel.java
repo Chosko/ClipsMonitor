@@ -184,9 +184,6 @@ public class RescueModel extends MonitorModel {
             map.updateMap();
         }
 
-        // Update the simulation status
-        updateStatus();
-        dispose();
         this.setChanged();
         this.notifyObservers("repaint");
     }
@@ -195,7 +192,7 @@ public class RescueModel extends MonitorModel {
         String[] robot = core.findFact("ENV", RescueFacts.AgentStatus.factName(), "TRUE", RescueFacts.AgentStatus.slotsArray());
         if (robot[0] != null) { //Se hai trovato il fatto
             step = new Integer(robot[RescueFacts.AgentStatus.STEP.index()]);
-            time = new Integer(robot[RescueFacts.AgentStatus.TIME.index()]);
+//            time = new Integer(robot[RescueFacts.AgentStatus.TIME.index()]);
             row = new Integer(robot[RescueFacts.AgentStatus.POSR.index()]);
             column = new Integer(robot[RescueFacts.AgentStatus.POSC.index()]);
             direction = robot[RescueFacts.AgentStatus.DIRECTION.index()];
@@ -263,7 +260,7 @@ public class RescueModel extends MonitorModel {
     
     
     
-    private void updateStatus() throws CLIPSError{
+    protected void updateStatus() throws CLIPSError{
         String[] status = core.findFact("MAIN", RescueFacts.Status.factName(), "TRUE", RescueFacts.Status.slotsArray());
         if (status[0] != null) {
             step = new Integer(status[RescueFacts.Status.STEP.index()]);
@@ -271,6 +268,7 @@ public class RescueModel extends MonitorModel {
             result = status[RescueFacts.Status.RESULT.index()];
             console.debug("Step: " + step + " Time: " + time + " Result: " + result);
         }
+        score = new Double(core.findOrderedFact("MAIN", "penalty"));
     }
     
     public ArrayList<int[]> getPersonPositions(){
@@ -280,22 +278,6 @@ public class RescueModel extends MonitorModel {
     public ArrayList<int[]> getKPersonPostions(){
     
       return kpersonPositions;
-    }
-    
-    @Override
-    protected boolean hasDone() {
-        // ritorna true se time>=maxduration o se result non è "no" e quindi è "disaster" o "done"
-        return time >= maxduration || !result.equalsIgnoreCase("no");
-    }
-
-    @Override
-    protected void dispose() {
-        try{
-            score = new Double(core.findOrderedFact("MAIN", "penalty"));
-        }
-        catch(CLIPSError ex){
-            console.error(ex);
-        }
     }
 
     public String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError{

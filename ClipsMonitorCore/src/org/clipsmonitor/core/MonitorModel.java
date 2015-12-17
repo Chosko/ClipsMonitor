@@ -62,12 +62,11 @@ public abstract class MonitorModel extends Observable implements Runnable {
     @Override
     public void run() {
         String clipsMonitorFact = "";
-        String[] arrayPercept = {"step"};
-        String[] done = {"no"};
+        boolean finished = false;
         try {
 
 
-            while (!hasDone()) {
+            while (!finished) {
 
 
 
@@ -96,35 +95,59 @@ public abstract class MonitorModel extends Observable implements Runnable {
                         break;
 
                 }
-                done = core.findFact("MAIN", "status", "TRUE", new String[]{"result"});
                 clipsMonitorFact = core.findOrderedFact("AGENT", "clips-monitor");
-
-                action();
-                this.setChanged();
-                this.notifyObservers("actionDone");
 
                 console.debug("clipsMonitorFacts: " + clipsMonitorFact);
 
                 /*
                     solo in fase di run non si richiede la suspend
                 */
-
-                if (clipsMonitorFact.equals("stop")){
-                    this.suspend();
+                boolean suspend = false;
+                boolean update = false;
+         
+                updateStatus();
+                
+                if (result.equals("done") || result.equals("disaster") || (time >= maxduration)){
+                    finished = true;
+                    update = true;
+                }
+                else if (clipsMonitorFact.equals("stop")){
+                    suspend = true;
+                    update = true;
                 }
                 else if(executionMode == ex_mode_BREAK){
-                    this.suspend();
+                    suspend = true;
+                    update = true;
                 }
                 else if(executionMode == ex_mode_STEP && clipsMonitorFact.equals("step-done")){
-                    this.suspend();
+                    suspend = true;
+                    update = true;
                 }
                 else if(executionMode == ex_mode_STOP || executionMode == ex_mode_RUNN){
-                  this.suspend();
+                    suspend = true;
+                    update = true;
+                }
+                else if(executionMode == ex_mode_RUN && clipsMonitorFact.equals("step-done")){
+                    update = true;
+                }
+                
+                if(update){
+                    try{
+                        updateModel();
+                    }
+                    catch(CLIPSError er){
+                        console.error(er);
+                    }
+                    this.setChanged();
+                    this.notifyObservers("actionDone");
+                }
+                if(suspend){
+                    this.suspend();
                 }
             }
 
-// Aggiorna le penalità
-            dispose();
+            // Aggiorna le penalità
+            updateStatus();
             this.setChanged();
             this.notifyObservers("disposeDone");
 
@@ -427,45 +450,24 @@ public abstract class MonitorModel extends Observable implements Runnable {
         initModel();
     }
 
-    protected void action() {
-        try{
-            updateModel();
-        }
-        catch (CLIPSError ex){
-            console.error(ex);
-        }
-    }
-
     // PARTE ASTRATTA
 
     /**
-     * Indica se l'ambiente ha finito la naturale esecuzione.
-     *
-     * @return true se l'esecuzione dell'ambiente e' terminata, false altrimenti
+     * Aggiorna lo stato della simulazione (time, step, result, score)
+     * @throws CLIPSError 
      */
-    protected abstract boolean hasDone();
-
-    /**
-     * Pone fine all'ambiente costruendo i risultati e le statistiche finali.
-     * Eseguita un'unica volta dopo che hasDone == true.
-     *
-     * @throws ClipsException
-     */
-    protected abstract void dispose();
-
+    protected abstract void updateStatus() throws CLIPSError;
+    
    /*
      Metodo per l'inizializzazione del modello in base al contenuto dei file
      clips caricati
     */
-
     protected abstract void initModel();
 
-    /*
-     Esegue l'aggiornamento della matrice di stringhe che descrive le celle
-     dell'ambiente, in base alla valutazione dei fatti prodotti dal motore di
-    Clips
-    */
-
+    /**
+     * Aggiorna tutte le informazioni del modello leggendo da clips (status + agent + person + cells.....)
+     * @throws CLIPSError 
+     */
     protected abstract void updateModel() throws CLIPSError;
 
 

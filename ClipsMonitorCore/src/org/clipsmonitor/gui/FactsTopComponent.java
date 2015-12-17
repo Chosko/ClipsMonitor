@@ -163,7 +163,6 @@ public final class FactsTopComponent extends TopComponent implements Observer {
     }// </editor-fold>//GEN-END:initComponents
 
     private void SearchTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchTextKeyTyped
-
     }//GEN-LAST:event_SearchTextKeyTyped
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
