@@ -53,7 +53,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "ControlsTopComponent",
-        //iconBase="SET/PATH/TO/ICON/HERE", 
+        //iconBase="SET/PATH/TO/ICON/HERE",
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "controls", openAtStartup = true)
@@ -77,7 +77,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     MonitorCore core;
     File projectDirectory;
     ProjectDirectory directory;
-    
+
     @SuppressWarnings("rawtypes")
     public ControlsTopComponent() {
         loadPreferences();
@@ -90,7 +90,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         this.directory.setProjectDirectory(projectDirectory);
     }
 
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -361,10 +361,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }// </editor-fold>//GEN-END:initComponents
 
     /*
-       I|O event managment functions 
+       I|O event managment functions
     */
-    
-    
+
+
     private void timeLeftTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLeftTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_timeLeftTextFieldActionPerformed
@@ -420,7 +420,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonActionPerformed
 
 
-    
+
     private void loadDefaultFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDefaultFileButtonActionPerformed
         loadDefaultFileButton.setEnabled(false);
         runButton.setEnabled(true);
@@ -463,7 +463,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void stepTextFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_stepTextFieldPropertyChange
-        
+
     }//GEN-LAST:event_stepTextFieldPropertyChange
 
     private void runOneButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_runOneButtonKeyPressed
@@ -506,7 +506,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-west");
     stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-east");
     stepButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "load-south");
-    
+
 
     stepButton.getActionMap().put("forward", new AbstractAction() {
         @Override
@@ -635,7 +635,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
     });
 }
-    
+
     void resetProjectDirectory(){
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + "/preferences.txt";
         File prefFile = new File(prefPath);
@@ -644,7 +644,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
         infoBox("Percorso del progetto resettato. Riavvia per settare un nuovo percorso", "Riavvia");
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BreakButton;
     private javax.swing.JComboBox CLPSelector;
@@ -689,7 +689,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         String version = p.getProperty("version");
         // TODO read your settings according to their version
     }
-    
+
         public JTextField getStepTextField() {
         return stepTextField;
     }
@@ -701,11 +701,11 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     public JTextField getLeftTimeTextField() {
         return this.timeLeftTextField;
     }
-    
+
   public JTextField getpenaltiesField() {
         return this.PenaltiesTextField;
     }
-    
+
     public void setStepTextField(JTextField stepTextField) {
         this.stepTextField = stepTextField;
     }
@@ -721,7 +721,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     public void setPenaltiesTextField(JTextField penaltiesField) {
         this.PenaltiesTextField = penaltiesField;
     }
-    
+
     /**
      * Estrae il nome di un file (con l'estensione) da un initialPath.
      *
@@ -746,14 +746,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "CLP");
             DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
             File[] listOfFiles = folder.listFiles();
-            
+
             Arrays.sort(listOfFiles, new Comparator<File>() {
                 @Override
                 public int compare(File o1, File o2) {
                     return o1.compareTo(o2);
                 }
             });
-            
+
             for (File file : listOfFiles) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     result.addElement(file.getName());
@@ -782,14 +782,14 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             File folder = new File(projectDirectory.getAbsolutePath() + File.separator + "envs");
             DefaultComboBoxModel<String> result = new DefaultComboBoxModel();
             File[] listOfFiles = folder.listFiles();
-            
+
             Arrays.sort(listOfFiles, new Comparator<File>() {
                 @Override
                 public int compare(File o1, File o2) {
                     return o1.compareTo(o2);
                 }
             });
-            
+
             for (File file : listOfFiles) {
                 if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     result.addElement(file.getName());
@@ -833,7 +833,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             this.init();
         }
         else if(arg == "repaint"){
-        
+
             Integer step = model.getStep();
             Integer time = model.getTime();
             Integer leftTime = model.getMaxDuration() - model.getTime();
@@ -862,7 +862,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     @Override
     public void keyTyped(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-       
+
     }
 
     @Override
@@ -877,17 +877,17 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     @Override
     public void keyReleased(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    
+
     }
 
-    
-    
+
+
     private void loadPreferences() {
         /* ------- Find the preferences file ------- */
         String prefPath = InstalledFileLocator.getDefault().locate(".", null, false).getParentFile().getAbsolutePath() + File.separator + "preferences.txt";
@@ -901,7 +901,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                     dirFound = true;
                     this.projectDirectory = dir;
                     directory = ProjectDirectory.getIstance(dir);
-                    
+
                 }
             }
             catch(IOException ex){
@@ -926,24 +926,24 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                 }
                 catch(IOException ex){
                     infoBox(ex.getMessage(), "Errore");
-                    LifecycleManager.getDefault().exit();                    
+                    LifecycleManager.getDefault().exit();
                 }
             } else {
                 LifecycleManager.getDefault().exit();
             }
         }
     }
-    
+
     public File getProjectDirectory(){
-    
+
         return this.projectDirectory;
-    
+
     }
-    
+
     public static void infoBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     private class ClpFileFilter extends FileFilter {
 
         @Override

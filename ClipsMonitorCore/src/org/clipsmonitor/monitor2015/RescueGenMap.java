@@ -348,6 +348,9 @@ public class RescueGenMap extends MonitorGenMap {
         return icons;
     }
 
-       
+    public boolean getEmptyPerson() {
+    
+      return this.Persons.isEmpty();
+    }    
 
 }
