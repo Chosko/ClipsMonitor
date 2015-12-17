@@ -9,6 +9,7 @@
             <file name="debugger.wsmode" url="debuggerWsmode.xml"/>
             <file name="facts.wsmode" url="factsWsmode.xml"/>
             <file name="focus.wsmode" url="focusWsmode.xml"/>
+            <file name="mapGenerator.wsmode" url="mapGeneratorWsmode.xml"/>
             <file name="output.wsmode" url="outputWsmode.xml"/>
             <file name="map.wsmode" url="mapWsmode.xml"/>
         </folder>
