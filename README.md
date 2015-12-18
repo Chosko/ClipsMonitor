@@ -1,9 +1,50 @@
 # ClipsMonitor
 
-Un IDE per i progetti di Intelligenza Artificiale del Dipartimento di Informatica di Torino.
+Un IDE per i progetti di Intelligenza Artificiale del Dipartimento di Informatica di Torino, nato dalle ceneri di [Monitor_NGCaffe](https://github.com/AlexBasile/Monitor_NGCaffe) (di Alessandro Basile e Tobia Giani), con:
 
-ClipsMonitor è stato pensato per il progetto RESCUE 2014/2015, ma dovrebbe essere facilmente
+Nuove funzionalità:
+
+* **Console CLIPS** integrata per debugging real-time (si può evitare completamente di usare CLIPS IDE)
+* **GUI** completamente riprogettata per essere user-friendly
+* **Due mappe** distinte per AGENT e ENV
+* **Modalità Break** che a differenza di 'Step' e 'Run' si ferma al primo comando `(halt)`
+* **Generatore di mappe e history** incorporato
+* **Comanda l'agente** forzando delle exec con delle shortcut
+* e tante altre....
+
+Maggiori miglioramenti:
+
+* **Utilizza un fork di CLIPSJNI** che permette una gestione più *Umana* degli errori e risolve una serie di crash.
+* **Esecuzione molto più veloce**: Run e Step non usano più un ciclo di Run(1) con polling dei fatti, ma sono basate su regole iniettate dall'IDE.
+* **Aggiornamento differenziale della mappa**: vengono ridisegnate solo le celle che cambiano
+* **Model aggiornato solo quando necessario**
+* **Refactoring** massivo del codice, pensato per essere più modulare ed estendibile (per quanto possibile).
+
+> ClipsMonitor è stato pensato per il progetto RESCUE 2014/2015, ma dovrebbe essere facilmente
 modificabile e riutilizzabile anche per altri progetti simili.
+
+<!-- TOC depth:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [ClipsMonitor](#clipsmonitor)
+	- [Per cominciare](#per-cominciare)
+			- [1. Installa CLIPSJNI2](#1-installa-clipsjni2)
+			- [2. Installa ClipsMonitor](#2-installa-clipsmonitor)
+			- [3. Scarica il progetto di prova](#3-scarica-il-progetto-di-prova)
+			- [4. Avvia ClipsMonitor](#4-avvia-clipsmonitor)
+	- [Features](#features)
+			- [Controls window](#controls-window)
+			- [Env map](#env-map)
+			- [Agent map](#agent-map)
+			- [Console window](#console-window)
+			- [Facts, Agenda e Focus windows](#facts-agenda-e-focus-windows)
+			- [Map generator](#map-generator)
+			- [Shortcuts](#shortcuts)
+	- [Setup](#setup)
+			- [Configura il tuo progetto](#configura-il-tuo-progetto)
+	- [Contribuire a ClipsMonitor](#contribuire-a-clipsmonitor)
+	- [Licenza](#licenza)
+	- [Aknowledgments](#aknowledgments)
+<!-- /TOC -->
 
 ## Per cominciare
 
@@ -184,4 +225,12 @@ Riceveranno una priorità massima tutte le modifiche che mirano a:
 
 * **risolvere bug**
 * **implementare nuove funzionalità** indipendenti dal singolo progetto CLIPS
-* **astrarre** i componenti di ClipsMonitor dall'implementazione del progetto CLIPS  
+* **astrarre** i componenti di ClipsMonitor dall'implementazione del progetto CLIPS
+
+## Licenza
+
+[GNU General Public License v2](https://github.com/Chosko/ClipsMonitor/blob/master/LICENSE)
+
+## Aknowledgments
+
+Per realizzare questo progetto è stato utilizzato come punto di partenza il progetto [Monitor_NGCaffe](https://github.com/AlexBasile/Monitor_NGCaffe) di Alessandro Basile e Tobia Giani.
