@@ -606,11 +606,21 @@ public abstract class MonitorGenMap {
         return result;
     }
 
+    public int getLastStepofPerson(String state){
+      int lastStep=0;
+        int pos = this.findPosByColor(state);
+        if (pos != -1) {
+            Person p = this.Persons.get(pos);
+            lastStep = p.paths.getLast().lastStep;
+
+        }
+        return lastStep;
+    }
+    
     /*
      * Restituisce l'ultima occorrenza di path associata alla persona con l'index i 
      */
     public String getLastPathOfPerson(String state) {
-
         String pathName = "empty";
         int pos = this.findPosByColor(state);
         if (pos != -1) {
@@ -1043,15 +1053,17 @@ public abstract class MonitorGenMap {
                     }
                 }
                 int offset = paramStep - succ.startStep;
-                if (succ.move.size() > paramStep) {
+                if (succ.move.size() > offset) {
                     StepMove s = succ.move.get(offset);
                     int r = s.getRow();
                     int c = s.getColumn();
                     newmap[r][c] = p.associatedColor;
+                    newmap[r][c] += "_last";
                 }
             }
 
-        } // caso di richiesta di una specifico path agente
+        }
+        // caso di richiesta di una specifico path agente
         else {
             int r = 0;
             int c = 0;

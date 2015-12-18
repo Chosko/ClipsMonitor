@@ -1268,7 +1268,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case Success :
                     console.info("Path aggiunto correttamente");
                     this.actualPath = model.getLastPathOfPerson(state);
-                    String[][] move = model.getMoveCellMap(this.actualPath,-1);
+                    String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
@@ -1315,7 +1315,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             case Success :
                 console.info("Rimozione eseguita correttamente");
                 this.actualPath = model.getLastPathOfPerson(state);
-                String[][] move = model.getMoveCellMap(this.actualPath,-1);
+                String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                 model.ApplyUpdateOnMoveMap(move);
                 model.CopyToActive(model.getMove());
                 PreviewMap.repaint();
@@ -1358,8 +1358,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         switch(result){
                 case Success :
                     console.info("Movimento agente aggiunto con successo");
-                    
-                    move = model.getMoveCellMap(actualPath,-1);
+                    move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
@@ -1383,7 +1382,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case LastMoveRemove : 
                     console.info("Movimento agente rimosso con successo");
                     
-                    move = model.getMoveCellMap(actualPath,-1);
+                    move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
