@@ -23,28 +23,26 @@ Maggiori miglioramenti:
 > ClipsMonitor è stato pensato per il progetto RESCUE 2014/2015, ma dovrebbe essere facilmente
 modificabile e riutilizzabile anche per altri progetti simili.
 
-<!-- TOC depth:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+## Table of contents
 
-- [ClipsMonitor](#clipsmonitor)
-	- [Per cominciare](#per-cominciare)
-			- [1. Installa CLIPSJNI2](#1-installa-clipsjni2)
-			- [2. Installa ClipsMonitor](#2-installa-clipsmonitor)
-			- [3. Scarica il progetto di prova](#3-scarica-il-progetto-di-prova)
-			- [4. Avvia ClipsMonitor](#4-avvia-clipsmonitor)
-	- [Features](#features)
-			- [Controls window](#controls-window)
-			- [Env map](#env-map)
-			- [Agent map](#agent-map)
-			- [Console window](#console-window)
-			- [Facts, Agenda e Focus windows](#facts-agenda-e-focus-windows)
-			- [Map generator](#map-generator)
-			- [Shortcuts](#shortcuts)
-	- [Setup](#setup)
-			- [Configura il tuo progetto](#configura-il-tuo-progetto)
-	- [Contribuire a ClipsMonitor](#contribuire-a-clipsmonitor)
-	- [Licenza](#licenza)
-	- [Aknowledgments](#aknowledgments)
-<!-- /TOC -->
+* [Per cominciare](#per-cominciare)
+	* [1. Installa CLIPSJNI2](#1-installa-clipsjni2)
+	* [2. Installa ClipsMonitor](#2-installa-clipsmonitor)
+	* [3. Scarica il progetto di prova](#3-scarica-il-progetto-di-prova)
+	* [4. Avvia ClipsMonitor](#4-avvia-clipsmonitor)
+* [Features](#features)
+	* [Controls window](#controls-window)
+	* [Env map](#env-map)
+	* [Agent map](#agent-map)
+	* [Console window](#console-window)
+	* [Facts, Agenda e Focus windows](#facts-agenda-e-focus-windows)
+	* [Map generator](#map-generator)
+	* [Shortcuts](#shortcuts)
+* [Setup](#setup)
+	* [Configura il tuo progetto](#configura-il-tuo-progetto)
+* [Contribuire a ClipsMonitor](#contribuire-a-clipsmonitor)
+* [Licenza](#licenza)
+* [Aknowledgments](#aknowledgments)
 
 ## Per cominciare
 
