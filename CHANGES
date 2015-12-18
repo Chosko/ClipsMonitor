@@ -1,4 +1,4 @@
-Version 0.1.0
+Version 1.0.0
  - installers created for version v1.0.0
  - release renamed to publish
  - fixed first step, removed installers
@@ -161,4 +161,3 @@ Version 0.1.0
  - added output view
  - initial layout done
  - initial commit
-
