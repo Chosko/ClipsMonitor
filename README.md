@@ -53,11 +53,11 @@ Prima di installare ClipsMonitor assicurati di avere installato la libreria nati
 
 #### 2. Installa ClipsMonitor
 
-[Scarica l'ultima versione di questo repository](https://github.com/Chosko/ClipsMonitor/releases)
+[Scarica l'installer relativo all'ultima versione](https://github.com/Chosko/ClipsMonitor/releases)
 
-Una volta scaricato, trovi nella cartella **dist** gli installer.
+Una volta scaricato, estrailo ed esegui l'installer relativo alla tua piattaforma.
 
-Se un installer per la tua piattaforma non è presente, sei obbligato a far partire il progetto dal codice sorgente, utilizzando NetBeans.
+Se non c'è un installer per la tua piattaforma, dovrai scaricare il codice sorgente e avviare ClipsMonitor utilizzando NetBeans.
 
 #### 3. Scarica il progetto di prova
 
