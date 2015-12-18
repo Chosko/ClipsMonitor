@@ -115,6 +115,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
                     suspend = true;
                     update = true;
                 }
+                else if (clipsMonitorFact.equals("do-step")){
+                    update = true;
+                    executionMode = ex_mode_STEP;
+                }
                 else if(executionMode == ex_mode_BREAK){
                     suspend = true;
                     update = true;
@@ -344,29 +348,29 @@ public abstract class MonitorModel extends Observable implements Runnable {
                                         "  (retract ?step-started)"             +
                                         ")";
 
-        String defruleInitialStop =     "(defrule clips-monitor-initial"        +
+        String defruleInitialStep =     "(defrule clips-monitor-initial"        +
                                         " (declare (salience 1000))"            +
                                         " (init-agent (done yes))"              +
                                         " (not (clips-monitor stop))"           +
                                         " (not (clips-monitor-initial done))"   +
                                         "  => "                                 +
-                                        "  (assert (clips-monitor stop))"       +
+                                        "  (assert (clips-monitor do-step))"    +
                                         "  (assert (clips-monitor-initial done))"+
                                         "  (halt)"                              +
                                         ")";
 
-        String defruleRetractStop =     "(defrule clips-monitor-retract-initial"+
+        String defruleRetractStep =     "(defrule clips-monitor-retract-initial"+
                                         "  (declare (salience 1000))"           +
-                                        "  ?stop <-(clips-monitor stop)"        +
+                                        "  ?do-step <-(clips-monitor do-step)"  +
                                         "  => "                                 +
-                                        "  (retract ?stop)"                     +
+                                        "  (retract ?do-step)"                  +
                                         ")";
 
         boolean check = core.build("AGENT", defruleStepDone);
         boolean check2 = core.build("AGENT", defruleStepStarted);
         boolean check3 = core.build("AGENT", defruleRetractStepStarted);
-        boolean check4 = core.build("AGENT", defruleInitialStop);
-        boolean check5 = core.build("AGENT", defruleRetractStop);
+        boolean check4 = core.build("AGENT", defruleInitialStep);
+        boolean check5 = core.build("AGENT", defruleRetractStep);
         if(check && check2 && check3 && check4 && check5){
             console.debug("Injection rule done");
         }
