@@ -1,0 +1,164 @@
+Version 0.1.0
+ - installers created for version v1.0.0
+ - release renamed to publish
+ - fixed first step, removed installers
+ - release script executable
+ - added installers, preparing release script
+ - fixed broken layout
+ - README updated
+ - Create LICENSE
+ - Merge branch 'master' of https://github.com/Chosko/ClipsMonitor
+ - modified preview map for moves
+ - installers updated
+ - readme updated
+ - updated README.md
+ - added Test Project, removed unused folders
+ - fixed controls gui
+ - fixed all conflicts
+ - fixed some stuff
+ - fixed resize generator map
+ - Added README and fixed run mode
+ - fixed list change value
+ - fixed MapGenerator layout
+ - fixed console layout
+ - fixed controls layout
+ - fixed facts search
+ - add break button
+ - recover strings from clips exec and search facts
+ - add kcell information
+ - add search function
+ - fixed penalties values
+ - add penalties field
+ - add check bump
+ - add kperson check
+ - fixed some errors on mapgenerator
+ - finally errors
+ - fixed env info
+ - fixed controls values
+ - added shortcuts for moving agent
+ - Merge branch 'master' of github.com:Chosko/ClipsMonitor
+ - removed wrong slots
+ - fixed injection start
+ - performance improvements
+ - Merge branch 'master' into chosko
+ - add injection rules
+ - refactored maps
+ - Merge branch 'thexeon'
+ - fixed core run
+ - fixed agent map
+ - merged conflict
+ - fixed agent map
+ - fixed agentmap
+ - fixed agent map
+ - added installers
+ - added images
+ - Merge branch 'master' of github.com:Chosko/ClipsMonitor
+ - OMG this is so awesome
+ - fixed all map generator
+ - rescuefacts add other facts
+ - improve rescue facts
+ - fixed load and save map generator
+ - fixed add and remove path
+ - init refactory map generator
+ - init paths managament
+ - fixed some things
+ - merged conflicts
+ - added previous to Cell
+ - refactored maps
+ - transfer method from Rescuegenmap to monitorgenmap
+ - add , remove person fixed
+ - fixed person add
+ - add new components for generator and modify managament of person insertion
+ - fixed change maps
+ - some improvement of map creation such as robot overlap managment
+ - add some methods to execute change of map for map gen
+ - fixed change icons
+ - fixed list view
+ - fixed loading images e keyset problem
+ - add new controls for map generator
+ - init move generator
+ - RescueMap refactored
+ - Merge branch 'thexeon' into chosko
+ - removed useless console.info
+ - fixed step time feedback
+ - simplified map complexity
+ - Merge branch 'thexeon' into chosko
+ - add shortcut
+ - removed RescueImages
+ - added a new map top component
+ - add init to abstract generator map  methods
+ - fixed stupid error
+ - make rescueGenMap and monitorGenMap
+ - transfer methods from loader to scene model
+ - fixed stash conflict
+ - Merge branch 'chosko'
+ - fuck you RealMap
+ - Merge branch 'master' into chosko
+ - added installers
+ - Merge branch 'thexeon' of github.com:Chosko/ClipsMonitor into thexeon
+ - deleted maps
+ - fixed fucking dependency
+ - Merge branch 'master' into chosko
+ - focus top component fixed
+ - add get focus stack
+ - add get focus stack
+ - Merge branch 'master' into chosko
+ - Merge branch 'master' into thexeon
+ - fixing ClipsMonitor for Ubuntu
+ - improving order
+ - fixed a NullReferencePointer
+ - recovered files from fetch
+ - fixed load images
+ - unused java src from to copy dir
+ - fixed mapgenerator save and update map
+ - fixed layout
+ - fixed fucking conflict
+ - modified git ignore
+ - fixed conflicts
+ - fixed conflict
+ - removed from project RESCUE project files
+ - merge conflicts
+ - map generator
+ - exported project
+ - changed image path
+ - add Map Generator
+ - extracted project, nullpointerexception to fix
+ - add envs
+ - add cmd history console and spacebar shortcut for run button
+ - remove nestled directory
+ - Merge branch 'thexeon' of https://github.com/Chosko/ClipsMonitor into thexeon
+ - fix k-cell and perception
+ - removed wrong nestled directory
+ - fix undiscovered map
+ - fix undiscovered map
+ - fixing CLP files
+ - Add last-perc perception
+ - fixed some errors
+ - Fixed Load EnvMap
+ - Fixed load facts
+ - changed a comment
+ - Merge branch 'master' of github.com:Chosko/ClipsMonitor
+ - Add new clips files
+ - migrating to new project
+ - added project to copy from
+ - Boh
+ - map added finally
+ - added some improvements
+ - started adding maps
+ - fixed conflict
+ - broken commit
+ - rename
+ - added clipsjni.jar to git
+ - renamed clipsjni library
+ - improved some stuff
+ - improved some stuff
+ - clipsmonitor improved a lot
+ - integrated new CLIPSJNI
+ - added agenda and facts
+ - console continued
+ - yeah
+ - windows
+ - added output view
+ - initial layout done
+ - initial commit
+
