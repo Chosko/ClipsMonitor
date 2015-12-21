@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# This script is used to build the project and release to the server
+
+# works with a file called VERSION in the current directory,
+# the contents of which should be a semantic version number
+# such as "1.2.3"
+
+# this script will display the current version, automatically
+# suggest a "minor" version update, and ask for input to use
+# the suggestion, or a newly entered value.
+
+# once the new version number is determined, the script will
+# pull a list of changes from git history, prepend this to
+# a file called CHANGES (under the title of the new version
+# number) and create a GIT tag.
+
+# Check if the git working directory is clean
+require_clean_work_tree () {
+  # Update the index
+  git update-index -q --ignore-submodules --refresh
+  err=0
+
+  # Disallow unstaged changes in the working tree
+  if ! git diff-files --quiet --ignore-submodules --
+  then
+    echo >&2 "cannot $1: you have unstaged changes."
+    git diff-files --name-status -r --ignore-submodules -- >&2
+    err=1
+  fi
+
+  # Disallow uncommitted changes in the index
+  if ! git diff-index --cached --quiet HEAD --ignore-submodules --
+  then
+    echo >&2 "cannot $1: your index contains uncommitted changes."
+    git diff-index --cached --name-status -r --ignore-submodules HEAD -- >&2
+    err=1
+  fi
+
+  if [ $err = 1 ]
+  then
+    echo >&2 "Please commit or stash them."
+    exit 1
+  fi
+}
+
+# Check if git branch is master
+require_master_branch (){
+  if [ $(git rev-parse --abbrev-ref HEAD) != "master" ]
+    then
+      echo >&2 "cannot $1: you are not in master branch"
+      exit 1
+  fi
+}
+
+# Log
+log (){
+  echo "[$label] $1"
+}
+
+# Print commands before executing them
+ex (){
+  log  "--->  $(echo "$@")"
+  "$@"
+}
+
+# Change directory and log
+ecd (){
+  cd $1
+  log "---> changed dir: $(pwd)"
+}
+
+label="release"
+require_clean_work_tree "release"
+require_master_branch "release"
+echo "working directory clean and on branch master"
+echo "starting release..."
+
+if [ -f VERSION ]; then
+    BASE_STRING=`cat VERSION`
+    BASE_LIST=(`echo $BASE_STRING | tr '.' ' '`)
+    V_MAJOR=${BASE_LIST[0]}
+    V_MINOR=${BASE_LIST[1]}
+    V_PATCH=${BASE_LIST[2]}
+    echo "Current version : $BASE_STRING"
+    V_MINOR=$((V_MINOR + 1))
+    V_PATCH=0
+    SUGGESTED_VERSION="$V_MAJOR.$V_MINOR.$V_PATCH"
+    read -p "Enter a version number [$SUGGESTED_VERSION]: " INPUT_STRING
+    if [ "$INPUT_STRING" = "" ]; then
+        INPUT_STRING=$SUGGESTED_VERSION
+    fi
+    echo "Will set new version to be $INPUT_STRING"
+    echo $INPUT_STRING > VERSION
+    echo "Version $INPUT_STRING:" > tmpfile
+    git log --pretty=format:" - %s" "v$BASE_STRING"...HEAD >> tmpfile
+    echo "" >> tmpfile
+    echo "" >> tmpfile
+    cat CHANGES >> tmpfile
+    mv tmpfile CHANGES
+    git add CHANGES VERSION
+    git commit -m "Version bump to $INPUT_STRING"
+    git tag -a -m "Tagging version $INPUT_STRING" "v$INPUT_STRING"
+    git push origin --tags
+else
+    echo "Could not find a VERSION file"
+    read -p "Do you want to create a version file and start from scratch? [y]" RESPONSE
+    if [ "$RESPONSE" = "" ]; then RESPONSE="y"; fi
+    if [ "$RESPONSE" = "Y" ]; then RESPONSE="y"; fi
+    if [ "$RESPONSE" = "Yes" ]; then RESPONSE="y"; fi
+    if [ "$RESPONSE" = "yes" ]; then RESPONSE="y"; fi
+    if [ "$RESPONSE" = "YES" ]; then RESPONSE="y"; fi
+    if [ "$RESPONSE" = "y" ]; then
+        echo "0.1.0" > VERSION
+        echo "Version 0.1.0" > CHANGES
+        git log --pretty=format:" - %s" >> CHANGES
+        echo "" >> CHANGES
+        echo "" >> CHANGES
+        git add VERSION CHANGES
+        git commit -m "Added VERSION and CHANGES files, Version bump to v0.1.0"
+        git tag -a -m "Tagging version 0.1.0" "v0.1.0"
+        git push origin --tags
+    fi
+fi
