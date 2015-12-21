@@ -82,9 +82,9 @@ public final class RescueFacts{
 
         RealCell = "(" + RescueFacts.RealCell.factName()
                 + "(" + RescueFacts.RealCell.POSR.slot() + " " + x + ") "
-                + "(" + RescueFacts.RealCell.POSC.slot() + "" + y + ") "
-                + "(" + RescueFacts.RealCell.CONTAINS.slot() + contains + ") "
-                + "(" + RescueFacts.RealCell.INJURED.slot() + inj + ")) \n";
+                + "(" + RescueFacts.RealCell.POSC.slot() + " " + y + ") "
+                + "(" + RescueFacts.RealCell.CONTAINS.slot() + " " +contains + ") "
+                + "(" + RescueFacts.RealCell.INJURED.slot() + " " +inj + ")) \n";
 
         return RealCell;
     }
