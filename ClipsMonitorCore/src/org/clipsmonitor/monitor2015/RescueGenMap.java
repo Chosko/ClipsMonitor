@@ -121,10 +121,12 @@ public class RescueGenMap extends MonitorGenMap {
     public String exportHistory() {
         String history = "";
         history += "(maxduration " + this.maxduration + ") \n\n";
-
+        int maxRow = scene[0].length;
+        int agentPosR = maxRow-this.agentposition[1];
+        int agentPosC = this.agentposition[0]+1;
         // posizione iniziale dell'agente
-        history += "(initial_agentposition ( pos-r " + this.agentposition[0] + ")";
-        history += "( pos-c " + this.agentposition[1] + ")";
+        history += "(initial_agentposition ( pos-r " + agentPosR  + ")";
+        history += "( pos-c " + agentPosC + ")";
         history += "(direction " + this.direction + ")) \n\n";
 
         Path[] paths = this.getPaths(-1);
@@ -148,8 +150,9 @@ public class RescueGenMap extends MonitorGenMap {
             LinkedList<StepMove> slist = elem.getMoves(); 
             for( StepMove s : slist){
                 int idstep = s.getStep() - step;
+                int row = maxRow-s.getRow();
                 history += "( move-path " + name + " " + idstep + " " + person 
-                            + " " + s.getRow() + " " + s.getColumn() + " ) \n"; 
+                            + " " + s.getColumn() + " " + row + " ) \n"; 
             
             }
         
@@ -171,12 +174,20 @@ public class RescueGenMap extends MonitorGenMap {
 
         //variabili per impostare la posizione delle componenti
         String s = "";
-
+        
+        // la matrice di stringhe è salvato per colonne!
+        
+        int maxRow = scene[0].length;
+        int maxColumn = scene.length;
+        // i rappresenta la colonna
+        // j la riga
         //Scansione della matrice di celle
-        for (int i = 0; i < scene.length; i++) {
-            for (int j = 0; j < scene[i].length; j++) {
+        // devo leggere dal basso vero l'alto le righe 
+        
+        for (int i = 0; i < maxColumn; i++) {
+            for (int j = 0; j < maxRow; j++) {
 
-                s += RescueFacts.RealCell.getRealCell(i, j, scene[i][j], scene[i][j].contains("injured"));
+                s += RescueFacts.RealCell.getRealCell(i+1,maxRow-j, scene[i][j], scene[i][j].contains("injured"));
             }
         }
         return s;

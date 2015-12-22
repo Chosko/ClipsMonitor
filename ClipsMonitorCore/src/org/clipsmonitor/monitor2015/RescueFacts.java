@@ -69,7 +69,7 @@ public final class RescueFacts{
      * @param injured eventaule presenza o meno di un ferito
      * @return una stringa rappresenta il fatto che descrive quella cella
      */
-    public static String getRealCell(int x, int y, String content, boolean injured) {
+    public static String getRealCell(int posC, int posR, String content, boolean injured) {
 
         String RealCell = "";
         String inj = injured ? "yes" : "no";
@@ -81,8 +81,8 @@ public final class RescueFacts{
         }
 
         RealCell = "(" + RescueFacts.RealCell.factName()
-                + "(" + RescueFacts.RealCell.POSR.slot() + " " + x + ") "
-                + "(" + RescueFacts.RealCell.POSC.slot() + " " + y + ") "
+                + "(" + RescueFacts.RealCell.POSR.slot() + " " + posR + ") "
+                + "(" + RescueFacts.RealCell.POSC.slot() + " " + posC + ") "
                 + "(" + RescueFacts.RealCell.CONTAINS.slot() + " " +contains + ") "
                 + "(" + RescueFacts.RealCell.INJURED.slot() + " " +inj + ")) \n";
 

@@ -1512,12 +1512,12 @@ public abstract class MonitorGenMap {
             DirName = directory.getName();
             Parent = directory.getParent();
             // creazione nuovo file
-            String infoMapPath = Parent + File.separator + DirName + File.separator + DirName + "_RealMap.txt";
+            String infoMapPath = Parent + File.separator + DirName + File.separator + "RealMap.txt";
             //scrivo il file della mappa
             Files.write(Paths.get(infoMapPath), sceneFile.getBytes());
             consoleOutput += "File creato \n" + Paths.get(infoMapPath);
 
-            String JSONMapPath = Parent + File.separator + DirName + File.separator + DirName + "_InfoMap.json";
+            String JSONMapPath = Parent + File.separator + DirName + File.separator + "InfoMap.json";
             //scrivo il file json con la mappa scritta
             this.saveJSONMap(JSONMapPath);
             consoleOutput += "File creato \n" + Paths.get(JSONMapPath);
@@ -1552,12 +1552,12 @@ public abstract class MonitorGenMap {
 
             if (historyFile.length() > 0) //scrivo il file della history solo se sono
             {                               //sono state aggiunte persone alla scena
-                String HistoryPath = Parent + File.separator + DirName + File.separator + DirName + "_History.txt";
+                String HistoryPath = Parent + File.separator + DirName + File.separator + "history.txt";
                 Files.write(Paths.get(HistoryPath), historyFile.getBytes());
                 consoleOutput += "File creato \n" + Paths.get(HistoryPath);
             }
             //scrivo il file json con la mappa scritta
-            String JSONMovePath = Parent + File.separator + DirName + File.separator + DirName + "_InfoMove.json";
+            String JSONMovePath = Parent + File.separator + DirName + File.separator + "InfoMove.json";
             boolean result = this.saveJSONMoves(JSONMovePath);
             if (result) {
                 consoleOutput += "File creato \n" + Paths.get(JSONMovePath);
