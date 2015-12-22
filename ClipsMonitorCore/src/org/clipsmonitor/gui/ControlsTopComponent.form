@@ -37,25 +37,35 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="envLabel" alignment="1" pref="125" max="32767" attributes="0"/>
-                      <Component id="strategyLabel" alignment="1" max="32767" attributes="0"/>
-                      <Component id="envLabel3" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
+                      <Component id="strategyLabel" alignment="1" pref="125" max="32767" attributes="0"/>
                       <Component id="CLPSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="envsSelector" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="envLabel3" pref="90" max="32767" attributes="0"/>
+                                  <Component id="envLabel" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                              <Component id="RefreshButton" min="-2" pref="22" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="envsSelector" min="-2" pref="119" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="envLabel2" min="-2" max="-2" attributes="0"/>
                               <Component id="envLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="strategyLabel1" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="125" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="envLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -109,18 +119,21 @@
                               </Group>
                           </Group>
                       </Group>
-                      <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="envLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="envLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="RefreshButton" alignment="0" min="-2" pref="22" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="envLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="envLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="PenaltiesTextField" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -357,6 +370,16 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BreakButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="RefreshButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/clipsmonitor/gui/Bundle.properties" key="ControlsTopComponent.RefreshButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RefreshButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
