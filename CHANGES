@@ -1,3 +1,15 @@
+Version 1.0.2:
+ - updated installers
+ - reduced console width
+ - fixed console window layout
+ - add watch check button
+ - fixed map generator export coordinates
+ - add refresh directory
+ - Merge branch 'master' of https://github.com/Chosko/ClipsMonitor
+ - fixed format real cell string
+ - Update README.md
+ - README updated
+
 Version 1.0.0
  - installers created for version v1.0.0
  - release renamed to publish
