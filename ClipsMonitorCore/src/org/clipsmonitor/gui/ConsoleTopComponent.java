@@ -270,6 +270,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
                 .addGap(0, 0, 0))
         );
 
+        RulesCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(RulesCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.RulesCheck.text")); // NOI18N
         RulesCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -279,6 +280,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
 
         org.openide.awt.Mnemonics.setLocalizedText(Watch, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.Watch.text")); // NOI18N
 
+        ActivationsCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(ActivationsCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.ActivationsCheck.text")); // NOI18N
         ActivationsCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,6 +288,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
         });
 
+        FactsCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(FactsCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.FactsCheck.text")); // NOI18N
         FactsCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -293,6 +296,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
         });
 
+        DeffunctionsCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(DeffunctionsCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.DeffunctionsCheck.text")); // NOI18N
         DeffunctionsCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -300,6 +304,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
         });
 
+        FocusCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(FocusCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.FocusCheck.text")); // NOI18N
         FocusCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -307,6 +312,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
         });
 
+        GenericFCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(GenericFCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.GenericFCheck.text")); // NOI18N
         GenericFCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -314,6 +320,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
             }
         });
 
+        MessagesCheck.setFont(new java.awt.Font("Noto Sans", 0, 10)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(MessagesCheck, org.openide.util.NbBundle.getMessage(ConsoleTopComponent.class, "ConsoleTopComponent.MessagesCheck.text")); // NOI18N
         MessagesCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
