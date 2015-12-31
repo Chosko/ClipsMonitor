@@ -267,14 +267,7 @@ public class RescueGenMap extends MonitorGenMap {
 
                     if (!mapActive[i][j].equals("")) {
 
-                        if (mapActive[i][j].contains(personName)) {
-                            int underscoreSeparate = mapActive[i][j].indexOf("_");
-                            String background = mapActive[i][j].substring(0, underscoreSeparate);
-                            BufferedImage backImg = img.getImage(background);
-                            BufferedImage overlapImg = img.overlapImages(img.getImage(personName), backImg);
-                            icons[i][j] = overlapImg;
-
-                        } else if (mapActive[i][j].contains("agent")) {
+                        if (mapActive[i][j].contains("agent")) {
                             int underscoreSeparate = mapActive[i][j].indexOf("_");
                             String background = mapActive[i][j].substring(0, underscoreSeparate);
                             String key_agent_map = "agent_" + direction + "_" + loaded;

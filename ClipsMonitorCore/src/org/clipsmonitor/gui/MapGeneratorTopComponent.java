@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -454,6 +455,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
         PersonsListComponentRemoved(evt);
       }
     });
+    PersonsList.addMouseListener(new java.awt.event.MouseAdapter() {
+      public void mouseClicked(java.awt.event.MouseEvent evt) {
+        PersonsListMouseClicked(evt);
+      }
+    });
     PersonsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
       public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
         PersonsListValueChanged(evt);
@@ -735,6 +741,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_SaveButtonActionPerformed
 
+    
+    
     private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
         boolean checkButton = this.MapButton.isSelected();
         if(!checkButton){
@@ -742,16 +750,22 @@ public final class MapGeneratorTopComponent extends TopComponent {
             this.updateLabel(state);
             this.actualPath = model.getLastPathOfPerson(state);
             if(!this.actualPath.equals("empty")){
-                String[][] move = model.getMoveCellMap(actualPath,-1);
-                model.ApplyUpdateOnMoveMap(move);
+              int pos = model.findPosByColor(state);
+              this.MakePersonList();
+              this.MakeStepList(-1);
+              this.MakeMoveList(pos,-1,"all");
             }
-            
+            else{
+              this.MakePersonList();
+              this.MakeStepList(-1);
+              this.MakeMoveList(-1,-1,"all");
+              
+            }
+            this.setListEnable();
+            String[][] move = model.getMoveCellMap(actualPath,-1);
+            model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
             PreviewMap.repaint();
-            this.MakePersonList();
-            this.MakeStepList(-1);
-            this.MakeMoveList(-1,-1,"all");
-            this.setListEnable();
         }
         else{
             setState(InsertionOptionComboBox.getSelectedItem().toString());
@@ -802,7 +816,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }//GEN-LAST:event_MovementListFocusGained
 
     private void MovementListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MovementListMouseClicked
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_MovementListMouseClicked
 
     
@@ -881,21 +895,30 @@ public final class MapGeneratorTopComponent extends TopComponent {
         this.setListEnable();
     }//GEN-LAST:event_MoveButtonActionPerformed
 
+    
+    
     private void PersonsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_PersonsListValueChanged
         
         String [] persons = model.getListPerson();
         if(evt.getFirstIndex()!=persons.length-1){
             String val = persons[evt.getFirstIndex()];
-            int underScoreIndex = val.indexOf("_");
-            String color = val.substring(underScoreIndex+1);
+            String[] split = val.split("_");
             this.MakePersonList();
-            int pos = model.findPosByColor(color);
+            int pos = model.findPosByColor(split[1]);
             this.MakeStepList(-1);
-            this.MakeMoveList(pos,-1,model.getLastPathOfPerson(val));
+            this.MakeMoveList(pos,-1,"all");
             this.MakePathList(pos);
             this.setListEnable();
-            this.InsertionOptionComboBox.setSelectedItem(color);
-            this.updateLabel(color);
+            setState(split[1]);
+            this.updateLabel(state);
+            this.actualPath = model.getLastPathOfPerson(state);
+            if(!this.actualPath.equals("empty")){
+                String[][] move = model.getMoveCellMap(actualPath,-1);
+                model.ApplyUpdateOnMoveMap(move);
+            }
+            
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
         }
         else{
             this.MakePersonList();
@@ -907,10 +930,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     
     private void StepListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_StepListValueChanged
-
+        
+        String value = (String) this.StepList.getModel().getElementAt(evt.getFirstIndex());
+        String intSubStr = value.substring(5); // "Step " length 
+        int step = Integer.parseInt(intSubStr);
         this.MakeStepList(-1);
         this.MakePathList(-1);
-        this.MakeMoveList(-1,evt.getFirstIndex(),"all");
+        this.MakeMoveList(-1,step,"all");
+        String [][] move = model.getMoveCellMap("none",step);
+        model.ApplyUpdateOnMoveMap(move);
+        model.CopyToActive(model.getMove());
+        PreviewMap.repaint();
         this.setListEnable();
     }//GEN-LAST:event_StepListValueChanged
 
@@ -926,10 +956,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
   private void PersonPathListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_PersonPathListValueChanged
       ListModel<String> listmodel = this.PersonPathList.getModel();
       String pathname = listmodel.getElementAt(evt.getFirstIndex());
-      
       this.MakeMoveList(-1,-1,pathname);
+      String [][] move = model.getMoveCellMap(pathname,-1);
+      model.ApplyUpdateOnMoveMap(move);
+      model.CopyToActive(model.getMove());
+      PreviewMap.repaint();
       this.setListEnable();
   }//GEN-LAST:event_PersonPathListValueChanged
+
+  private void PersonsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PersonsListMouseClicked
+    // TODO add your handling code here:
+  }//GEN-LAST:event_PersonsListMouseClicked
  
     
     
@@ -1048,10 +1085,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
         else{
         
             return true;
-            
         }
-                      
     }
+    
     
     private void MakePersonList(){
     
@@ -1060,9 +1096,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(this.PersonsList,list);
+        ListRenderer render = new ListRenderer(this.PersonsList,list);
         
     }
+    
+    
     
     private void MakeStepList(int paramStep){
     
@@ -1074,6 +1112,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
             ListRenderer render = new ListRenderer(this.StepList,list);
         
     }
+    
+    
     
     private void MakeMoveList(int paramPerson,int paramStep, String paramPath){
     
@@ -1097,9 +1137,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     }
     
-    
-    
-    
+   
     /*
       Aggiorna la combo e l'icona corrisponendentemente scelta
     */
@@ -1155,7 +1193,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case Success :
                     console.info("Modifica della mappa eseguita con successo");
                     this.actualPath = model.getLastPathOfPerson(state);
-                    String[][] move = model.getMoveCellMap(this.actualPath,-1);
+                    String [][]move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
@@ -1195,60 +1233,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
     
     }
     
-    /*
-     Ridisegna la mappa di generazione in base alla nuova dimensione della griglia e imposta la nuova
-     max duration
-    */
-    
-    private void ExecUpdateMap(){
-        
-        final int Success = 0;
-        final int IllegalPosition = 1 ;
-        final int keyColorEmpty = 2; 
-        final int keyColorFull = 3;
-        final int IllegalRobotPosition = 4;
-        final int IllegalAgentPosition = 5;
-        final int PersonOverride = 6;
-    
-        int result = model.UpdateCell(this.actualPosClicked[0],this.actualPosClicked[1], state);
-            switch(result){
-                case Success :
-                     console.info("Modifica della mappa eseguita con successo");
-                     model.CopyToActive(model.getScene());
-                     PreviewMap.repaint();
-                     this.MakePersonList();
-                     this.MakeStepList(-1);
-                     this.MakeMoveList(-1,-1,"all");
-                     this.MakePathList(-1);
-                     this.setListEnable();
-                break;
-                    
-                case IllegalPosition :
-                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
-                break;
-                case keyColorEmpty :
-                    console.error("Color set vuoto");
-                break;
-                case keyColorFull :
-                    console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
-                break;
-                case IllegalRobotPosition :
-                    console.error("Posizione del robot non valida");
-                break;
-                case IllegalAgentPosition:
-                    console.error("Posizione dell'agente non valida");
-                break;
-                
-                case PersonOverride :
-                     console.error("La cella è già occupata da un altro agente");
-                break;
-                default :
-                    
-                break;    
-                  
-            }
-    
-    }
     
     private void ExecAddPath(){
     
@@ -1268,7 +1252,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case Success :
                     console.info("Path aggiunto correttamente");
                     this.actualPath = model.getLastPathOfPerson(state);
-                    String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
+                    String[][] move = model.getMoveCellMap(actualPath,-1);
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
@@ -1287,19 +1271,14 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 case PersonOverride :
                     console.error("Person ovveride");
                     
-                break;    
-                    
-                    
-                  
+                break;           
             
             }
         }
         catch(NumberFormatException er){
-        
-            console.error("Valore di Waitstep non valido: Input deve essere necessariamente un intero positivo");
+           console.error("Valore di Waitstep non valido: Input deve essere necessariamente un intero positivo");
         }
-        
-    
+       
     }
     
     
@@ -1398,6 +1377,64 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
         
     }
+    
+    
+    /*
+     Ridisegna la mappa di generazione in base alla nuova dimensione della griglia e imposta la nuova
+     max duration
+    */
+    
+    private void ExecUpdateMap(){
+        
+        final int Success = 0;
+        final int IllegalPosition = 1 ;
+        final int keyColorEmpty = 2; 
+        final int keyColorFull = 3;
+        final int IllegalRobotPosition = 4;
+        final int IllegalAgentPosition = 5;
+        final int PersonOverride = 6;
+    
+        int result = model.UpdateCell(this.actualPosClicked[0],this.actualPosClicked[1], state);
+            switch(result){
+                case Success :
+                     console.info("Modifica della mappa eseguita con successo");
+                     model.CopyToActive(model.getScene());
+                     PreviewMap.repaint();
+                     this.MakePersonList();
+                     this.MakeStepList(-1);
+                     this.MakeMoveList(-1,-1,"all");
+                     this.MakePathList(-1);
+                     this.setListEnable();
+                break;
+                    
+                case IllegalPosition :
+                    console.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
+                break;
+                case keyColorEmpty :
+                    console.error("Color set vuoto");
+                break;
+                case keyColorFull :
+                    console.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
+                break;
+                case IllegalRobotPosition :
+                    console.error("Posizione del robot non valida");
+                break;
+                case IllegalAgentPosition:
+                    console.error("Posizione dell'agente non valida");
+                break;
+                
+                case PersonOverride :
+                     console.error("La cella è già occupata da un altro agente");
+                break;
+                default :
+                    
+                break;    
+                  
+            }
+    
+    }
+    
+    
     
     /*
      * Ridisegna la mappa in base alla nuova dimensione della griglia richiesta e 

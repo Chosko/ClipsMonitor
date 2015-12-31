@@ -84,6 +84,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         ComboBoxRenderer comborender = new ComboBoxRenderer(deffind,this.SearchModeCombobox);
         SetPaneStyle();
         this.refreshAll();
+        this.cleanWatch();
     }
 
 
@@ -103,6 +104,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     private void clear(){
         this.model = null;
         this.console = null;
+        cleanWatch();
         setEditable(false);
         this.jTextPane1.setText("");
     }
@@ -954,6 +956,18 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
         GenericFCheck.setEnabled(editable);
         FocusCheck.setEnabled(editable);
         MessagesCheck.setEnabled(editable);
+    }
+    
+    private void cleanWatch(){
+        ActivationsCheck.setSelected(false);
+        RulesCheck.setSelected(false);
+        FactsCheck.setSelected(false);
+        DeffunctionsCheck.setSelected(false);
+        GenericFCheck.setSelected(false);
+        FocusCheck.setSelected(false);
+        MessagesCheck.setSelected(false);
+    
+    
     }
 
     @Override
