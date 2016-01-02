@@ -291,7 +291,12 @@ public abstract class MonitorGenMap {
     }
 
     /**
+<<<<<<< Updated upstream
      *
+=======
+     * Imposta il campo di Max duration
+     * 
+>>>>>>> Stashed changes
      * @param max_dur
      */
     public void setMaxDuration(int max_dur) {

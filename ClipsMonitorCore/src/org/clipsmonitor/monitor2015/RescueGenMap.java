@@ -312,7 +312,6 @@ public class RescueGenMap extends MonitorGenMap {
             for (int j = 0; j < this.NumCellY; j++) {
 
                 if (mapActive[i][j].contains("agent")) {
-
                     int underscoreSeparate = mapActive[i][j].indexOf("_");
                     String background = mapActive[i][j].substring(0, underscoreSeparate);
                     BufferedImage backImg = img.getImage(background);
@@ -320,14 +319,16 @@ public class RescueGenMap extends MonitorGenMap {
                     BufferedImage overlapImage = img.overlapImages(img.getImage(key_agent_map), backImg);
                     icons[i][j] = overlapImage;
 
-                } else if (mapActive[i][j].contains("last")) {
+                } 
+                else if (mapActive[i][j].contains("last")) {
                     String[] underscoreSplit = mapActive[i][j].split("_");
                     String color = underscoreSplit[1];
                     String background = underscoreSplit[0];
                     BufferedImage tmp = img.overlapImages(img.getImage(color), img.getImage(background));
                     BufferedImage overlapImage = img.overlapImages(img.getImage(personName), tmp);
                     icons[i][j] = overlapImage;
-                } else {
+                }
+                else {
                     if (mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")) {
 
                         int lastUnderScore = mapActive[i][j].lastIndexOf("_");
@@ -347,10 +348,8 @@ public class RescueGenMap extends MonitorGenMap {
                         BufferedImage overlapImage = img.overlapImages(img.getImage(color), img.getImage("outdoor"));
                         icons[i][j] = overlapImage;
                     } else {
-
                         icons[i][j] = img.getImage(mapActive[i][j]);
                     }
-
                 }
             }
 

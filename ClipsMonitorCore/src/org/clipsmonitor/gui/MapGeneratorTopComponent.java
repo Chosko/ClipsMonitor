@@ -1190,9 +1190,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 break;    
                   
             }
-        
-    
-    
     }
     
     /*
