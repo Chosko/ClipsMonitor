@@ -19,14 +19,14 @@ import org.clipsmonitor.clips.ClipsConsole;
 
 /**
  *
- * @author Marco Corona, Ruben Caliandro 
- * 
- * Questa classe viene utilizzata come supporto per la visualizzazione sia dell'ambiente 
+ * @author Marco Corona, Ruben Caliandro
+ *
+ * Questa classe viene utilizzata come supporto per la visualizzazione sia dell'ambiente
  * sia come supporto alla creazione delle mappe mediante il generatore.
- * 
+ *
  */
 public class MonitorImages {
-    
+
     private static MonitorImages instance;
 
     private Map<String, BufferedImage> map_img;
@@ -35,7 +35,7 @@ public class MonitorImages {
     private String [] setKeyColor;
 
     private ClipsConsole console;
- 
+
     public static final int DEFAULT_IMG_SIZE = 170;
 
     /**
@@ -50,7 +50,7 @@ public class MonitorImages {
         }
         return instance;
     }
-  
+
     /**
      * Initialize the instance. Used in a separate function to avoid infinite
      * recursion when initializing singleton classes
@@ -62,17 +62,17 @@ public class MonitorImages {
         setKeyColor = null;
         setKeyMap = null;
     }
-    
+
     public Map<String, BufferedImage> getMapImg(){
         return map_img;
     }
-    
-    /** 
-     * Returns an image given its name 
+
+    /**
+     * Returns an image given its name
      */
     public BufferedImage getImage(String name){
         BufferedImage img = map_img.get(name);
-        
+
         // Image not found. If 'name' is a color name, create an image with that color and retreive it
         if(img == null){
             Color color = findColorByName(name);
@@ -80,16 +80,16 @@ public class MonitorImages {
                 img = createColorImage(name, color);
             }
         }
-        
+
         // Color image not found, put an error image
         if(img == null){
             img = map_img.get("error_image");
             ClipsConsole.getInstance().warn("Image \""+ name +"\" not found, applying a red image instead");
         }
-        
+
         return img;
     }
-    
+
     /**
      * Create a new Buffered image with the given color
      */
@@ -109,22 +109,19 @@ public class MonitorImages {
 
     public void ClearImg(){
         this.map_img=null;
-// <<<<<<< HEAD
-// =======
         this.colors=null;
         this.setKeyColor= null;
         this.setKeyMap = null;
-// >>>>>>> thexeon
     }
-    
+
     /*
-        Carica le immagini per le mappe e il generatore di mappe 
+        Carica le immagini per le mappe e il generatore di mappe
     */
-    
+
     public void loadImages(String path) {
         try {
             createColorImage("error_image", new Color(1, 0, 0, 0.4f));
-            
+
             File img_dir = new File(path + File.separator + "img");
 
             File [] imgs = img_dir.listFiles();
@@ -137,9 +134,9 @@ public class MonitorImages {
                     String img_name = file_name.substring(0,dot_position);
                     map_img.put(img_name, ImageIO.read(new File(path + File.separator + "img" + File.separator + file_name)));
                 }
-                
+
              }
-            
+
             Set<String> keys = map_img.keySet();
             setKeyMap= keys.toArray(new String[keys.size()]);
             String setMap = "(";
@@ -153,18 +150,18 @@ public class MonitorImages {
             }
             setMap +=")";
             console.debug("Chiavi icona registrate :" + setMap);
-            
+
         } catch (IOException e) {
             console.error("Load Icons error:");
             console.error(e);
         }
     }
-    
+
     /*
         Load dei colori utilizzati dal generatore di mappe per tracciare il percorso fatto dalle persone
         eseguendo un overlap sulle celle
     */
-    
+
     public void loadGenColors(String path) {
         try {
             String colorPath = path + File.separator + "img" + File.separator + "colors";
@@ -209,18 +206,18 @@ public class MonitorImages {
             return null;
         }
     }
-    
+
    public String [] getSetKeyMap(){
-   
+
       return this.setKeyMap;
    }
 
    public String[] getSetKeyColor(){
-   
+
        return this.setKeyColor;
    }
 
-   
+
    /**
         * Restituisce l'immagine che è la sovrapposizione fra object e background.
         * La dimensione è quella dell'immagine più piccola
@@ -246,4 +243,3 @@ public class MonitorImages {
            return combined;
        }
 }
-
