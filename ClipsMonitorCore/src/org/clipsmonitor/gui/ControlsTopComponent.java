@@ -5,6 +5,7 @@
  */
 package org.clipsmonitor.gui;
 
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +26,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -123,7 +125,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     envLabel1 = new javax.swing.JLabel();
     envLabel2 = new javax.swing.JLabel();
     envLabel3 = new javax.swing.JLabel();
-    jButton1 = new javax.swing.JButton();
+    ResetPathButton = new javax.swing.JButton();
     PenaltiesTextField = new javax.swing.JTextField();
     jLabel1 = new javax.swing.JLabel();
     BreakButton = new javax.swing.JButton();
@@ -252,10 +254,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
     org.openide.awt.Mnemonics.setLocalizedText(envLabel3, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.envLabel3.text")); // NOI18N
 
-    org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jButton1.text")); // NOI18N
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
+    org.openide.awt.Mnemonics.setLocalizedText(ResetPathButton, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.ResetPathButton.text")); // NOI18N
+    ResetPathButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
+        ResetPathButtonActionPerformed(evt);
       }
     });
 
@@ -329,7 +331,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
           .addGroup(controlPanelLayout.createSequentialGroup()
             .addComponent(BreakButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addComponent(ResetPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
     );
     controlPanelLayout.setVerticalGroup(
       controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -366,7 +368,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
           .addComponent(jLabel1)
           .addComponent(PenaltiesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(BreakButton)
-          .addComponent(jButton1)
+          .addComponent(ResetPathButton)
           .addComponent(envsSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addGap(6, 6, 6))
     );
@@ -484,9 +486,19 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         // TODO add your handling code here:
     }//GEN-LAST:event_envsSelectorActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        resetProjectDirectory();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void ResetPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetPathButtonActionPerformed
+       String message = "Il reset del path cancella le preferenze utente del progetto CLIPS e al prossimo riavvio"
+                + "bisogna ri-selezionare il percorso del progetto. Continuare ?";
+       JLabel DimensionLabel = new javax.swing.JLabel();
+       if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Reset Path",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
+       {
+          resetProjectDirectory();
+       } 
+       else{
+          infoBox("Reset del path annulato","reset path");
+       }
+        
+    }//GEN-LAST:event_ResetPathButtonActionPerformed
 
     private void stepTextFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_stepTextFieldPropertyChange
 
@@ -688,13 +700,13 @@ public final class ControlsTopComponent extends TopComponent implements Observer
   private javax.swing.JComboBox CLPSelector;
   private javax.swing.JTextField PenaltiesTextField;
   private javax.swing.JButton RefreshButton;
+  private javax.swing.JButton ResetPathButton;
   private javax.swing.JPanel controlPanel;
   private javax.swing.JLabel envLabel;
   private javax.swing.JLabel envLabel1;
   private javax.swing.JLabel envLabel2;
   private javax.swing.JLabel envLabel3;
   private javax.swing.JComboBox envsSelector;
-  private javax.swing.JButton jButton1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JButton loadDefaultFileButton;
   private javax.swing.JButton resetButton;
