@@ -627,7 +627,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
                    {
                      updateMap(num_row,num_col,max_dur);
                      model.RemoveStepAfterResize();
-                     
                    } 
                 }
                 else{
@@ -1447,7 +1446,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
         model.resize(x,y);
         model.initModelMap(x, y, PreviewMap.getWidth(),PreviewMap.getHeight());
         model.setMaxDuration(max);
-        PreviewMap.repaint();
     }
     
     String getState() {

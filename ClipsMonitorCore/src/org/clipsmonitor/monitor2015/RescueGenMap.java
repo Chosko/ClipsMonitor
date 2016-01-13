@@ -54,7 +54,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.CellWidth = 0;
         this.direction = "north";
         this.loaded = "unloaded";
-        this.maxduration = 100;
+        this.maxduration = 300;
         this.mode = "scene";
         this.personName = "person";
         this.defaulagentcondition = "gate_agent_north_unloaded";

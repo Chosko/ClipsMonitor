@@ -59,35 +59,35 @@ public final class RescueFacts{
             return FACT_NAME;
         }
         
-        /**
-     * Genera e restituisce una stringa che descrive le celle al primo step, in
-     * modo da costituire la mappa, che viene può scrtta su un file txt
-     *
-     * @param x riga della cella
-     * @param y colonna della cella
-     * @param content valore del contenuto della cella
-     * @param injured eventaule presenza o meno di un ferito
-     * @return una stringa rappresenta il fatto che descrive quella cella
-     */
-    public static String getRealCell(int posC, int posR, String content, boolean injured) {
+         /**
+         * Genera e restituisce una stringa che descrive le celle al primo step, in
+         * modo da costituire la mappa, che viene può scrtta su un file txt
+         *
+         * @param x riga della cella
+         * @param y colonna della cella
+         * @param content valore del contenuto della cella
+         * @param injured eventaule presenza o meno di un ferito
+         * @return una stringa rappresenta il fatto che descrive quella cella
+         */
+        public static String getRealCell(int posC, int posR, String content, boolean injured) {
 
-        String RealCell = "";
-        String inj = injured ? "yes" : "no";
-        String contains = "";
-        if (content.contains("agent")) {
-            contains = content.substring(0, content.indexOf("_"));
-        } else {
-            contains = content;
+            String RealCell = "";
+            String inj = injured ? "yes" : "no";
+            String contains = content;
+            if (content.contains("agent")) {
+               contains = content.substring(0, content.indexOf("_"));
+            } 
+
+            if (content.contains("debris")) contains = "debris";
+
+            RealCell = "(" + RescueFacts.RealCell.factName()
+                    + "(" + RescueFacts.RealCell.POSR.slot() + " " + posR + ") "
+                    + "(" + RescueFacts.RealCell.POSC.slot() + " " + posC + ") "
+                    + "(" + RescueFacts.RealCell.CONTAINS.slot() + " " +contains + ") "
+                    + "(" + RescueFacts.RealCell.INJURED.slot() + " " +inj + ")) \n";
+
+            return RealCell;
         }
-
-        RealCell = "(" + RescueFacts.RealCell.factName()
-                + "(" + RescueFacts.RealCell.POSR.slot() + " " + posR + ") "
-                + "(" + RescueFacts.RealCell.POSC.slot() + " " + posC + ") "
-                + "(" + RescueFacts.RealCell.CONTAINS.slot() + " " +contains + ") "
-                + "(" + RescueFacts.RealCell.INJURED.slot() + " " +inj + ")) \n";
-
-        return RealCell;
-    }
         
     }
 
