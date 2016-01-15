@@ -10,7 +10,7 @@ import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorMap;
 
 /**
- * L'implementazione della classe ClipsModel specifica per il progetto Rescue 2014/2015. 
+ * L'implementazione della classe ClipsModel specifica per il progetto Rescue 2014/2015.
  * L'oggetto fondamentale è il map, una matrice che in ogni elemento
  * contiene la stringa corrispondente al contenuto.
  *
@@ -20,13 +20,13 @@ import org.clipsmonitor.core.MonitorMap;
 
 public class RescueModel extends MonitorModel {
 
-    
+
     private String direction;
     private String mode;
     private String loaded; // presenza di un carico
+    private boolean bumped;
     private String kdirection;
     private String kmode;
-    private boolean bumped;
     private String kloaded; // presenza di un carico
     private int krow;
     private int kcolumn;
@@ -39,13 +39,20 @@ public class RescueModel extends MonitorModel {
     private Map<String, MonitorMap> maps;
     private ArrayList<int[]> personPositions;
     private ArrayList<int[]> kpersonPositions;
-    
-    /*costanti enumerative intere per un uso più immediato delle posizioni all'interno 
+    private String pdirection;
+    private String pmode;
+    private String ploaded; // presenza di un carico
+    private int prow;
+    private int pcolumn;
+    private ArrayList<int[]> openNodes;
+    private ArrayList<int[]> closedNodes;
+
+    /*costanti enumerative intere per un uso più immediato delle posizioni all'interno
      degli array che definiscono i fatti di tipo (real-cell)*/
-    
-    
-    
-    
+
+
+
+
     /**
      * Singleton
      */
@@ -55,7 +62,7 @@ public class RescueModel extends MonitorModel {
         }
         return instance;
     }
-    
+
     public static void clearInstance() {
         if(instance != null){
             instance.advise = null;
@@ -83,10 +90,17 @@ public class RescueModel extends MonitorModel {
             instance.personPositions = null;
             instance.kpersonPositions = null;
             instance.offsetPosition = null;
+            instance.pdirection = null;
+            instance.pmode = null;
+            instance.ploaded = null; // presenza di un carico
+            instance.prow = 0;
+            instance.pcolumn = 0;
+            instance.openNodes = null;
+            instance.closedNodes = null;
             instance = null;
         }
     }
-    
+
     /**
      * Costruttore del modello per il progetto Monitor
      *
@@ -113,17 +127,17 @@ public class RescueModel extends MonitorModel {
         offsetPosition.put("south",new int[]{-1,0});
         offsetPosition.put("east",new int[]{0,1});
         offsetPosition.put("west",new int[]{0,-1});
-        
+
         try {
             console.debug("Esecuzione degli step necessari ad aspettare che l'agente sia pronto.");
-            
+
             /* Eseguiamo un passo fino a quando il fatto init-agent viene dichiarato
              * con lo slot (done yes): il mondo è pronto.
              */
-           
-            
+
+
             core.run();
-            
+
 
             maxduration = new Integer(core.findOrderedFact("MAIN", "maxduration"));
             for (MonitorMap map : maps.values()) {
@@ -137,26 +151,26 @@ public class RescueModel extends MonitorModel {
             console.error(ex);
         }
     }
-    
+
     /**
      * Register a map to a MapTopComponent
      * @param target
-     * @param map 
+     * @param map
      */
-    
-    
+
+
     public void registerMap(String target, MonitorMap map){
         maps.put(target, map);
         this.setChanged();
         this.notifyObservers(target);
     }
-    
-    
-    
+
+
+
     public MonitorMap getMapToRegister(String target){
         return maps.get(target);
     }
-    
+
     /**
      * Aggiorna la mappa leggendola dal motore clips. Lanciato ogni volta che si
      * compie un'azione.
@@ -167,18 +181,21 @@ public class RescueModel extends MonitorModel {
     protected synchronized void updateModel() throws CLIPSError {
 
         console.debug("Aggiornamento del modello...");
-        
+
         // Update the agent
         updateAgent();
-        
+
         // Update the agent's perception about itself
         updateKAgent();
-        
+
+        // Update the planning nodes
+        updatePNodes();
+
         // Update the other agents
         updatePeople();
         updateKPeople();
         checkBumpCondition();
-        
+
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
             map.updateMap();
@@ -200,8 +217,8 @@ public class RescueModel extends MonitorModel {
             mode = loaded.equals("yes") ? "loaded" : "unloaded";
         }
     }
-    
-    
+
+
     private void updateKAgent() throws CLIPSError{
         String[] robot = core.findFact("AGENT", RescueFacts.KAgent.factName(), "TRUE", RescueFacts.KAgent.slotsArray());
         if (robot[0] != null) { //Se hai trovato il fatto
@@ -214,9 +231,44 @@ public class RescueModel extends MonitorModel {
             kmode = kloaded.equals("yes") ? "loaded" : "unloaded";
         }
     }
-    
-    
-    
+
+    private void updatePNodes() throws CLIPSError{
+        openNodes = new ArrayList<int[]>();
+        closedNodes = new ArrayList<int[]>();
+        instance.pdirection = null;
+        instance.pmode = null;
+        instance.ploaded = null; // presenza di un carico
+        instance.prow = -1;
+        instance.pcolumn = -1;
+
+        String[][] pnodes = core.findAllFacts("REASONING", RescueFacts.PNode.factName(), "TRUE", RescueFacts.PNode.slotsArray());
+        for(String[] pnode : pnodes){
+            if (pnode[0] != null) { //Se hai trovato il fatto
+                int ident = new Integer(pnode[RescueFacts.PNode.IDENT.index()]);
+                String nodetype = pnode[RescueFacts.PNode.NODETYPE.index()];
+
+                String[] robot = core.findFact("REASONING", RescueFacts.PAgent.factName(), "eq ?f:ident " + ident, RescueFacts.PAgent.slotsArray());
+                if (robot[0] != null) { //Se hai trovato il fatto
+                  prow = new Integer(robot[RescueFacts.PAgent.POSR.index()]);
+                  pcolumn = new Integer(robot[RescueFacts.PAgent.POSC.index()]);
+                  
+                  if(nodetype.equals("selected")){
+                    pdirection = robot[RescueFacts.PAgent.DIRECTION.index()];
+                    ploaded = robot[RescueFacts.PAgent.LOADED.index()];
+                    pmode = ploaded.equals("yes") ? "loaded" : "unloaded";
+                  }
+                  else if(nodetype.equals("open")){
+                    openNodes.add(new int[]{prow,pcolumn});
+                  }
+                  else if(nodetype.equals("closed")){
+                    closedNodes.add(new int[]{prow, pcolumn});
+                  }
+                }
+            }
+        }
+    }
+
+
     private void updatePeople() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti per EnvMap...");
         String[][] persons = core.findAllFacts("ENV", RescueFacts.PersonStatus.factName(), "TRUE", RescueFacts.PersonStatus.slotsArray());
@@ -232,8 +284,8 @@ public class RescueModel extends MonitorModel {
         }
     }
 
-    
-    
+
+
     private void updateKPeople() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti per agentMap...");
         String[][] persons = core.findAllFacts("AGENT", RescueFacts.KPerson.factName(), "= ?f:step " + this.step, RescueFacts.KPerson.slotsArray());
@@ -248,18 +300,18 @@ public class RescueModel extends MonitorModel {
             }
         }
     }
-    
+
     private void checkBumpCondition() throws CLIPSError{
-      
+
       console.debug("Controllo di evento bump...");
       boolean bumped = false;
       String[][] bump = core.findAllFacts("AGENT",RescueFacts.SpecialCondition.factName(),"TRUE", RescueFacts.SpecialCondition.slotsArray());
       this.bumped= bump.length!=0 ? true: false;
-      
+
     }
-    
-    
-    
+
+
+
     protected void updateStatus() throws CLIPSError{
         String[] status = core.findFact("MAIN", RescueFacts.Status.factName(), "TRUE", RescueFacts.Status.slotsArray());
         if (status[0] != null) {
@@ -270,13 +322,13 @@ public class RescueModel extends MonitorModel {
         }
         score = new Double(core.findOrderedFact("MAIN", "penalty"));
     }
-    
+
     public ArrayList<int[]> getPersonPositions(){
         return personPositions;
     }
 
     public ArrayList<int[]> getKPersonPostions(){
-    
+
       return kpersonPositions;
     }
 
@@ -294,7 +346,7 @@ public class RescueModel extends MonitorModel {
     public String getMode() {
        return mode;
     }
-    
+
 
 
     public void setAdvise(String advise) {
@@ -304,15 +356,15 @@ public class RescueModel extends MonitorModel {
     public String getAdvise() {
         return this.advise;
     }
-    
+
     public String getDirection() {
         return direction;
     }
-    
+
     public String getKDirection() {
         return kdirection;
     }
-    
+
     public String getKLoaded() {
         return kloaded;
     }
@@ -320,28 +372,56 @@ public class RescueModel extends MonitorModel {
     public String getKMode() {
         return kmode;
     }
-    
+
     public int getKRow(){
         return krow;
     }
-    
+
     public int getKColumn(){
         return kcolumn;
     }
     
-    public boolean getBumped(){
-    
-        return bumped;
+    public String getPDirection() {
+        return pdirection;
+    }
+
+    public String getPLoaded() {
+        return ploaded;
+    }
+
+    public String getPMode() {
+        return pmode;
+    }
+
+    public int getPRow(){
+        return prow;
+    }
+
+    public int getPColumn(){
+        return pcolumn;
     }
     
+    public ArrayList<int[]> getOpenNodes(){
+        return openNodes;
+    }
+    
+    public ArrayList<int[]> getClosedNodes(){
+        return closedNodes;
+    }
+
+    public boolean getBumped(){
+
+        return bumped;
+    }
+
     public Map<String,int[]> getOffset(){
       return this.offsetPosition;
     }
-    
+
     @Override
     public void injectExecutionRules() throws CLIPSError{
         super.injectExecutionRules();
-        
+
         String overrideExecTemplate = "" +
             "(deftemplate override-exec \n" +
             "  (slot step) \n" +
@@ -356,8 +436,8 @@ public class RescueModel extends MonitorModel {
             "  (slot param2)\n" +
             "  (slot param3)\n" +
             ")\n";
-        
-        String overrideExecRule = "" + 
+
+        String overrideExecRule = "" +
             "(defrule override-exec\n" +
             "  (declare (salience 1))\n" +
             "  (status (step ?s))\n" +
@@ -368,7 +448,7 @@ public class RescueModel extends MonitorModel {
             "  (retract ?override)\n" +
             "  (assert (exec (step ?s)(action ?a)(param1 ?p1)(param2 ?p2)(param3 ?p3)))\n" +
             ")";
-        
+
         boolean check = core.build("AGENT", overrideExecTemplate);
         boolean check2 = core.build("AGENT", overrideExecRule);
         if (check && check2) {
@@ -398,17 +478,17 @@ public class RescueModel extends MonitorModel {
         String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
         assertOverrideExec(action, krow + 1, kcolumn, null);
     }
-    
+
     public void actionLoadEast() {
         String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
         assertOverrideExec(action, krow, kcolumn + 1, null);
     }
-    
+
     public void actionLoadWest() {
         String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
         assertOverrideExec(action, krow, kcolumn - 1, null);
     }
-    
+
     public void actionLoadSouth() {
         String action = kloaded.equals("yes") ? "unload_debris" : "load_debris";
         assertOverrideExec(action, krow -1 , kcolumn, null);
@@ -417,19 +497,19 @@ public class RescueModel extends MonitorModel {
     public void actionDrillNorth() {
         assertOverrideExec("drill", krow + 1, kcolumn, null);
     }
-    
+
     public void actionDrillEast() {
         assertOverrideExec("drill", krow, kcolumn + 1, null);
     }
-    
+
     public void actionDrillWest() {
         assertOverrideExec("drill", krow, kcolumn - 1, null);
     }
-    
+
     public void actionDrillSouth() {
         assertOverrideExec("drill", krow -1 , kcolumn, null);
     }
-    
+
     private void assertOverrideExec(String action, Object param1, Object param2, Object param3){
         String cmd = "(assert (override-exec (action " + action + ")(step " + step + ")";
         if(param1 != null){

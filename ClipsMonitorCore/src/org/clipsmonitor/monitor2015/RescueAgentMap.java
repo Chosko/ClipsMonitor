@@ -65,6 +65,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         updateKCells();
         updatePersonStatus();
         updateAgentStatus();
+        updatePNodes();
         // debugMap("k-cell");
     }
 
@@ -139,7 +140,27 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         
     }
     
-    
+    private void updatePNodes() throws CLIPSError{
+        int r = model.getPRow() - 1;
+        int c = model.getPColumn() - 1;
+        
+        console.debug("Acquisizione P-node...");
+        if(r >= 0 && c >= 0){
+            ArrayList<int[]> openNodes = model.getOpenNodes();
+            ArrayList<int[]> closedNodes = model.getClosedNodes();
+            for (int[] current : openNodes) {
+                int nrow = current[0] - 1;
+                int ncolumn = current[1] - 1;
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(31, 17, 111,0.15)";
+            }
+            for (int[] current : closedNodes) {
+                int nrow = current[0] - 1;
+                int ncolumn = current[1] - 1;
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(111,61,17,0.15)";
+            }
+            map[r][c] = map[r][c] + "+agent_" + model.getPDirection() + "_" + model.getPMode();
+        }        
+    }
     
     public void updatePersonStatus() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti...");
