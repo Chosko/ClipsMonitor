@@ -249,19 +249,21 @@ public class RescueModel extends MonitorModel {
 
                 String[] robot = core.findFact("REASONING", RescueFacts.PAgent.factName(), "eq ?f:ident " + ident, RescueFacts.PAgent.slotsArray());
                 if (robot[0] != null) { //Se hai trovato il fatto
-                  prow = new Integer(robot[RescueFacts.PAgent.POSR.index()]);
-                  pcolumn = new Integer(robot[RescueFacts.PAgent.POSC.index()]);
-                  
+                  int curRow = new Integer(robot[RescueFacts.PAgent.POSR.index()]);
+                  int curColumn = new Integer(robot[RescueFacts.PAgent.POSC.index()]);
                   if(nodetype.equals("selected")){
+                    prow = curRow;
+                    pcolumn = curColumn;
                     pdirection = robot[RescueFacts.PAgent.DIRECTION.index()];
                     ploaded = robot[RescueFacts.PAgent.LOADED.index()];
                     pmode = ploaded.equals("yes") ? "loaded" : "unloaded";
+                    openNodes.add(new int[]{curRow,curColumn});
                   }
                   else if(nodetype.equals("open")){
-                    openNodes.add(new int[]{prow,pcolumn});
+                    openNodes.add(new int[]{curRow,curColumn});
                   }
                   else if(nodetype.equals("closed")){
-                    closedNodes.add(new int[]{prow, pcolumn});
+                    closedNodes.add(new int[]{curRow, curColumn});
                   }
                 }
             }
