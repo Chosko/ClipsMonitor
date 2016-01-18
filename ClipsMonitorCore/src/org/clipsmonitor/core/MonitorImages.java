@@ -157,46 +157,6 @@ public class MonitorImages {
         }
     }
 
-    /*
-        Load dei colori utilizzati dal generatore di mappe per tracciare il percorso fatto dalle persone
-        eseguendo un overlap sulle celle
-    */
-
-    public void loadGenColors(String path) {
-        try {
-            String colorPath = path + File.separator + "img" + File.separator + "colors";
-            File img_dir = new File(colorPath);
-
-            File [] imgs = img_dir.listFiles();
-
-            for(File img : imgs)
-            {
-
-                String file_name = img.getName(); // recupero il nome dell'immagine
-                int dot_position = file_name.lastIndexOf(".");  // calcolo la posizione del separatore
-                String img_name = file_name.substring(0,dot_position);
-                colors.put(img_name, ImageIO.read(new File(colorPath + File.separator + file_name)));
-            }
-
-            Set<String> colorKeys = colors.keySet();
-            this.setKeyColor = colorKeys.toArray(new String[colorKeys.size()]);
-
-            String setColor = "(";
-            for(int i=0; i<setKeyColor.length;i++){
-                if(i<setKeyColor.length-1){
-                    setColor += setKeyColor[i] + "," ;
-                }
-                else{
-                    setColor += setKeyColor[i] ;
-                }
-            }
-            setColor +=")";
-            console.debug("Chiavi colore registrate :" + setColor);
-        } catch (IOException e) {
-            console.error("Load color error:");
-            console.error(e);
-        }
-    }
 
     private Color findColorByName(String name) {
         try{

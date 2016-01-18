@@ -28,9 +28,9 @@ public class RescueAgentMap extends MonitorMap implements Observer {
 
     @Override
     protected void onDispose() {
-        
+
     }
-    
+
     @Override
     protected void initializeMap() throws CLIPSError {
         console.debug("Inizializzazione del modello (EnvMap).");
@@ -54,7 +54,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             }
         }
     }
-    
+
     /**
      * Aggiorna la mappa visualizzata nell'interfaccia per farla allineare alla
      * versione nel modello.
@@ -74,7 +74,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         String[][] cellFacts = core.findAllFacts("AGENT", RescueFacts.KCell.factName(), "TRUE", RescueFacts.KCell.slotsArray());
 
         for (String[] fact : cellFacts) {
-             
+
             // Nei fatti si conta partendo da 1, nella matrice no, quindi sottraiamo 1.
             int c = new Integer(fact[RescueFacts.KCell.POSC.index()]) - 1;
             int r = new Integer(fact[RescueFacts.KCell.POSR.index()]) - 1;
@@ -84,19 +84,19 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             String discovered = fact[RescueFacts.KCell.DISCOVERED.index()];
             String checked = fact[RescueFacts.KCell.CHECKED.index()];
             String clear = fact[RescueFacts.KCell.CLEAR.index()];
-            
+
             // Inseriamo nella mappa ciò che contiene
             map[r][c] = contains;
-            
+
             if(contains.equals("robot")){
                 map[r][c] = WHITE;
             }
-            
+
             // Se è unknown, sostituiamo con un nero
             if(contains.equals("unknown")){
                 map[r][c] = UNKNOWN_COLOR;
             }
-            
+
 
             // Se contiene debris e injured è yes
             if (contains.equals("debris") && injured.equals("yes")) {
@@ -112,7 +112,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             if (sound.equals("yes")) {
                 map[r][c] += "+sound";
             }
-            
+
             if (discovered.equals("yes")) {
                 map[r][c] += "+discovered";
             }
@@ -136,15 +136,15 @@ public class RescueAgentMap extends MonitorMap implements Observer {
           int [] offset = model.getOffset().get(model.getKDirection());
           map[r + offset[0]][c + offset[1]] = map[r + offset[0]][c + offset[1]] + "+bump";
         }
-        
+
     }
-    
-    
-    
+
+
+
     public void updatePersonStatus() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti...");
         ArrayList<int[]> personPositions = model.getKPersonPostions();
-        
+
         for (int[] person : personPositions) {
             int r = person[0] - 1;
             int c = person[1] - 1;
@@ -152,6 +152,3 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         }
     }
 }
-
-
-

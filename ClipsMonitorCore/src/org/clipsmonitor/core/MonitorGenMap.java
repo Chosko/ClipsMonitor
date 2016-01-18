@@ -294,11 +294,11 @@ public abstract class MonitorGenMap {
     }
 
     /**
-     *
+     * 
      * Imposta il campo di Max duration
-     *
      * @param max_dur
      */
+    
     public void setMaxDuration(int max_dur) {
 
         this.maxduration = max_dur;
@@ -465,23 +465,15 @@ public abstract class MonitorGenMap {
     public String[][] loadMoveonMap(String[][] map, String[][] move) {
 
         String[][] newmap = new String[map.length][map[0].length];
-
         for (int i = 0; i < newmap.length; i++) {
-
             for (int j = 0; j < newmap.length; j++) {
-
                 if (!move[i][j].equals("")) {
-
                     newmap[i][j] = map[i][j] + "_" + move[i][j];
                 } else {
-
                     newmap[i][j] = map[i][j];
                 }
-
             }
-
         }
-
         return newmap;
     }
 
@@ -1302,7 +1294,7 @@ public abstract class MonitorGenMap {
      * @param ystartStep : colonna della cella iniziale del path
      * @param waitStep : tempo di attesa dalla fine del path precedente
      */
-    public int AddNewPathToPerson(String color, int xStartStep, int yStartStep, int waitStep) {
+    public int AddNewPathToPerson(String color, int waitStep) {
 
         final int Success = 0;
         final int IllegalStartCell = 1;
@@ -1314,6 +1306,8 @@ public abstract class MonitorGenMap {
 
         }
         int start = p.paths.getLast().lastStep + waitStep + 1;
+        int xStartStep = p.paths.getLast().move.getLast().row;
+        int yStartStep = p.paths.getLast().move.getLast().column;
         String result = this.CheckBusyCellFromPerson(xStartStep, yStartStep, start);
 
         if (result.equals("empty")) {
@@ -1365,7 +1359,6 @@ public abstract class MonitorGenMap {
             // distanza di manhattam e check sulla attraversabilità della cella
             if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 &&
                     this.PersonPositionIsValid(scene[x][y])) {
-
                 p.AddMove(x, y);
                 return Success;
             } else if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 0) {
