@@ -84,27 +84,37 @@ public class RescueGenMap extends MonitorGenMap {
      */
     
     
-    @Override
-    public void initScene(String[][] scene) {
+   /**
+ * Inizializzazione della scena eseguita mettendo nel perimetro della scena
+ * l'outdoor e riempiendo il resto con le celle empty. Il metodo risulta
+ * chiaramente adattato ai vincoli del progetto e a come si dovrebbe
+ * presentare di default uno scenario
+ *
+ * @param scene matrice di stringe che dovrà essere riempita
+ */
 
-        for (int i = 0; i < scene.length; i++) {
-            for (int j = 0; j < scene[i].length; j++) {
-                if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
-                    scene[i][j] = "outdoor";
-                } else if (i == 1 || i == scene.length - 2 || j == 1 || j == scene[0].length - 2) {
-                    scene[i][j] = "wall";
-                } else {
 
-                    scene[i][j] = "empty";
-                }
+@Override
+public void initScene(String[][] scene) {
+
+    for (int i = 0; i < scene.length; i++) {
+        for (int j = 0; j < scene[i].length; j++) {
+            if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
+                scene[i][j] = "outdoor";
+            } else if (i == 1 || i == scene.length - 2 || j == 1 || j == scene[0].length - 2) {
+                scene[i][j] = "wall";
+            } else {
+
+                scene[i][j] = "empty";
             }
         }
-
-        scene[this.agentposition[0]][this.agentposition[1]] = "gate" + "_" + "agent_" + direction + "_" + loaded;
-        this.move = this.clone(scene);
     }
 
-    
+    scene[this.agentposition[0]][this.agentposition[1]] = "gate" + "+" + "agent_" + direction + "_" + loaded;
+    this.move = this.clone(scene);
+}
+
+  
 
     
 
@@ -254,103 +264,7 @@ public class RescueGenMap extends MonitorGenMap {
      */
     
     
-    @Override
-    public BufferedImage[][] makeIconMapMatrix() {
-
-        BufferedImage[][] icons = new BufferedImage[mapActive.length][mapActive[0].length];
-
-        
-
-            for (int i = 0; i < this.NumCellX; i++) {
-
-                for (int j = 0; j < this.NumCellY; j++) {
-
-                    if (!mapActive[i][j].equals("")) {
-
-                        if (mapActive[i][j].contains("agent")) {
-                            int underscoreSeparate = mapActive[i][j].indexOf("_");
-                            String background = mapActive[i][j].substring(0, underscoreSeparate);
-                            String key_agent_map = "agent_" + direction + "_" + loaded;
-                            BufferedImage overlapImage = img.overlapImages(img.getImage(key_agent_map), img.getImage(background));
-                            icons[i][j] = overlapImage;
-
-                        } else {
-                            icons[i][j] = img.getImage(mapActive[i][j]);
-                        }
-                    }
-                }
-
-            }
-        
-            return icons;
-        }
-
     
-    /**
-    * Metodo per la creazione della matrice di icone da disegnare sulla mappa
-    * del generatore quando questo è impostato in modalità scene.Il metodo si occupa 
-    * di creare le icone con l'overlap.
-    *
-    * @return la matrice di icone da disegnare sul pannello
-    */
-
-    @Override
-    public BufferedImage[][] makeIconMoveMatrix(){
-
-    // determino le regole nel caso in cui ci sia attiva la mappa di move
-        BufferedImage[][] icons = new BufferedImage[this.NumCellX][this.NumCellY];
-
-        for (int i = 0; i < this.NumCellX; i++) {
-
-            for (int j = 0; j < this.NumCellY; j++) {
-
-                if (mapActive[i][j].contains("agent")) {
-                    int underscoreSeparate = mapActive[i][j].indexOf("_");
-                    String background = mapActive[i][j].substring(0, underscoreSeparate);
-                    BufferedImage backImg = img.getImage(background);
-                    String key_agent_map = "agent_" + direction + "_" + loaded;
-                    BufferedImage overlapImage = img.overlapImages(img.getImage(key_agent_map), backImg);
-                    icons[i][j] = overlapImage;
-
-                } 
-                else if (mapActive[i][j].contains("last")) {
-                    String[] underscoreSplit = mapActive[i][j].split("_");
-                    String color = underscoreSplit[1];
-                    String background = underscoreSplit[0];
-                    BufferedImage tmp = img.overlapImages(img.getImage(color), img.getImage(background));
-                    BufferedImage overlapImage = img.overlapImages(img.getImage(personName), tmp);
-                    icons[i][j] = overlapImage;
-                }
-                else {
-                    if (mapActive[i][j].contains("empty") && !mapActive[i][j].equals("empty")) {
-
-                        int lastUnderScore = mapActive[i][j].lastIndexOf("_");
-                        String color = mapActive[i][j].substring(lastUnderScore + 1);
-                        BufferedImage overlapImage = img.overlapImages(img.getImage(color), img.getImage("empty"));
-                        icons[i][j] = overlapImage;
-                    } else if (mapActive[i][j].contains("gate") && !mapActive[i][j].equals("gate")) {
-
-                        int lastUnderScore = mapActive[i][j].lastIndexOf("_");
-                        String color = mapActive[i][j].substring(lastUnderScore + 1);
-                        BufferedImage overlapImage = img.overlapImages(img.getImage(color), img.getImage("gate"));
-                        icons[i][j] = overlapImage;
-                    } else if (mapActive[i][j].contains("outdoor") && !mapActive[i][j].equals("outdoor")) {
-
-                        int lastUnderScore = mapActive[i][j].lastIndexOf("_");
-                        String color = mapActive[i][j].substring(lastUnderScore + 1);
-                        BufferedImage overlapImage = img.overlapImages(img.getImage(color), img.getImage("outdoor"));
-                        icons[i][j] = overlapImage;
-                    } else {
-                        icons[i][j] = img.getImage(mapActive[i][j]);
-                    }
-                }
-            }
-
-        }
-
-        return icons;
-    }
-
     public boolean getEmptyPerson() {
     
       return this.Persons.isEmpty();

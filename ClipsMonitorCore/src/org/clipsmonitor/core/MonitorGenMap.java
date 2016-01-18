@@ -157,16 +157,12 @@ public abstract class MonitorGenMap {
      * @param g : per effettuare il draw del pannello
      * @param MapWidth : larghezza in pixel del pannello della mappa
      * @param MapHeight : altezza in pixel del pannello della mappa
-     * @param type : tipologia di mappa di cui si deve eseguire il disegno
      */
-    public void drawScene(Graphics2D g, float MapWidth, float MapHeight, String type) {
+    public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
 
-        BufferedImage[][] icons;
-        if (type.equals("scene")) {
-            icons = this.makeIconMapMatrix();
-        } else {
-            icons = this.makeIconMoveMatrix();
-        }
+        BufferedImage[][] icons = this.makeIconMatrix();
+       
+         
 
         //aggiorno le dimensioni della finestra
         this.MapWidth = MapWidth;
@@ -259,7 +255,11 @@ public abstract class MonitorGenMap {
 
     }
 
-    //  SET E GET
+     /****************
+      *  SET E GET
+      ****************/
+
+
     /**
      *
      * @param NumCellX
@@ -278,58 +278,71 @@ public abstract class MonitorGenMap {
      * @param y
      * @param value
      */
+
     public void setCell(int x, int y, String value) {
         scene[x][y] = value;
     }
 
-    /**
-     * Imposta le dimensioni della mappa in pixel occupati nella GUI
-     *
-     * @param MapWidth
-     * @param MapHeight
-     */
+
     public void setSizeScreen(float MapWidth, float MapHeight) {
         this.MapHeight = MapHeight;
         this.MapWidth = MapWidth;
     }
 
-    /**
-     * 
-     * Imposta il campo di Max duration
-     * @param max_dur
-     */
-    
+
     public void setMaxDuration(int max_dur) {
-
-        this.maxduration = max_dur;
+      this.maxduration = max_dur;
     }
 
-    /**
-     *
-     * @param mode
-     */
     public void setMode(String mode) {
-
-        this.mode = mode;
+      this.mode = mode;
     }
 
-    /**
-     *
-     * @param keys
-     */
+
     public void setKeyMap(String[] keys) {
-
-        this.setKeyMap = keys;
+      this.setKeyMap = keys;
     }
 
-    /**
-     *
-     * @param keys
-     */
+
     public void setKeyColor(String[] keys) {
-
-        this.setKeyColor = keys;
+      this.setKeyColor = keys;
     }
+
+    public String[][] getScene() {
+      return this.scene;
+    }
+
+
+    public String[][] getMove() {
+      return this.move;
+    }
+
+
+    public int getNumx() {
+        return this.NumCellX;
+    }
+
+    public int getNumy() {
+        return this.NumCellY;
+    }
+
+
+    public String[] getSetKey() {
+
+        return this.setKeyMap;
+    }
+
+
+    public String[] getSetKeyColor() {
+      return this.setKeyColor;
+    }
+
+    public String getMode() {
+          return this.mode;
+    }
+
+
+
 
     /**
      * Copia una delle mappe in input sulla mappa attiva di modo che venga
@@ -353,7 +366,7 @@ public abstract class MonitorGenMap {
         this.move = this.clone(scene);
     }
 
-        /*
+     /*
      * Restituisce un mappa temporanea di move per la visualizzazione delle modifiche
      * sulla mappa. La move map restituita e soltanto temporanea
      * @param x : riga della cella da inserire la move
@@ -382,79 +395,81 @@ public abstract class MonitorGenMap {
 
     }
 
-    /*
-     * Questo metodo genera la mappa delle celle coinvolte in un certo movimento in base
-     * ai parametri della persona o dello step a cui si è interessati.
-     * @param paramPerson : indice della persona nella linkedList
-     * @param paramStep : numero di step a cui siamo interessati
-     * @return newmap : stringa delle celle occupate da un movimento
-     */
+    
+/**
+* Questo metodo genera la mappa delle celle coinvolte in un certo movimento in base
+* ai parametri della persona o dello step a cui si è interessati.
+* @param paramPerson : indice della persona nella linkedList
+* @param paramStep : numero di step a cui siamo interessati
+* @return newmap : stringa delle celle occupate da un movimento
+*/
+
     public String[][] getMoveCellMap(String paramPath, int paramStep) {
 
-        String[][] newmap = new String[this.NumCellX][this.NumCellY];
+   String[][] newmap = new String[this.NumCellX][this.NumCellY];
 
-        for (int i = 0; i < newmap.length; i++) {
+   for (int i = 0; i < newmap.length; i++) {
 
-            for (int j = 0; j < newmap[0].length; j++) {
-                newmap[i][j] = "";
-            }
-        }
+       for (int j = 0; j < newmap[0].length; j++) {
+           newmap[i][j] = "";
+       }
+   }
+   if (paramPath.equals("empty")) {
+       return newmap;
+   }
 
-        if (paramPath.equals("empty")) {
-            return newmap;
-        }
+   // caso di richiesta di uno specifico step
+   if (paramPath.equals("none")) {
+       ListIterator<Person> it = this.Persons.listIterator();
+       while (it.hasNext()) {
+           Person p = it.next();
+           ListIterator<Path> itPath = p.paths.listIterator();
+           Path succ = null;
+           while (itPath.hasNext()) {
+               succ = itPath.next();
+               if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
+                   break;
+               }
+           }
+           int offset = paramStep - succ.startStep;
+           if (succ.move.size() > offset) {
+               StepMove s = succ.move.get(offset);
+               int r = s.getRow();
+               int c = s.getColumn();
+               newmap[r][c] = p.associatedColor + "+" + personName;
+           }
+       }
 
-        // caso di richiesta di uno specifico step
-        if (paramPath.equals("none")) {
-            ListIterator<Person> it = this.Persons.listIterator();
-            while (it.hasNext()) {
-                Person p = it.next();
-                ListIterator<Path> itPath = p.paths.listIterator();
-                Path succ = null;
-                while (itPath.hasNext()) {
-                    succ = itPath.next();
-                    if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
-                        break;
-                    }
-                }
-                int offset = paramStep - succ.startStep;
-                if (succ.move.size() > offset) {
-                    StepMove s = succ.move.get(offset);
-                    int r = s.getRow();
-                    int c = s.getColumn();
-                    newmap[r][c] = p.associatedColor;
-                    newmap[r][c] += "_last";
-                }
-            }
+   }
+   // caso di richiesta di una specifico path agente
+   else {
+       int r = 0;
+       int c = 0;
 
-        }
-        // caso di richiesta di una specifico path agente
-        else {
-            int r = 0;
-            int c = 0;
+       Path result = this.getPathByName(paramPath);
+       String[] splitResult = result.name.split("_");
+       ListIterator<StepMove> it = result.move.listIterator();
 
-            Path result = this.getPathByName(paramPath);
-            String[] splitResult = result.name.split("_");
-            ListIterator<StepMove> it = result.move.listIterator();
+       while (it.hasNext()) {
+           StepMove s = it.next();
+           r = s.getRow();
+           c = s.getColumn();
 
-            while (it.hasNext()) {
-                StepMove s = it.next();
-                r = s.getRow();
-                c = s.getColumn();
+           newmap[r][c] = splitResult[0];
 
-                newmap[r][c] = splitResult[0];
+       }
 
-            }
+       newmap[r][c] += "+" + personName;
+   }
 
-            newmap[r][c] += "_last";
-        }
+   return newmap;
+}
 
-        return newmap;
-    }
+    
 
     /*
-     *  Metodo per il caricamento delle move da visualizzare sulla mappa.Il metodo
-     *  prende in input due mappe di stringhe, la prima rappresenta i valori della
+     * Metodo per il caricamento delle move da visualizzare sulla mappa.Il metodo
+     * prende in input due mappe di stringhe, la prima rappresenta i valori della
      * scena, il background. Il secondo una mappa dove vengono messe le etichette dei
      * colori raffiguranti le celle occupate dai movimenti di un certo agente
      * @param map : la mappa delle stringhe di background
@@ -468,7 +483,7 @@ public abstract class MonitorGenMap {
         for (int i = 0; i < newmap.length; i++) {
             for (int j = 0; j < newmap.length; j++) {
                 if (!move[i][j].equals("")) {
-                    newmap[i][j] = map[i][j] + "_" + move[i][j];
+                    newmap[i][j] = map[i][j] + "+" + move[i][j];
                 } else {
                     newmap[i][j] = map[i][j];
                 }
@@ -489,67 +504,45 @@ public abstract class MonitorGenMap {
         this.move = this.loadMoveonMap(scene, cellMove);
     }
 
-    /**
-     *
-     * @return
-     */
-    public String[][] getScene() {
 
-        return this.scene;
-    }
+    
 
     /**
-     *
-     * @return
+     * Metodo per la creazione della matrice di icone da disegnare sulla mappa
+     * del generatore .Il metodo si occupa di creare le icone con l'overlap.
+     * @return la matrice di icone da disegnare sul pannello
      */
-    public String[][] getMove() {
 
-        return this.move;
+    public BufferedImage[][] makeIconMatrix() {
+
+        BufferedImage[][] iconMatrix = new BufferedImage[mapActive.length][mapActive[0].length];
+
+            for (int i = 0; i < this.NumCellX; i++) {
+
+                for (int j = 0; j < this.NumCellY; j++) {
+
+                  BufferedImage tmpImage;
+
+                  // Split the map string in arguments
+                  String[] curCel = mapActive[i][j].split("\\+");
+
+                  // Background image is the first argument
+                  iconMatrix[i][j] = img.getImage(curCel[0]);
+
+                  // All the others arguments are overlaps
+                  for (int k = 1; k < curCel.length; k++) {
+                      String curOverlap = curCel[k];
+
+                      tmpImage = img.getImage(curOverlap);
+                      iconMatrix[i][j] = img.overlapImages(tmpImage, iconMatrix[i][j]);
+                }
+
+            }
+    
+        }
+        
+        return iconMatrix;
     }
-
-    /**
-     *
-     * @return
-     */
-    public int getNumx() {
-        return this.NumCellX;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public int getNumy() {
-        return this.NumCellY;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String[] getSetKey() {
-
-        return this.setKeyMap;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String[] getSetKeyColor() {
-
-        return this.setKeyColor;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getMode() {
-
-        return this.mode;
-    }
-
     /*
      * Restituisce la distanza di Manhattam tra due celle
      */
@@ -558,7 +551,9 @@ public abstract class MonitorGenMap {
         return Math.abs(ytarget - ystart) + Math.abs(xtarget - xstart);
     }
 
-    // Metodi per l'utilizzo del generatore della history dei movimenti
+
+
+// Metodi per l'utilizzo del generatore della history dei movimenti
     /**
      * Classe utilizzata per memorizzare i movimenti che possono essere eseguiti
      * da agenti che si trovano a condividere l'ambiente con l'agente robotico.
@@ -1171,79 +1166,89 @@ public abstract class MonitorGenMap {
      *******************************************************************/
 
 
-    /**
-     * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna
-     * interi corrispondenti ad un particolare conclusione dell'esecuzione.
-     * L'aggiornamento viene sostanzialmente separato in tre casi (richiesta di
-     * una posizione dell'agente robotico , richiesta di una nuova posizione
-     * iniziale di un agente umano, modifiche allo scenario). Il robot può
-     * essere modificato nella sua posizione solo se vengono rispettate le
-     * condizoioni del progetto
-     *
-     * @param x ,y : possibile in riga e colonna della cella da modificare
-     * @param state : nuovo stato da inserire
-     * @return Success ==0 : aggiornamento consistente IllegalPosition ==1 :
-     * posizione del cursore non valida KeyColorEmpty ==2 : le chiavi dei colori
-     * non sono state correttamente generate KeyColorFull ==3 : le chiavi per
-     * nuove person sono terminate IllegalRobotPosition ==4 : posizione del
-     * robot non valida IllegalAgentPosition ==5 : posizione dell'agente umano
-     * non valida PersonOverride ==6 : sovrascrittura di un agente umano
-     */
-    public int UpdateCell(int x, int y, String state) {
+    
 
-        final int Success = 0;
-        final int IllegalPosition = 1;
-        final int IllegalRobotPosition = 2;
+/********************************************************************
+ *          UPDATE AND MODIFIDY MAPS
+ *
+ *******************************************************************/
 
-        if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
-            // se è stato richiesto un aggiornamento della posizione di agent
-            // controllo se attualmente non si trova nella stessa cella in cui vado a fare la modifica
-            if (state.contains("agent")) {
+/**
+ * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna
+ * interi corrispondenti ad un particolare conclusione dell'esecuzione.
+ * L'aggiornamento viene sostanzialmente separato in tre casi (richiesta di
+ * una posizione dell'agente robotico , richiesta di una nuova posizione
+ * iniziale di un agente umano, modifiche allo scenario). Il robot può
+ * essere modificato nella sua posizione solo se vengono rispettate le
+ * condizoioni del progetto
+ *
+ * @param x ,y : possibile in riga e colonna della cella da modificare
+ * @param state : nuovo stato da inserire
+ * @return Success ==0 : aggiornamento consistente IllegalPosition ==1 :
+ * posizione del cursore non valida KeyColorEmpty ==2 : le chiavi dei colori
+ * non sono state correttamente generate KeyColorFull ==3 : le chiavi per
+ * nuove person sono terminate IllegalRobotPosition ==4 : posizione del
+ * robot non valida IllegalAgentPosition ==5 : posizione dell'agente umano
+ * non valida PersonOverride ==6 : sovrascrittura di un agente umano
+ */
 
-                // se la nuova posizione agente è diversa dalla precedente
-                if (x != this.agentposition[0] || y != this.agentposition[1]) {
+public int UpdateCell(int x, int y, String state) {
 
-                    if (this.RobotPositionIsValid(scene[x][y])) {
+    final int Success = 0;
+    final int IllegalPosition = 1;
+    final int IllegalRobotPosition = 2;
 
-                        // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
-                        // e successivamente inserisco il nuovo agente
-                        int separate = scene[this.agentposition[0]][this.agentposition[1]].indexOf("_");
-                        String background = scene[this.agentposition[0]][this.agentposition[1]].substring(0, separate);
-                        scene[x][y] += "_" + state;
-                        scene[this.agentposition[0]][this.agentposition[1]] = background;
-                        this.SetRobotParams(state, x, y);
+    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
-                    } else {
+        // se è stato richiesto un aggiornamento della posizione di agent
+        // controllo se attualmente non si trova nella stessa cella in cui vado a fare la modifica
+        if (state.contains("agent")) {
 
-                        return IllegalRobotPosition;
-                    }
+            // se la nuova posizione agente è diversa dalla precedente
+            if (x != this.agentposition[0] || y != this.agentposition[1]) {
 
-                } else { // stessa posizione attuale dell'agent position
+                if (this.RobotPositionIsValid(scene[x][y])) {
 
-                    int separate = scene[x][y].indexOf("_");
-                    String background = scene[x][y].substring(0, separate);
-                    scene[x][y] = background + "_" + state;
+                    // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
+                    // e successivamente inserisco il nuovo agente
+                    String [] split = scene[this.agentposition[0]][this.agentposition[1]].split("\\+");
+                    String background = split[0]; 
+                    scene[x][y] += "+" + state;
+                    scene[this.agentposition[0]][this.agentposition[1]] = background;
+                    this.SetRobotParams(state, x, y);
                 }
-            } // si richiedono modifiche alla scena diverse da tipologie di state agent
-            else {
-                        // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
-                // allora semplicemente reimposto la posizione di default dell'agente
-                if (x == this.agentposition[0] && y == this.agentposition[1]) {
-                    scene[x][y] = state;
-                    this.agentposition[0] = this.defaultagentposition[0];
-                    this.agentposition[1] = this.defaultagentposition[1];
-                    scene[this.agentposition[0]][this.agentposition[1]] = this.defaulagentcondition;
-                } else {
-                    scene[x][y] = state;
+                else {
+                    return IllegalRobotPosition;
                 }
+
             }
-        } else {  // punto della mappa non disponibile per la modifica
+            else { // stessa posizione attuale dell'agent position
 
-            return IllegalPosition;
+                String [] split = scene[x][y].split("\\+");
+                String background = split[0];
+                scene[x][y] = background + "+" + state;
+            }
         }
-        return Success;
+        // si richiedono modifiche alla scena diverse da tipologie di state agent
+        else {
+            // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
+            // allora semplicemente reimposto la posizione di default dell'agente
+            if (x == this.agentposition[0] && y == this.agentposition[1]) {
+                scene[x][y] = state;
+                this.agentposition[0] = this.defaultagentposition[0];
+                this.agentposition[1] = this.defaultagentposition[1];
+                scene[this.agentposition[0]][this.agentposition[1]] = this.defaulagentcondition;
+            } else {
+                scene[x][y] = state;
+            }
+        }
+    } else {  // punto della mappa non disponibile per la modifica
+
+        return IllegalPosition;
     }
+    return Success;
+}
 
 
     /*
@@ -1325,58 +1330,60 @@ public abstract class MonitorGenMap {
 
     }
 
+    
+    
     /**
-     * Questo metodo genera l'aggiornamento delle celle della mappa del
-     * generatore in modalità move, determinando quali movimenti sono possibili
-     * per un agente e in tal caso aggiorna la lista dei movimenti
-     *
-     * @param x : numero di riga
-     * @param y : numero di colonna
-     * @param p : persona a cui aggiungere la move
-     */
-    public int UpdateMoveCell(int x, int y, String path) {
+ * Questo metodo genera l'aggiornamento delle celle della mappa del
+ * generatore in modalità move, determinando quali movimenti sono possibili
+ * per un agente e in tal caso aggiorna la lista dei movimenti
+ *
+ * @param x : numero di riga
+ * @param y : numero di colonna
+ * @param p : persona a cui aggiungere la move
+ */
+public int UpdateMoveCell(int x, int y, String path) {
 
-        final int Success = 0;
-        final int IllegalPosition = 1;
-        final int UnavaibleCellScenario = 2;
-        final int PersonOverride = 3;
-        final int LastMoveRemove = 4;
+    final int Success = 0;
+    final int IllegalPosition = 1;
+    final int UnavaibleCellScenario = 2;
+    final int PersonOverride = 3;
+    final int LastMoveRemove = 4;
 
-        String[] pathSplit = path.split("_");
-        String color = pathSplit[0];
+    String[] pathSplit = path.split("_");
+    String color = pathSplit[0];
 
-        Path p = this.getPathByName(path);
+    Path p = this.getPathByName(path);
 
-        if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
+    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
-            StepMove s = p.getMoves().getLast();
-            int step = p.getMoves().getLast().getStep() + 1;
-            String result = this.CheckBusyCellFromPerson(x, y, step);
-            if (!(result.equals("empty"))) {
-
-                return PersonOverride;
-            }
-            // distanza di manhattam e check sulla attraversabilità della cella
-            if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 &&
-                    this.PersonPositionIsValid(scene[x][y])) {
-                p.AddMove(x, y);
-                return Success;
-            } else if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 0) {
-                p.RemoveLast();
-                return LastMoveRemove;
-            } else {
-                return UnavaibleCellScenario;
-
-            }
-
-        } else {
-
-            return IllegalPosition;
-
+        StepMove s = p.getMoves().getLast();
+        int step = p.getMoves().getLast().getStep() + 1;
+        String result = this.CheckBusyCellFromPerson(x, y, step);
+        if (!(result.equals("empty"))) {
+            return PersonOverride;
         }
+        // distanza di manhattam e check sulla attraversabilità della cella
+        if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 &&
+                this.PersonPositionIsValid(scene[x][y])) {
+            p.AddMove(x, y);
+            return Success;
+        } else if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 0) {
+            p.RemoveLast();
+            return LastMoveRemove;
+        } else {
+            return UnavaibleCellScenario;
+        }
+
+    } else {
+
+        return IllegalPosition;
 
     }
 
+}
+
+    
+    
     /**
      * Rimuove una persona in base al colore ad esso assegnata
      *
@@ -1399,75 +1406,80 @@ public abstract class MonitorGenMap {
         return false;
     }
 
+    
+    
     /**
-     * Aggiunge una nuova persona allo scenario dichiarandone il colore
-     * associato e la posizione di partenza
-     *
-     * @param x : riga della cella iniziale
-     * @param y : colonna della cella iniziale
-     * @param color : colore da associare
-     */
-    public int AddNewPerson(int x, int y, String color, int waitTime) {
+ * Aggiunge una nuova persona allo scenario dichiarandone il colore
+ * associato e la posizione di partenza
+ *
+ * @param x : riga della cella iniziale
+ * @param y : colonna della cella iniziale
+ * @param color : colore da associare
+ */
+public int AddNewPerson(int x, int y, String color, int waitTime) {
 
-        final int Success = 0;
-        final int IllegalPosition = 1;
-        final int keyColorEmpty = 2;
-        final int keyColorFull = 3;
-        final int IllegalAgentPosition = 5;
-        final int PersonOverride = 6;
-        String result = "";
+    final int Success = 0;
+    final int IllegalPosition = 1;
+    final int keyColorEmpty = 2;
+    final int keyColorFull = 3;
+    final int IllegalAgentPosition = 5;
+    final int PersonOverride = 6;
+    String result = "";
 
-        if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
+    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
-            if (this.setKeyColor.length == 0) {
-                return keyColorEmpty;
-            }
+        if (this.setKeyColor.length == 0) {
+            return keyColorEmpty;
+        }
 
-            if (x == this.agentposition[0] && y == this.agentposition[1]) {
+        if (x == this.agentposition[0] && y == this.agentposition[1]) {
+
+            return IllegalAgentPosition;
+        }
+        result = this.CheckBusyCellFromPerson(x, y, 0);
+        if (!result.equals("empty")) {
+
+            return PersonOverride;
+        }
+
+        if (this.findPosByColor(color) != -1) {
+
+            Person p = this.findByColor(color);
+            Path first = p.paths.get(0);
+            first.move.getFirst().setRow(x);
+            first.move.getFirst().setColumn(y);
+            return PersonOverride;
+
+        }
+
+        // ho ancora disponibilita di colori per indicare le person
+        if (this.NumPerson < this.MaxNumPerson) {
+            this.NumPerson++;
+            this.Persons.add(new Person(color));
+            this.Persons.getLast().AddPath(waitTime);
+
+            if (this.PersonPositionIsValid(move[x][y])) {
+                this.Persons.getLast().paths.getLast().AddMove(x, y);
+                String background = move[x][y];
+                move[x][y] = background + "+" + color + "+" + personName;
+            } else {
 
                 return IllegalAgentPosition;
             }
-            result = this.CheckBusyCellFromPerson(x, y, 0);
-            if (!result.equals("empty")) {
-
-                return PersonOverride;
-            }
-
-            if (this.findPosByColor(color) != -1) {
-
-                Person p = this.findByColor(color);
-                Path first = p.paths.get(0);
-                first.move.getFirst().setRow(x);
-                first.move.getFirst().setColumn(y);
-                return PersonOverride;
-
-            }
-
-            // ho ancora disponibilita di colori per indicare le person
-            if (this.NumPerson < this.MaxNumPerson) {
-                this.NumPerson++;
-                this.Persons.add(new Person(color));
-                this.Persons.getLast().AddPath(waitTime);
-
-                if (this.PersonPositionIsValid(move[x][y])) {
-                    this.Persons.getLast().paths.getLast().AddMove(x, y);
-                    String background = move[x][y];
-                    move[x][y] = background + "_" + personName + "_" + color;
-                } else {
-
-                    return IllegalAgentPosition;
-                }
-            } // ho terminato il numero di aggiunte che posso fare
-            else {
-                return keyColorFull;
-            }
-
-            return Success;
-        } else {
-
-            return IllegalPosition;
+        } // ho terminato il numero di aggiunte che posso fare
+        else {
+            return keyColorFull;
         }
+
+        return Success;
+    } else {
+
+        return IllegalPosition;
     }
+}
+
+    
+        
 
     /**
      * Rimuove l'ultimo path aggiunto ad una persona e restuisce un intero
@@ -1638,6 +1650,8 @@ public abstract class MonitorGenMap {
         return true;
     }
 
+    
+    
     public void LoadFiles(File directory) throws ParseException {
 
         String jsonMapPath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMap.json";
@@ -1649,59 +1663,64 @@ public abstract class MonitorGenMap {
         this.LoadMoves(jsonMove);
     }
 
+
     /*
-     * Metodo per il caricamnento di una scena a partire da un file JSON precedentemente creato
-     * Viene costruita la mappa e popolata dai valori contenuti nel JSON.
-     * @param jsonFile : il file JSON da cui eseguire il load
-     */
-    @SuppressWarnings("UnnecessaryUnboxing")
-    private void LoadScene(File jsonFile) throws ParseException {
-        //creo una nuova istanza di scena
+ * Metodo per il caricamnento di una scena a partire da un file JSON precedentemente creato
+ * Viene costruita la mappa e popolata dai valori contenuti nel JSON.
+ * @param jsonFile : il file JSON da cui eseguire il load
+ */
+@SuppressWarnings("UnnecessaryUnboxing")
+private void LoadScene(File jsonFile) throws ParseException {
+    //creo una nuova istanza di scena
 
-        try {
-            //converto il file in un oggetto JSON
-            FileReader jsonreader = new FileReader(jsonFile);
-            char[] chars = new char[(int) jsonFile.length()];
-            jsonreader.read(chars);
-            String jsonstring = new String(chars);
-            jsonreader.close();
-            JSONObject json = new JSONObject(jsonstring);
-            //leggo il numero di celle dalla radice del JSON
+    try {
+        //converto il file in un oggetto JSON
+        FileReader jsonreader = new FileReader(jsonFile);
+        char[] chars = new char[(int) jsonFile.length()];
+        jsonreader.read(chars);
+        String jsonstring = new String(chars);
+        jsonreader.close();
+        JSONObject json = new JSONObject(jsonstring);
+        //leggo il numero di celle dalla radice del JSON
 
-            int NumCellX = Integer.parseInt(json.get("cell_x").toString());
-            int NumCellY = Integer.parseInt(json.get("cell_y").toString());
+        int NumCellX = Integer.parseInt(json.get("cell_x").toString());
+        int NumCellY = Integer.parseInt(json.get("cell_y").toString());
 
-            //setto il numero di celle nella scena
-            this.setNumCell(NumCellX, NumCellY);
-            this.resize(NumCellX, NumCellY);
-            //estraggo il JSONArray dalla radice
-            JSONArray arrayCelle = json.getJSONArray("celle");
-            for (int i = 0; i < arrayCelle.length(); i++) {
-                //ciclo su ogni cella e setto il valore della cella letta nella scena
-                JSONObject cell = arrayCelle.getJSONObject(i);
-                int x = cell.getInt("x");
-                int y = cell.getInt("y");
-                String stato = cell.getString("stato");
+        //setto il numero di celle nella scena
+        this.setNumCell(NumCellX, NumCellY);
+        this.resize(NumCellX, NumCellY);
+        //estraggo il JSONArray dalla radice
+        JSONArray arrayCelle = json.getJSONArray("celle");
+        for (int i = 0; i < arrayCelle.length(); i++) {
+            //ciclo su ogni cella e setto il valore della cella letta nella scena
+            JSONObject cell = arrayCelle.getJSONObject(i);
+            int x = cell.getInt("x");
+            int y = cell.getInt("y");
+            String stato = cell.getString("stato");
 
-                if (stato.contains("agent")) {
-                    stato = stato.substring(stato.indexOf("_") + 1);
-                    this.SetRobotParams(stato, x, y);
-                }
-                this.setCell(x, y, stato);
-
-                this.defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
+            if (stato.contains("agent")) {
+                String [] split = stato.split("\\+");
+                stato = split[1];
+                this.SetRobotParams(stato, x, y);
             }
+            this.setCell(x, y, stato);
 
-        } catch (JSONException ex) {
-
-            console.error(ex);
-        } catch (IOException ex) {
-            console.error(ex);
-        } catch (NumberFormatException ex) {
-            console.error(ex);
+            this.defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
         }
 
+    } catch (JSONException ex) {
+
+        console.error(ex);
+    } catch (IOException ex) {
+        console.error(ex);
+    } catch (NumberFormatException ex) {
+        console.error(ex);
     }
+
+}
+
+    
+    
 
     /*
      * Genera un file JSON corrispondente alla lista linkata salvata per le move fino ad ora definite
@@ -1841,12 +1860,6 @@ public abstract class MonitorGenMap {
      */
     public abstract void init();
 
-    /*
-     * Genera le icone per il disegno delle mappe
-     */
-    public abstract BufferedImage[][] makeIconMapMatrix();
-
-    public abstract BufferedImage[][] makeIconMoveMatrix();
 
     /*
      *  Verifica le condizioni imposte alla posizione del robot

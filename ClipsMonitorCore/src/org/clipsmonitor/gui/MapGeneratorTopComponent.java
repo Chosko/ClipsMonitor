@@ -168,7 +168,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         Graphics2D g2 = (Graphics2D) g; // cast g to Graphics2D
 
         if (model != null) {
-          model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight(), model.getMode());
+          model.drawScene(g2, PreviewMap.getWidth(), PreviewMap.getHeight());
         }
       }
 
@@ -382,11 +382,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
       public int getSize() { return strings.length; }
       public Object getElementAt(int i) { return strings[i]; }
     });
-    MovementList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-      public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-        MovementListValueChanged(evt);
-      }
-    });
     jScrollPane3.setViewportView(MovementList);
 
     org.openide.awt.Mnemonics.setLocalizedText(AddPathButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.AddPathButton.text")); // NOI18N
@@ -526,6 +521,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
           .addComponent(jScrollPane6))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(0, 0, 0)
         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0))
     );
@@ -772,10 +768,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private void DeletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletePersonButtonActionPerformed
         this.ExecRemove();
     }//GEN-LAST:event_DeletePersonButtonActionPerformed
-
-    private void MovementListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_MovementListValueChanged
-        // TODO add your handling code here:
-    }//GEN-LAST:event_MovementListValueChanged
 
     
     private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
