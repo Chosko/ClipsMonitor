@@ -6,7 +6,6 @@
 package org.clipsmonitor.monitor2015;
 
 import org.clipsmonitor.core.MonitorGenMap;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorImages;
