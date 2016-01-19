@@ -153,6 +153,46 @@ Con questo tool puoi anche gestire le persone e i path che verranno esportati ne
 
 ![Map generator](snapshots/mapgenerator.png)
 
+Il Map generator prevede due principali modalità di funzionamento attivabili mediante le radio button sottostanti **map** e **move**.
+
+##### Map
+
+Con la modalità Map è possibile creare una mappa personalizzata, indicando le dimensione della griglia atttraverso gli appositi textfield **x** , **y** apposite e modificare i vari elementi della scena utilizzando la comoda *checkbox* **Inserisci**, la quale mostra un anteprima dell'immagine che rappresenta un elemento del dominio.
+
+All'inizio la mappa generata rappresenta una configurazione standard per il vostro progetto, che potrete tranquillamente decidere tramite una classe Java.
+
+Inolte è possibile impostare la posizione iniziale del robot e indicare il time a disposizione dell'agente per completare la sua esecuzione atttraverso
+la textfield **maxduration** presente.
+
+Per modificare gli elementi della scena bisogna selezionare un elemento mediante **Inserisci** e successivamente cliccare su una cella della griglia affinchè venga eseeguito l'aggiornamento.
+
+Se invece si desidera modificare la dimensione della griglia o il time a disposizione bisogna digitare il valore desiderato sulle varie textfield e poi successivamente cliccare il pulsante **Aggiorna** affinchè vengano applicate le modifiche.
+
+> NB: Quando eseguite un aggiornamento delle dimensioni della griglia, dovete stare attenti che questo comporta, l'eliminazione di tutti quei movimenti che non sono piu coerenti con la scena. Nel caso in cui siano già stati creati path, una finestra di dialogo comunque vi chiederà una conferma. L'operazione una volta confermata non può essere ANNULATA.
+
+#### Move
+
+Con la modalità Move invece sarete in grado di generare path coerenti su cui far muovere altri agenti all'interno della mappa; potete aggiungere più persone, a cui associare uno o più path di movimento personalizzati, decidere gli intervalli di attesa tra un path e l'altro e infine potete rimuovere sia
+interi path, sia singoli movimenti.
+
+Per tenere sotto controllo gli elementi inseriti, potete controllare le pratiche liste **Persons, Persons path, Step , Moves** che vi daranno un prospetto degli elementi inseriti ed inoltre grazie cliccando sugli elementi delle liste è possibile filtrare le move inserite e nel caso del filtro mediante path sarà possibile visualizzarlo direttamente sulla mappa.
+
+Inoltre la mappa farà vedere per ogni Step, la posizione di tutti gli agenti in modo da evitare sovrapposizioni e ottenere quindi una history pulita.
+
+Per inserire una nuova persona bisognerà in prima battuta scegliere un colore sempre mediante la *combobox* **Inserisci**, cliccare su un punto della mappa da cui si vuol far partire la person, e successivamente cliccare sul pulsante **Aggiungi** immediatamente sotto la lista **Person**; in caso la si voglia eliminare bisogna utilizzare il pulsante **Rimuovi** sempre al di sotto della lista Person.
+
+Una volta inserita, possiamo iniziare a costruire un primo path, utilizzando esclusivamente la mappa. Cliccando su una cella attigua a dove compare l'icona dell'agente, si chiede al map generator di *spostare* l'agente in una nuova posizione e questo identifica un nuovo movimento che verrà aggiunto.
+
+Una volta aggiunto un passo, è comunque sempre possibile, eliminare l'ultima mossa eseguita, semplicemente cliccando sull'icona dell' agente e quest'ultimo
+retrocederà di un passo.
+Ad ogni aggiunta di passo o rimozione, vedrete sempre il resto degli agenti inseriti in modo aver sempre chiaro, lo sviluppo della history.
+
+Se ad una persona vogliamo associar più di un path allora tenendo su **Inserisci** il colore corrispondente possiamo cliccare il pulsante **Aggiungi** posto sotto la lista **Path** e da quel momento quando ci muoveremo sulla mappa tutti i passi inseriti saranno aggiunti al nuovo path corrente.
+
+Per rendere totale la flessibilità di costruzione delle history è stata aggiunta una *textfield* **Wait time** la quale viene utilizzata dal map generator in fase di aggiunta del nuovo path come intervallo di tempo (misurato in step) in cui la person resta ferma sulla mappa prima di iniziare una nuova sequenza di passi.
+
+
+
 #### Shortcuts
 
 **Azioni base**

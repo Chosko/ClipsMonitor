@@ -8,7 +8,7 @@ package org.clipsmonitor.core;
 import java.io.File;
 
 /**
- *
+ * 
  * @author Marco Corona 
  */
 public class ProjectDirectory {
