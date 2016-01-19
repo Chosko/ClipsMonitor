@@ -9,9 +9,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
-import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileFilter;
@@ -175,7 +175,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     };
     jScrollPane6 = new javax.swing.JScrollPane();
     jTextArea1 = new javax.swing.JTextArea();
-    jButton1 = new javax.swing.JButton();
+    ClearButton = new javax.swing.JButton();
 
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
     jPanel2.setLayout(jPanel2Layout);
@@ -511,10 +511,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
     jTextArea1.setRows(5);
     jScrollPane6.setViewportView(jTextArea1);
 
-    org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.jButton1.text")); // NOI18N
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
+    org.openide.awt.Mnemonics.setLocalizedText(ClearButton, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.ClearButton.text")); // NOI18N
+    ClearButton.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        jButton1ActionPerformed(evt);
+        ClearButtonActionPerformed(evt);
       }
     });
 
@@ -530,9 +530,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jButton1)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+          .addComponent(ClearButton))
         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0))
     );
@@ -543,7 +541,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
           .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton1))
+            .addComponent(ClearButton))
           .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
@@ -929,15 +927,29 @@ public final class MapGeneratorTopComponent extends TopComponent {
     // TODO add your handling code here:
   }//GEN-LAST:event_PersonsListMouseClicked
 
-  private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    
-  }//GEN-LAST:event_jButton1ActionPerformed
+  private void ClearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearButtonActionPerformed
+    String message = "La mappa sarà ripristinata allo scenario di default. Continuare ?";
+       JLabel DimensionLabel = new javax.swing.JLabel();
+       if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Clear scene",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
+       {
+          int numX = model.getNumx();
+          int numY = model.getNumy();
+          model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
+          model.resize(numX,numY);
+          model.initModelMap(numX, numY, PreviewMap.getWidth(),PreviewMap.getHeight());
+          model.setMaxDuration(model.getMaxDuration());
+          this.model.initScene(model.getScene());
+          model.CopyToActive(model.getScene());
+          PreviewMap.repaint();
+       } 
+  }//GEN-LAST:event_ClearButtonActionPerformed
  
     
     
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton AddPathButton;
   private javax.swing.JButton AddPersonButton;
+  private javax.swing.JButton ClearButton;
   private javax.swing.JButton DeletePersonButton;
   private javax.swing.JLabel DimensionLabel;
   private javax.swing.JLabel Icons;
@@ -960,7 +972,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
   private javax.swing.JLabel XLabel;
   private javax.swing.JTextField YButton;
   private javax.swing.JLabel YLabel;
-  private javax.swing.JButton jButton1;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;

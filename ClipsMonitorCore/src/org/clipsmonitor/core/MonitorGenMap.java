@@ -326,7 +326,11 @@ public abstract class MonitorGenMap {
         return this.NumCellY;
     }
 
+    public int getMaxDuration(){
+        return this.maxduration;
+    }
 
+    
     public String[] getSetKey() {
 
         return this.setKeyMap;
