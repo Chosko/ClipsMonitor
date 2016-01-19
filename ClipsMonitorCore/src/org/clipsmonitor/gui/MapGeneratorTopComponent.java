@@ -640,6 +640,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         } catch (NumberFormatException err) {
             model.error("Input non valido: Verificare che i valori siano interi \n" );
         }
+        
+        updateLogArea();
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
     
@@ -681,6 +683,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
 
         }
+        updateLogArea();
     }//GEN-LAST:event_LoadButtonActionPerformed
 
     private void LoadButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoadButtonMouseClicked
@@ -721,6 +724,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             }
 
         }
+        updateLogArea();
     }//GEN-LAST:event_LoadButtonMouseClicked
 
 
@@ -733,8 +737,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
                model.log(output);
             } catch (JSONException ex) {
                 Exceptions.printStackTrace(ex);
+                model.error(ex.getMessage());
             }
         }
+        updateLogArea();
     }//GEN-LAST:event_SaveButtonActionPerformed
 
 
@@ -768,6 +774,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             this.updateLabel(state);
         }
         Icons.repaint();
+        updateLogArea();
     }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
 
     private void AddPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPersonButtonActionPerformed
@@ -943,6 +950,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
          model.setMaxDuration(model.getMaxDuration());
          model.CopyToActive(model.getScene());
          PreviewMap.repaint(); 
+         updateLogArea();
        }
   }//GEN-LAST:event_ClearButtonActionPerformed
 
@@ -1062,14 +1070,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private boolean getActiveColorMap(){
 
         String[] colors = model.getListColorActive();
-        if(colors.length==1 && colors[0].equals("")){
-
-            return false;
-        }
-        else{
-
-            return true;
-        }
+        return !(colors.length==1 && colors[0].equals(""));
     }
 
 

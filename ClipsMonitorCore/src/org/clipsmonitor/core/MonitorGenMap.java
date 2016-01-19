@@ -1647,6 +1647,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             //salvo le informazioni in un file JSON della scenea
             Files.write(Paths.get(nome), info.toString(2).getBytes());
         } catch (IOException ex) {
+            this.AppendLogMessage(ex.getMessage(),"error");
             Logger.getLogger(RescueGenMap.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -1734,21 +1735,28 @@ private void LoadScene(File jsonFile) throws ParseException {
     private boolean saveJSONMoves(String name) throws JSONException {
 
         try {
+            
             JSONObject Info = new JSONObject();
             JSONArray PersonsArray = new JSONArray();
+            
             for (int i = 0; i < this.Persons.size(); i++) {
+                
                 Person p = this.Persons.get(i);
                 JSONObject person = new JSONObject();
                 person.put("color", p.associatedColor);
                 JSONArray paths = new JSONArray();
+                
                 for (int j = 0; j < p.paths.size(); j++) {
+                
                     Path pts = p.paths.get(j);
                     JSONObject path = new JSONObject();
                     path.put("name", pts.name);
                     path.put("startStep", pts.startStep);
                     path.put("lastStep", pts.lastStep);
                     JSONArray moves = new JSONArray();
+                    
                     for (int k = 0; k < pts.move.size(); k++) {
+                    
                         JSONObject move = new JSONObject();
                         StepMove s = pts.move.get(k);
                         move.put("row", s.row);
@@ -1756,9 +1764,11 @@ private void LoadScene(File jsonFile) throws ParseException {
                         move.put("step", s.step);
                         moves.put(move);
                     }
+                    
                     path.put("moves", moves);
                     paths.put(path);
                 }
+                
                 person.put("paths", paths);
                 PersonsArray.put(person);
             }
@@ -1767,7 +1777,9 @@ private void LoadScene(File jsonFile) throws ParseException {
 
             Files.write(Paths.get(name), Info.toString(2).getBytes());
             return true;
+        
         } catch (IOException err) {
+            
             AppendLogMessage(err.getMessage(),"error");
             return false;
         }
@@ -1800,14 +1812,18 @@ private void LoadScene(File jsonFile) throws ParseException {
                 String color = person.getString("color");
                 Person p = new Person(color);
                 JSONArray arrayPaths = person.getJSONArray("paths");
+                
                 for (int j = 0; j < arrayPaths.length(); j++) {
+                    
                     JSONObject path = arrayPaths.getJSONObject(j);
                     String pathName = path.getString("name");
                     int startStep = path.getInt("startStep");
                     int lastStep = path.getInt("lastStep");
                     p.paths.add(new Path(pathName, startStep, lastStep));
                     JSONArray arrayMoves = path.getJSONArray("moves");
+                    
                     for (int k = 0; k < arrayMoves.length(); k++) {
+                    
                         JSONObject move = arrayMoves.getJSONObject(k);
                         int row = move.getInt("row");
                         int column = move.getInt("column");
