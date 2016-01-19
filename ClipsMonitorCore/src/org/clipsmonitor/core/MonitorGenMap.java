@@ -100,6 +100,7 @@ public abstract class MonitorGenMap {
         this.mapActive = scene;
     }
 
+    
     /**
      * Metodo per il ridimensionamento delle celle a seguito della modifica
      * della dimensione della griglia.
@@ -433,7 +434,8 @@ public abstract class MonitorGenMap {
                StepMove s = succ.move.get(offset);
                int r = s.getRow();
                int c = s.getColumn();
-               newmap[r][c] = p.associatedColor + "+" + "rgba(255,255,255,0.1)+"+ personName;
+               String rgba= MonitorImages.getInstance().creatergbafromName(p.associatedColor, 0.25);
+               newmap[r][c] = rgba + "+" + personName;
            }
        }
 
@@ -451,9 +453,13 @@ public abstract class MonitorGenMap {
            StepMove s = it.next();
            r = s.getRow();
            c = s.getColumn();
-
-           newmap[r][c] = splitResult[0];
-
+           String rgba= MonitorImages.getInstance().creatergbafromName(splitResult[0], 0.25);
+           if(newmap[r][c].equals("")){
+             newmap[r][c]= rgba;
+           }
+           else{
+              newmap[r][c] +="+"+rgba;
+           }
        }
 
        newmap[r][c] += "+" + personName;

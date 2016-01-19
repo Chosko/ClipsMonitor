@@ -63,7 +63,6 @@ public class RescueGenMap extends MonitorGenMap {
         this.agentposition[1] = this.defaultagentposition[1];
         this.NumPerson = 0;
         this.Persons = new LinkedList<Person>();
-        this.setKeyColor = new String[]{"blue", "green", "red", "yellow", "grey"};
         this.setKeyMap = new String[]
         { "agent_north_unloaded", 
           "agent_north_loaded",
@@ -80,6 +79,17 @@ public class RescueGenMap extends MonitorGenMap {
           "debris", 
           "debris_injured"
         };
+        this.setKeyColor=new String[]
+        {
+          "green",
+          "blue",
+          "red",
+          "yellow",
+          "black",
+          "magenta",
+          "orange"
+        };
+        
         this.MaxNumPerson = this.setKeyColor.length;
         log("Map generator inizializzato correttamente");
     }
