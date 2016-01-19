@@ -44,7 +44,8 @@ public class RescueGenMap extends MonitorGenMap {
     public void init() {
         this.console = ClipsConsole.getInstance();
         this.img = MonitorImages.getInstance();
-        console.debug("Inizializzazione del map geneator");
+        this.log="";
+        log("Inizializzazione del Map generator in corso...");
         this.NumCellX = 0;
         this.NumCellY = 0;
         this.MapWidth = 0;
@@ -56,7 +57,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.maxduration = 300;
         this.mode = "scene";
         this.personName = "person";
-        this.defaulagentcondition = "gate_agent_north_unloaded";
+        this.defaulagentcondition = "gate+agent_north_unloaded";
         this.defaultagentposition = new int[2];
         this.defaultagentposition[0] = 3;
         this.defaultagentposition[1] = 2;
@@ -66,11 +67,24 @@ public class RescueGenMap extends MonitorGenMap {
         this.NumPerson = 0;
         this.Persons = new LinkedList<Person>();
         this.setKeyColor = new String[]{"blue", "green", "red", "yellow", "grey"};
-        this.setKeyMap = new String[]{"agent_north_unloaded", "agent_north_loaded",
-            "agent_west_unloaded", "agent_west_loaded", "agent_east_unloaded", "agent_east_loaded",
-            "agent_south_unloaded", "agent_south_loaded", "gate", "empty", "outdoor", "wall", "debris", "debris_injured"};
+        this.setKeyMap = new String[]
+        { "agent_north_unloaded", 
+          "agent_north_loaded",
+          "agent_west_unloaded",
+          "agent_west_loaded", 
+          "agent_east_unloaded",
+          "agent_east_loaded",
+          "agent_south_unloaded", 
+          "agent_south_loaded", 
+          "gate", 
+          "empty", 
+          "outdoor", 
+          "wall", 
+          "debris", 
+          "debris_injured"
+        };
         this.MaxNumPerson = this.setKeyColor.length;
-        console.debug("Inizializzzione terminata del map generator");
+        log("Map generator inizializzato correttamente");
     }
 
     /**
@@ -269,4 +283,13 @@ public void initScene(String[][] scene) {
       return this.Persons.isEmpty();
     }    
 
+    
+    public void error(String message){
+      this.AppendLogMessage(message,"error");
+    }
+    
+    
+    public void log(String message){
+      this.AppendLogMessage(message, "log");
+    }
 }

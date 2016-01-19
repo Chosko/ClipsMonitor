@@ -64,8 +64,9 @@ public abstract class MonitorGenMap {
     protected LinkedList<Person> Persons; // Struttura che contiene i path delle varie persone
     protected String defaulagentcondition; // stringa di default utilizzata per inizializzare la scena
     // formata come background_keyagentdefault
+    protected String direction; // direzione iniziale del robot;
+    protected String log;
 
-    protected String direction; // direzione iniziale del robot
     /*
      Carica le immagini del progetto e genera l'array di stringhe che possono essere
      utilizzate per la scena (corrspondono alle chiavi dell'hash map di images)
@@ -161,8 +162,8 @@ public abstract class MonitorGenMap {
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
 
         BufferedImage[][] icons = this.makeIconMatrix();
-       
-         
+
+
 
         //aggiorno le dimensioni della finestra
         this.MapWidth = MapWidth;
@@ -303,6 +304,10 @@ public abstract class MonitorGenMap {
       this.setKeyMap = keys;
     }
 
+    public void setLog(String log){
+      this.log= log;
+
+    }
 
     public void setKeyColor(String[] keys) {
       this.setKeyColor = keys;
@@ -310,6 +315,10 @@ public abstract class MonitorGenMap {
 
     public String[][] getScene() {
       return this.scene;
+    }
+
+    public String getLog(){
+      return log;
     }
 
 
@@ -330,7 +339,7 @@ public abstract class MonitorGenMap {
         return this.maxduration;
     }
 
-    
+
     public String[] getSetKey() {
 
         return this.setKeyMap;
@@ -394,12 +403,12 @@ public abstract class MonitorGenMap {
             }
         }
 
-        newmap[x][y] = color;
+        newmap[x][y] = color ;
         return newmap;
 
     }
 
-    
+
 /**
 * Questo metodo genera la mappa delle celle coinvolte in un certo movimento in base
 * ai parametri della persona o dello step a cui si è interessati.
@@ -440,7 +449,7 @@ public abstract class MonitorGenMap {
                StepMove s = succ.move.get(offset);
                int r = s.getRow();
                int c = s.getColumn();
-               newmap[r][c] = p.associatedColor + "+" + personName;
+               newmap[r][c] = p.associatedColor + "+" + "rgba(255,255,255,0.1)+"+ personName;
            }
        }
 
@@ -469,7 +478,7 @@ public abstract class MonitorGenMap {
    return newmap;
 }
 
-    
+
 
     /*
      * Metodo per il caricamento delle move da visualizzare sulla mappa.Il metodo
@@ -509,7 +518,7 @@ public abstract class MonitorGenMap {
     }
 
 
-    
+
 
     /**
      * Metodo per la creazione della matrice di icone da disegnare sulla mappa
@@ -542,9 +551,9 @@ public abstract class MonitorGenMap {
                 }
 
             }
-    
+
         }
-        
+
         return iconMatrix;
     }
     /*
@@ -1170,7 +1179,7 @@ public abstract class MonitorGenMap {
      *******************************************************************/
 
 
-    
+
 
 /********************************************************************
  *          UPDATE AND MODIFIDY MAPS
@@ -1217,7 +1226,7 @@ public int UpdateCell(int x, int y, String state) {
                     // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
                     // e successivamente inserisco il nuovo agente
                     String [] split = scene[this.agentposition[0]][this.agentposition[1]].split("\\+");
-                    String background = split[0]; 
+                    String background = split[0];
                     scene[x][y] += "+" + state;
                     scene[this.agentposition[0]][this.agentposition[1]] = background;
                     this.SetRobotParams(state, x, y);
@@ -1334,8 +1343,8 @@ public int UpdateCell(int x, int y, String state) {
 
     }
 
-    
-    
+
+
     /**
  * Questo metodo genera l'aggiornamento delle celle della mappa del
  * generatore in modalità move, determinando quali movimenti sono possibili
@@ -1386,8 +1395,8 @@ public int UpdateMoveCell(int x, int y, String path) {
 
 }
 
-    
-    
+
+
     /**
      * Rimuove una persona in base al colore ad esso assegnata
      *
@@ -1410,8 +1419,8 @@ public int UpdateMoveCell(int x, int y, String path) {
         return false;
     }
 
-    
-    
+
+
     /**
  * Aggiunge una nuova persona allo scenario dichiarandone il colore
  * associato e la posizione di partenza
@@ -1482,8 +1491,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
     }
 }
 
-    
-        
+
+
 
     /**
      * Rimuove l'ultimo path aggiunto ad una persona e restuisce un intero
@@ -1564,7 +1573,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             consoleOutput += "File creato \n" + Paths.get(JSONMapPath);
 
         } catch (IOException err) {
-            console.error(err);
+            return err.getMessage();
         }
 
         return consoleOutput;
@@ -1605,7 +1614,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             }
 
         } catch (IOException err) {
-            console.error(err);
+            return err.getMessage();
         }
 
         return consoleOutput;
@@ -1654,8 +1663,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         return true;
     }
 
-    
-    
+
+
     public void LoadFiles(File directory) throws ParseException {
 
         String jsonMapPath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMap.json";
@@ -1714,17 +1723,17 @@ private void LoadScene(File jsonFile) throws ParseException {
 
     } catch (JSONException ex) {
 
-        console.error(ex);
+        AppendLogMessage(ex.getMessage(),"error");
     } catch (IOException ex) {
-        console.error(ex);
+        AppendLogMessage(ex.getMessage(),"error");
     } catch (NumberFormatException ex) {
-        console.error(ex);
+        AppendLogMessage(ex.getMessage(),"error");
     }
 
 }
 
-    
-    
+
+
 
     /*
      * Genera un file JSON corrispondente alla lista linkata salvata per le move fino ad ora definite
@@ -1769,7 +1778,7 @@ private void LoadScene(File jsonFile) throws ParseException {
             Files.write(Paths.get(name), Info.toString(2).getBytes());
             return true;
         } catch (IOException err) {
-            console.error(err.getMessage());
+            AppendLogMessage(err.getMessage(),"error");
             return false;
         }
     }
@@ -1819,15 +1828,41 @@ private void LoadScene(File jsonFile) throws ParseException {
                 this.Persons.add(p);
             }
         } catch (JSONException ex) {
-
-            console.error(ex);
+            AppendLogMessage(ex.getMessage(),"error");
         } catch (IOException ex) {
-            console.error(ex);
+            AppendLogMessage(ex.getMessage(),"error");
         } catch (NumberFormatException ex) {
-            console.error(ex);
+            AppendLogMessage(ex.getMessage(),"error");
         }
 
     }
+
+
+    protected void AppendLogMessage(String newLog, String type){
+      String logMessage="";
+      if(type.equals("error")){
+        logMessage=CreateErrorMessage(newLog);
+      }
+      else{
+        logMessage=CreateLogMessage(newLog);
+      }
+      this.log= log + logMessage + "\n";
+    }
+
+
+    protected String CreateLogMessage(String message){
+
+      String newString = "[INFO] : ";
+      newString += message;
+      return newString;
+    }
+
+    protected String CreateErrorMessage(String message){
+      String newString = "[ERROR] : ";
+      newString += message;
+      return newString;
+    }
+
 
     /*
      * metodo che converte lo stream di file in un oggetto JSON
