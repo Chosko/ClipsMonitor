@@ -558,17 +558,17 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
 
   private void FindButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FindButtonActionPerformed
 
-               String cmd = "( pp" + SearchModeCombobox.getSelectedItem() + " " + SearchText.getText() + ")";
+      String cmd = "( pp" + SearchModeCombobox.getSelectedItem() + " " + SearchText.getText() + ")";
 
-                boolean check = this.parenthesisChecker(cmd);
-                if(check){
+       boolean check = this.parenthesisChecker(cmd);
+       if(check){
 
-                    String res = model.evalComandLine(cmd);
-                }
-                else{
+           String res = model.evalComandLine(cmd);
+       }
+       else{
 
-                console.error("Parenthesis checker fallito");
-                }
+       console.error("Parenthesis checker fallito");
+     }
   }//GEN-LAST:event_FindButtonActionPerformed
 
   private void SearchModeComboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchModeComboboxActionPerformed
@@ -998,47 +998,7 @@ public final class ConsoleTopComponent extends TopComponent implements Observer,
     }
 
 
-    /*
-        Utility
-    */
-
-    /*
-
-    private ArrayList<Integer> getOccurancies(String pattern , String text){
-
-
-       ArrayList<Integer> indexMatches = new ArrayList<Integer>();
-       int checkOccur=0;
-       while(checkOccur!=-1){
-         checkOccur=text.indexOf(pattern,checkOccur);
-
-         if(checkOccur!=-1)
-         {
-           indexMatches.add(checkOccur);
-           checkOccur +=pattern.length();
-         }
-       }
-
-       return indexMatches;
-    }
-
-
-
-
-    private void paintPane(String pattern , String text, Highlighter highPane) throws BadLocationException{
-
-
-        ArrayList<Integer> indStart=this.getOccurancies(pattern, text);
-        int i = 0;
-        while(i<indStart.size()){
-            int start = indStart.get(i);
-            int end = start + pattern.length();
-            highPane.addHighlight(start, end, painters.get(pattern));
-            i++;
-            }
-        }
-
-    */
+   
 
 
     // controllo sulla corretta chiusura delle parentesi

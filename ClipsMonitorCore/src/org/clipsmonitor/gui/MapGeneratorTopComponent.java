@@ -642,6 +642,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
+    
     private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
 
         int returnVal = fc.showOpenDialog(this);
@@ -928,19 +929,20 @@ public final class MapGeneratorTopComponent extends TopComponent {
   }//GEN-LAST:event_PersonsListMouseClicked
 
   private void ClearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearButtonActionPerformed
-    String message = "La mappa sarà ripristinata allo scenario di default. Continuare ?";
+    String message = "La mappa e i movimenti dell'agente sarà ripristinata allo situazione di default. Continuare ?";
        JLabel DimensionLabel = new javax.swing.JLabel();
        if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Clear scene",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
        {
-          int numX = model.getNumx();
-          int numY = model.getNumy();
-          model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
-          model.resize(numX,numY);
-          model.initModelMap(numX, numY, PreviewMap.getWidth(),PreviewMap.getHeight());
-          model.setMaxDuration(model.getMaxDuration());
-          this.model.initScene(model.getScene());
-          model.CopyToActive(model.getScene());
-          PreviewMap.repaint();
+         
+         model.clear();
+         model = RescueGenMap.getInstance();
+         int x =Integer.parseInt(this.XButton.getText());
+         int y =Integer.parseInt(this.YButton.getText()); 
+         model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
+         model.initModelMap(x, y, PreviewMap.getWidth(),PreviewMap.getHeight());
+         model.setMaxDuration(model.getMaxDuration());
+         model.CopyToActive(model.getScene());
+         PreviewMap.repaint(); 
        }
   }//GEN-LAST:event_ClearButtonActionPerformed
 
@@ -1428,7 +1430,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     void updateMap(int x, int y,int max) {
         model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
-        model.resize(x,y);
+        model.SetSizeCells();
         model.initModelMap(x, y, PreviewMap.getWidth(),PreviewMap.getHeight());
         model.setMaxDuration(max);
     }

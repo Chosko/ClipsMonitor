@@ -86,19 +86,16 @@ public abstract class MonitorGenMap {
 
         this.MapWidth = MapWidth;
         this.MapHeight = MapHeight;
+        this.NumCellX = NumCellX;
+        this.NumCellY = NumCellY;
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
         //genero la scena della dimensione specificata
 
-        this.defaultagentposition[0] = NumCellX / 2;
-        this.defaultagentposition[1] = NumCellY - 2;
-        this.agentposition[0] = this.defaultagentposition[0];
-        this.agentposition[1] = this.defaultagentposition[1];
-
-        this.resize(NumCellX, NumCellY);
-
+        SetSizeCells();
+        setAgentDefaultPosition();
+        initScene(scene);
         //inizializzo la scena con i valori di default e cioè con i muri su tutto il bordo della scena
-        this.initScene(scene);
         this.move = this.clone(scene);
         this.mapActive = scene;
     }
@@ -110,13 +107,9 @@ public abstract class MonitorGenMap {
      * @param NumCellX
      * @param NumCellY
      */
-    public void resize(int NumCellX, int NumCellY) {
+    public void SetSizeCells() {
     //creo una scena con la nuova dimensione
-
-        String[][] new_scene = new String[NumCellX][NumCellY];
         //salvo il numero di celle sulle x e sulle y
-        this.NumCellX = NumCellX;
-        this.NumCellY = NumCellY;
         //calcolo la larghezza delle celle
         this.CellWidth = (this.MapWidth - 20) / NumCellX;
         this.CellHeight = (this.MapHeight - 20) / NumCellY;
@@ -127,26 +120,18 @@ public abstract class MonitorGenMap {
             this.CellHeight = this.CellWidth;
         }
 
+    }
+    
+    public void setAgentDefaultPosition(){
         // aggiorno la posizione dell'agent in base alla nuova dimensione della griglia
         this.defaultagentposition[0] = NumCellX / 2;
         this.defaultagentposition[1] = NumCellY - 2;
         this.agentposition[0] = this.defaultagentposition[0];
         this.agentposition[1] = this.defaultagentposition[1];
-
-        //inizializzo la nuova scena per farsi che abbia i muri sul perimetro
-        initScene(new_scene);
-
-        //ricopio ogni cella della vecchia mappa nella nuova mappa senza uscire fuori dalle celle a disposizione
-        for (int i = 1; i < new_scene.length - 1; i++) {
-            for (int j = 1; j < new_scene[i].length - 1; j++) {
-                if (i <= scene.length - 1 && j <= scene[0].length - 1) {
-                    new_scene[i][j] = scene[i][j];
-                }
-            }
-        }
-        scene = new_scene;
-
     }
+     
+    
+       
 
 
     /**
@@ -162,7 +147,6 @@ public abstract class MonitorGenMap {
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
 
         BufferedImage[][] icons = this.makeIconMatrix();
-
 
 
         //aggiorno le dimensioni della finestra
@@ -1701,7 +1685,7 @@ private void LoadScene(File jsonFile) throws ParseException {
 
         //setto il numero di celle nella scena
         this.setNumCell(NumCellX, NumCellY);
-        this.resize(NumCellX, NumCellY);
+        this.initModelMap(NumCellX, NumCellY, MapWidth, MapHeight);
         //estraggo il JSONArray dalla radice
         JSONArray arrayCelle = json.getJSONArray("celle");
         for (int i = 0; i < arrayCelle.length(); i++) {

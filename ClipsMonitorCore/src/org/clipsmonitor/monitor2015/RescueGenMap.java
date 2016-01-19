@@ -7,7 +7,6 @@ package org.clipsmonitor.monitor2015;
 
 import org.clipsmonitor.core.MonitorGenMap;
 import java.util.LinkedList;
-import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.monitor2015.RescueFacts;
 
@@ -21,7 +20,6 @@ import org.clipsmonitor.monitor2015.RescueFacts;
 public class RescueGenMap extends MonitorGenMap {
 
     private static RescueGenMap instance;
-    private static RescueFacts facts;
 
     private String loaded; // stato iniziale del robot
 
@@ -42,7 +40,6 @@ public class RescueGenMap extends MonitorGenMap {
 
     @Override
     public void init() {
-        this.console = ClipsConsole.getInstance();
         this.img = MonitorImages.getInstance();
         this.log="";
         log("Inizializzazione del Map generator in corso...");
@@ -292,4 +289,8 @@ public void initScene(String[][] scene) {
     public void log(String message){
       this.AppendLogMessage(message, "log");
     }
+
+  public void clear() {
+     instance=null;
+  }
 }
