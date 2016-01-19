@@ -73,11 +73,9 @@ public final class RescueFacts{
 
             String RealCell = "";
             String inj = injured ? "yes" : "no";
-            String contains = content;
-            if (content.contains("agent")) {
-               contains = content.substring(0, content.indexOf("_"));
-            }
-
+            String [] split = content.split("\\+");
+            String contains= split[0];
+            
             if (content.contains("debris")) contains = "debris";
 
             RealCell = "(" + RescueFacts.RealCell.factName()
