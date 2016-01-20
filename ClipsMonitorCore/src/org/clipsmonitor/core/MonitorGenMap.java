@@ -925,7 +925,8 @@ public abstract class MonitorGenMap {
         ArrayList<String> moveslist = new ArrayList<String>();
         // richiesta della lista completa degli step;
         if (paramPerson == -1 && paramStep == -1 && paramPath.equals("all")) {
-
+            
+            
             ListIterator<Person> it = this.Persons.listIterator();
             while (it.hasNext()) {
                 Person p = it.next();
@@ -1431,14 +1432,17 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
 
     if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
+        // keycolor non ancora inizializzato
         if (this.setKeyColor.length == 0) {
             return keyColorEmpty;
         }
 
+        // sovrascrittura dell'agente
         if (x == this.agentposition[0] && y == this.agentposition[1]) {
 
             return IllegalAgentPosition;
         }
+        
         result = this.CheckBusyCellFromPerson(x, y, 0);
         if (!result.equals("empty")) {
 
