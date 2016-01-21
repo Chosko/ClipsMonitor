@@ -556,13 +556,17 @@ public final class ControlsTopComponent extends TopComponent implements Observer
   }//GEN-LAST:event_RefreshButtonActionPerformed
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
-        model.setTargetUpdateTime(jSlider1.getValue());
-        jSlider1.setValue((int) model.getTargetUpdateTime());
+        if(model != null){
+          model.setTargetUpdateTime(jSlider1.getValue());
+          jSlider1.setValue((int) model.getTargetUpdateTime());
+        }
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        model.setPartialUpdateEnabled(jCheckBox1.isSelected());
+       if(model!=null){  
+      model.setPartialUpdateEnabled(jCheckBox1.isSelected());
         jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+       }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void setShortcut() {

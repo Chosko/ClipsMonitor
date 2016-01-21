@@ -3,6 +3,7 @@ package org.clipsmonitor.monitor2015;
 import java.util.ArrayList;
 import java.util.Observer;
 import net.sf.clipsrules.jni.CLIPSError;
+import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.core.MonitorMap;
 
 /**
@@ -47,6 +48,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
                 maxc = c;
             }
         }
+        
         map = new String[maxr][maxc];//Matrice di max_n_righe x max_n_colonne
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
@@ -125,6 +127,11 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             if (clear.equals("yes")) {
                 map[r][c] += "+clear";
             }
+            
+            
+            if (((Math.abs(model.getKRow()-(r+1))>1) || (Math.abs(model.getKColumn()-(c+1))>1))  && !contains.equals("unknown")){
+              map[r][c] += "+"+MonitorImages.getInstance().creatergbafromName("black",0.2) ;
+            }
         }
     }
 
@@ -152,12 +159,12 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             for (int[] current : openNodes) {
                 int nrow = current[0] - 1;
                 int ncolumn = current[1] - 1;
-                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(31, 17, 111,0.15)";
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(31, 17, 111,0.25)";
             }
             for (int[] current : closedNodes) {
                 int nrow = current[0] - 1;
                 int ncolumn = current[1] - 1;
-                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(111,61,17,0.15)";
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(111,61,17,0.25)";
             }
             map[r][c] = map[r][c] + "+p_agent_" + model.getPDirection() + "_" + model.getPMode();
         }
