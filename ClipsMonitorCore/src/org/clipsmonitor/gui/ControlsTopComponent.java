@@ -132,6 +132,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         RefreshButton = new javax.swing.JButton();
         jSlider1 = new javax.swing.JSlider();
         jLabel2 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(strategyLabel, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.strategyLabel.text")); // NOI18N
 
@@ -296,6 +297,13 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jLabel2.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jCheckBox1.text")); // NOI18N
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
@@ -303,48 +311,52 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(strategyLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
-                    .addComponent(envsSelector, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(controlPanelLayout.createSequentialGroup()
-                            .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(envLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                                .addComponent(envLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(RefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(CLPSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(56, 56, 56)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(envLabel2)
-                    .addComponent(envLabel1)
-                    .addComponent(strategyLabel1)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(PenaltiesTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                    .addComponent(stepTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                    .addComponent(timeTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(timeLeftTextField, javax.swing.GroupLayout.Alignment.LEADING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                            .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                            .addComponent(runOneButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(loadDefaultFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(strategyLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                            .addComponent(envsSelector, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(controlPanelLayout.createSequentialGroup()
+                                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(envLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                        .addComponent(envLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(RefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(CLPSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(56, 56, 56)
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(envLabel2)
+                            .addComponent(envLabel1)
+                            .addComponent(strategyLabel1)
+                            .addComponent(jLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(PenaltiesTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                            .addComponent(stepTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                            .addComponent(timeTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(timeLeftTextField, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(42, 42, 42)
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(controlPanelLayout.createSequentialGroup()
+                                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                                    .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                                    .addComponent(runOneButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(loadDefaultFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(controlPanelLayout.createSequentialGroup()
+                                .addComponent(BreakButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(ResetPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addComponent(BreakButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jCheckBox1)
+                        .addGap(30, 30, 30)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ResetPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(controlPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,7 +399,9 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                     .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)))
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jCheckBox1))))
                 .addContainerGap())
         );
 
@@ -395,9 +409,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6))
+            .addComponent(controlPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,7 +441,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
         disableButtons();
-        model.setMode(MonitorModel.ex_mode_STEP);
+        model.setMode(MonitorModel.EX_MODE_STEP);
         model.resume();
         //model.step();
         enableButtons();
@@ -439,7 +451,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         disableButtons();
         // Il tasto può essere Run oppure Stop (a seconda di cosa era attivo)
         if (runButton.getText().equals("Run")) {
-            model.setMode(MonitorModel.ex_mode_RUN);
+            model.setMode(MonitorModel.EX_MODE_RUN);
             model.resume();
             runButton.setText("Stop");
             stepButton.setEnabled(false);
@@ -447,7 +459,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             resetButton.setEnabled(false);
         } else
          {
-                model.setMode(MonitorModel.ex_mode_STOP);
+                model.setMode(MonitorModel.EX_MODE_STOP);
                 runButton.setText("Run");
                 stepButton.setEnabled(true);
                 runOneButton.setEnabled(true);
@@ -461,7 +473,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     }//GEN-LAST:event_runOneButtonKeyReleased
 
     private void runOneButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOneButtonActionPerformed
-        model.setMode(MonitorModel.ex_mode_RUNN, 1);
+        model.setMode(MonitorModel.EX_MODE_RUNN, 1);
         model.resume();
     }//GEN-LAST:event_runOneButtonActionPerformed
 
@@ -488,7 +500,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         } catch (CLIPSError ex) {
             Exceptions.printStackTrace(ex);
         }
-        model.setMode(MonitorModel.ex_mode_START);
+        model.setMode(MonitorModel.EX_MODE_START);
         model.execute();
     }//GEN-LAST:event_loadDefaultFileButtonActionPerformed
 
@@ -532,7 +544,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
   private void BreakButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BreakButtonActionPerformed
         disableButtons();
-        model.setMode(MonitorModel.ex_mode_BREAK);
+        model.setMode(MonitorModel.EX_MODE_BREAK);
         model.resume();
         //model.step();
         enableButtons();
@@ -547,6 +559,11 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         model.setTargetUpdateTime(jSlider1.getValue());
         jSlider1.setValue((int) model.getTargetUpdateTime());
     }//GEN-LAST:event_jSlider1StateChanged
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        model.setPartialUpdateEnabled(jCheckBox1.isSelected());
+        jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     private void setShortcut() {
     /**
@@ -730,6 +747,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private javax.swing.JLabel envLabel2;
     private javax.swing.JLabel envLabel3;
     private javax.swing.JComboBox envsSelector;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSlider jSlider1;
@@ -919,6 +937,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             this.getStepTextField().setText(step.toString());
             this.getpenaltiesField().setText(score.toString());
             jSlider1.setValue((int) model.getTargetUpdateTime());
+            jCheckBox1.setSelected(model.getPartialUpdateEnabled());
         }
     }
 
@@ -934,7 +953,10 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         loadDefaultFileButton.setEnabled(true);
         CLPSelector.setEnabled(true);
         envsSelector.setEnabled(true);
-        jSlider1.setValue((int) model.getTargetUpdateTime());
+        if(model != null){
+            jSlider1.setValue((int) model.getTargetUpdateTime());
+            jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+        }
     }
 
     @Override
@@ -946,7 +968,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     @Override
     public void keyPressed(KeyEvent e) {
        if(e.getKeyCode() == KeyEvent.VK_SPACE){
-            model.setMode(MonitorModel.ex_mode_RUNN, 1);
+            model.setMode(MonitorModel.EX_MODE_RUNN, 1);
             model.resume();
        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
