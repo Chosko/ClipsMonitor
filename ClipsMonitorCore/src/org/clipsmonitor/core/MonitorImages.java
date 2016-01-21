@@ -218,7 +218,7 @@ public class MonitorImages {
 
        private void NameToRgbMap(){
 
-        colorToRgba.put("AliceBlue","rgba(240,24,255");
+        colorToRgba.put("AliceBlue","240,24,255");
         colorToRgba.put("AntiqueWhite","250,235,215");
         colorToRgba.put("Aqua","0,255,255");
         colorToRgba.put("Aquamarine","127,255, 212");
@@ -358,7 +358,7 @@ public class MonitorImages {
         colorToRgba.put("WhiteSmoke","245,245,245");
         colorToRgba.put("Yellow","255,255,0");
         colorToRgba.put("YellowGreen","154,205,50");
-
+          
        }
        
        

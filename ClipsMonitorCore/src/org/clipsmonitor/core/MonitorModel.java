@@ -19,7 +19,8 @@ import org.clipsmonitor.clips.ClipsCore;
  */
 
 public abstract class MonitorModel extends Observable implements Runnable {
-
+    
+    private long targetUpdateTime;
     protected ClipsCore core;
     private int executionMode;
     private ClipsConsole console;
@@ -68,7 +69,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
 
             while (!finished) {
 
-
+                long startTime = System.nanoTime();
 
                 switch (executionMode) {
                     case ex_mode_STEP:
@@ -104,8 +105,15 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 */
                 boolean suspend = false;
                 boolean update = false;
+                String partialUpdateString = null;
          
                 updateStatus();
+                
+                if(clipsMonitorFact.startsWith("update-")){
+                    suspend = false;
+                    update = false;
+                    partialUpdateString = clipsMonitorFact;
+                }
                 
                 if (result.equals("done") || result.equals("disaster") || (time >= maxduration)){
                     finished = true;
@@ -145,8 +153,32 @@ public abstract class MonitorModel extends Observable implements Runnable {
                     this.setChanged();
                     this.notifyObservers("actionDone");
                 }
+                else if(partialUpdateString != null){
+                    try{
+                        partialUpdate(partialUpdateString);
+                    }
+                    catch(CLIPSError er){
+                        console.error(er);
+                    }
+                    this.setChanged();
+                    this.notifyObservers(partialUpdateString);
+                }
                 if(suspend){
                     this.suspend();
+                }
+                else if(update){
+                    long millisecondsLeft;
+                    do{ // Horrible busy waiting
+                      long elapsedMilliseconds = (System.nanoTime() - startTime) / 1000000;
+                      millisecondsLeft = targetUpdateTime - elapsedMilliseconds;
+                    } while(millisecondsLeft > 0);
+                }
+                else if(partialUpdateString != null){
+                    long millisecondsLeft;
+                    do{ // Horrible busy waiting
+                      long elapsedMilliseconds = (System.nanoTime() - startTime) / 1000000;
+                      millisecondsLeft = (targetUpdateTime - elapsedMilliseconds) / 2;
+                    } while(millisecondsLeft > 0);
                 }
             }
 
@@ -292,6 +324,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
         executionMode = ex_mode_START;
         console = ClipsConsole.getInstance();
         core = ClipsCore.getInstance();
+        targetUpdateTime = 200;
         this.setChanged();
         this.notifyObservers("startApp");
     }
@@ -449,6 +482,16 @@ public abstract class MonitorModel extends Observable implements Runnable {
     public synchronized Integer getColumn() {
         return column;
     }
+    
+    public long getTargetUpdateTime(){
+        return targetUpdateTime;
+    }
+    
+    public void setTargetUpdateTime(long value){
+        if(value > 0){
+            targetUpdateTime = value;
+        }
+    }
 
     protected void setup(){
         initModel();
@@ -474,5 +517,10 @@ public abstract class MonitorModel extends Observable implements Runnable {
      */
     protected abstract void updateModel() throws CLIPSError;
 
+    /**
+     * Aggiorna solo alcune informazioni, basate sulla stringa in input
+     * @throws CLIPSError 
+     */
+    protected abstract void partialUpdate(String partial) throws CLIPSError;
 
 }

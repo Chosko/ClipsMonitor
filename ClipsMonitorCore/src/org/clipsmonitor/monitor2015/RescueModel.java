@@ -19,8 +19,6 @@ import org.clipsmonitor.core.MonitorMap;
  */
 
 public class RescueModel extends MonitorModel {
-
-
     private String direction;
     private String mode;
     private String loaded; // presenza di un carico
@@ -169,6 +167,59 @@ public class RescueModel extends MonitorModel {
 
     public MonitorMap getMapToRegister(String target){
         return maps.get(target);
+    }
+
+    @Override
+    protected synchronized void partialUpdate(String partial) throws CLIPSError {
+        console.debug("Aggiornamento parziale del modello: " + partial);
+        
+        boolean updateValid = false;
+                
+        if(partial.equals("update-agent")){
+            updateAgent();
+            MonitorMap envMap = maps.get("envMap");
+            if(envMap != null){
+                envMap.updateMap();
+            }
+            updateValid = true;
+        }
+        else if(partial.equals("update-k-agent")){
+            updateKAgent();
+            MonitorMap agentMap = maps.get("agentMap");
+            if(agentMap != null){
+                agentMap.updateMap();
+            }
+            updateValid = true;
+        }
+        else if(partial.equals("update-p-nodes")){
+            updatePNodes();
+            MonitorMap agentMap = maps.get("agentMap");
+            if(agentMap != null){
+                agentMap.updateMap();
+            }
+            updateValid = true;
+        }
+        else if(partial.equals("update-people")){
+            updatePeople();
+            MonitorMap envMap = maps.get("envMap");
+            if(envMap != null){
+                envMap.updateMap();
+            }
+            updateValid = true;
+        }
+        else if(partial.equals("update-k-people")){
+            updateKPeople();
+            MonitorMap agentMap = maps.get("agentMap");
+            if(agentMap != null){
+                agentMap.updateMap();
+            }
+            updateValid = true;
+        }
+
+        if(updateValid){
+          this.setChanged();
+          this.notifyObservers("repaint"); 
+        }
     }
 
     /**
@@ -382,7 +433,7 @@ public class RescueModel extends MonitorModel {
     public int getKColumn(){
         return kcolumn;
     }
-    
+
     public String getPDirection() {
         return pdirection;
     }
@@ -402,11 +453,11 @@ public class RescueModel extends MonitorModel {
     public int getPColumn(){
         return pcolumn;
     }
-    
+
     public ArrayList<int[]> getOpenNodes(){
         return openNodes;
     }
-    
+
     public ArrayList<int[]> getClosedNodes(){
         return closedNodes;
     }
