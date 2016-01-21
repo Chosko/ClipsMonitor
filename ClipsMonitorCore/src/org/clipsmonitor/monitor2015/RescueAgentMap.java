@@ -159,7 +159,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
                 int ncolumn = current[1] - 1;
                 map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(111,61,17,0.15)";
             }
-            map[r][c] = map[r][c] + "+agent_" + model.getPDirection() + "_" + model.getPMode();
+            map[r][c] = map[r][c] + "+p_agent_" + model.getPDirection() + "_" + model.getPMode();
         }
     }
 
