@@ -174,7 +174,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
                       millisecondsLeft = targetUpdateTime - elapsedMilliseconds;
                     } while(millisecondsLeft > 0);
                 }
-                else if(partialUpdateString != null){
+           else if(partialUpdateString != null){
                     long millisecondsLeft;
                     do{ // Horrible busy waiting
                       long elapsedMilliseconds = (System.nanoTime() - startTime) / 1000000;

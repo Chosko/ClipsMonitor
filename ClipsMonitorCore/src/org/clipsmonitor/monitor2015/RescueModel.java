@@ -44,7 +44,8 @@ public class RescueModel extends MonitorModel {
     private int pcolumn;
     private ArrayList<int[]> openNodes;
     private ArrayList<int[]> closedNodes;
-
+    private int [] goalSelected;
+    
     /*costanti enumerative intere per un uso più immediato delle posizioni all'interno
      degli array che definiscono i fatti di tipo (real-cell)*/
 
@@ -95,6 +96,7 @@ public class RescueModel extends MonitorModel {
             instance.pcolumn = 0;
             instance.openNodes = null;
             instance.closedNodes = null;
+            instance.goalSelected = new int []{0,0};
             instance = null;
         }
     }
@@ -111,6 +113,7 @@ public class RescueModel extends MonitorModel {
         personPositions = new ArrayList<int[]>();
         kpersonPositions = new ArrayList<int[]>();
         offsetPosition = new HashMap<String,int[]>();
+        goalSelected = new int []{0,0};
     }
 
     /**
@@ -246,6 +249,8 @@ public class RescueModel extends MonitorModel {
         updatePeople();
         updateKPeople();
         checkBumpCondition();
+        
+        updateGoal();
 
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
@@ -283,6 +288,22 @@ public class RescueModel extends MonitorModel {
         }
     }
 
+    
+    public void updateGoal() throws CLIPSError{
+      String[] goal = core.findFact("AGENT", RescueFacts.Goal.factName(), "eq ?f:status selected", RescueFacts.Goal.slotsArray());
+      if (goal[0]!=null){
+          try{
+            int row = Integer.parseInt(goal[RescueFacts.Goal.PARAM1.index()]);
+            int column = Integer.parseInt(goal[RescueFacts.Goal.PARAM2.index()]);
+            goalSelected = new int [] {row,column};
+          }
+          catch(NumberFormatException ex){
+            goalSelected=new int []{0,0};
+          }
+        }
+      
+    }
+    
     private void updatePNodes() throws CLIPSError{
         openNodes = new ArrayList<int[]>();
         closedNodes = new ArrayList<int[]>();
@@ -440,6 +461,11 @@ public class RescueModel extends MonitorModel {
 
     public String getPLoaded() {
         return ploaded;
+    }
+    
+    public int [] getGoalSelected(){
+    
+      return goalSelected;
     }
 
     public String getPMode() {

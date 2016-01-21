@@ -17,7 +17,8 @@ public class RescueAgentMap extends MonitorMap implements Observer {
     private final String UNKNOWN_COLOR = "#333333";
     private final String SOUND_COLOR = "rgba(0,70,255,0.3)";
     private final String WHITE = "#ffffff";
-
+    private static MonitorImages img;
+    
     /**
      * È il costruttore da chiamare nel main per avviare l'intero sistema, apre
      * una nuova finestra con il controller, pronto per caricare il file .clp
@@ -68,6 +69,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         updatePersonStatus();
         updateAgentStatus();
         updatePNodes();
+        updateGoal();
         // debugMap("k-cell");
     }
 
@@ -130,7 +132,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             
             
             if (((Math.abs(model.getKRow()-(r+1))>1) || (Math.abs(model.getKColumn()-(c+1))>1))  && !contains.equals("unknown")){
-              map[r][c] += "+"+MonitorImages.getInstance().creatergbafromName("black",0.2) ;
+              map[r][c] += "+"+ images.creatergbafromName("black",0.2) ;
             }
         }
     }
@@ -146,7 +148,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         }
 
     }
-
+    
     
     private void updatePNodes() throws CLIPSError{
         int r = model.getPRow() - 1;
@@ -159,12 +161,12 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             for (int[] current : openNodes) {
                 int nrow = current[0] - 1;
                 int ncolumn = current[1] - 1;
-                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(31, 17, 111,0.25)";
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+" + images.creatergbafromName("blue", 0.25);
             }
             for (int[] current : closedNodes) {
                 int nrow = current[0] - 1;
                 int ncolumn = current[1] - 1;
-                map[nrow][ncolumn] = map[nrow][ncolumn] + "+rgba(111,61,17,0.25)";
+                map[nrow][ncolumn] = map[nrow][ncolumn] + "+" + images.creatergbafromName("red", 0.25);
             }
             map[r][c] = map[r][c] + "+p_agent_" + model.getPDirection() + "_" + model.getPMode();
         }
@@ -180,5 +182,16 @@ public class RescueAgentMap extends MonitorMap implements Observer {
             int c = person[1] - 1;
             map[r][c] = map[r][c] + "+person";
         }
+    }
+    
+    public void updateGoal()throws CLIPSError{
+    
+      console.debug("Acquisizione posizione del goal selezionato...");
+      int [] goal = model.getGoalSelected();
+      if(goal[0]!=0 && goal[1]!=0){
+        int r = goal[0]-1;
+        int c = goal[1]-1;
+        map[r][c]+="+"+ images.creatergbafromName("green", 0.6);
+      }
     }
 }

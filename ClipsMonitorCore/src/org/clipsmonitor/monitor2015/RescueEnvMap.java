@@ -76,6 +76,7 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         updateCells();
         updatePersonStatus();
         updateAgentStatus();
+        updateGoal();
         // debugMap("cell");
     }
 
@@ -143,5 +144,16 @@ public class RescueEnvMap extends MonitorMap implements Observer {
             int c = person[1] - 1;
             map[r][c] = map[r][c] + "+person";
         }
+    }
+    
+    public void updateGoal()throws CLIPSError{
+    
+      console.debug("Acquisizione posizione del goal selezionato...");
+      int [] goal = model.getGoalSelected();
+      if(goal[1]!=0 && goal[1]!=0){
+        int r = goal[0]-1;
+        int c = goal[1]-1;
+        map[r][c]+="+"+ images.creatergbafromName("green", 0.6);
+      }
     }
 }

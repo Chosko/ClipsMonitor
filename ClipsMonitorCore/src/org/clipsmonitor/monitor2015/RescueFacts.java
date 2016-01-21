@@ -75,7 +75,7 @@ public final class RescueFacts{
             String inj = injured ? "yes" : "no";
             String [] split = content.split("\\+");
             String contains= split[0];
-            
+
             if (content.contains("debris")) contains = "debris";
 
             RealCell = "(" + RescueFacts.RealCell.factName()
@@ -252,6 +252,51 @@ public final class RescueFacts{
             return FACT_NAME;
         }
     }
+        
+        public enum Goal implements RescueFact {
+          IDENT(0, "ident"),
+          PRIORITY(1, "priority"),
+          ACTION(2,"action"),
+          PARAM1(3,"param1"),
+          PARAM2(4,"param2"),
+          PARAM3(5,"param3"),
+          STATUS(6,"status"),
+          ENCLOSED(7,"enclosed");
+
+          private static final String FACT_NAME = "goal";
+          private final int index;
+          private final String slot;
+
+          Goal(int index, String slot) {
+            this.index = index;
+            this.slot = slot;
+          }
+
+        @Override
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public String slot() {
+            return slot;
+        }
+
+        public static String[] slotsArray() {
+            RescueFact[] fact = values();
+            String[] slots = new String[fact.length];
+            for (RescueFact slot : fact) {
+                slots[slot.index()] = slot.slot();
+            }
+            return slots;
+        }
+
+        public static String factName() {
+            return FACT_NAME;
+        }
+    }
+
+
 
     public enum AgentStatus implements RescueFact{
         STEP(0, "step"),
