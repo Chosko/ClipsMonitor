@@ -44,7 +44,9 @@ public class RescueModel extends MonitorModel {
     private int pcolumn;
     private ArrayList<int[]> openNodes;
     private ArrayList<int[]> closedNodes;
+    private ArrayList<int[]> goalsToDo;
     private int [] goalSelected;
+    private String typeGoalSelected;
     
     /*costanti enumerative intere per un uso più immediato delle posizioni all'interno
      degli array che definiscono i fatti di tipo (real-cell)*/
@@ -96,6 +98,7 @@ public class RescueModel extends MonitorModel {
             instance.pcolumn = 0;
             instance.openNodes = null;
             instance.closedNodes = null;
+            instance.goalsToDo = null;
             instance.goalSelected = new int []{0,0};
             instance = null;
         }
@@ -251,6 +254,7 @@ public class RescueModel extends MonitorModel {
         checkBumpCondition();
         
         updateGoal();
+        updateGoalsToDo();
 
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
@@ -296,6 +300,8 @@ public class RescueModel extends MonitorModel {
             int row = Integer.parseInt(goal[RescueFacts.Goal.PARAM1.index()]);
             int column = Integer.parseInt(goal[RescueFacts.Goal.PARAM2.index()]);
             goalSelected = new int [] {row,column};
+            typeGoalSelected = goal[RescueFacts.Goal.ACTION.index()];
+            
           }
           catch(NumberFormatException ex){
             goalSelected=new int []{0,0};
@@ -342,7 +348,19 @@ public class RescueModel extends MonitorModel {
         }
     }
 
-
+    
+    private void updateGoalsToDo(){
+    
+        goalsToDo = new ArrayList<int []>();
+        String[][] goals = core.findAllFacts("AGENT", RescueFacts.Goal.factName(), "eq ?f:status to-do", RescueFacts.Goal.slotsArray());
+        for(String [] goal : goals){
+          int r = new Integer(goal[RescueFacts.Goal.PARAM1.index()]);
+          int c = new Integer(goal[RescueFacts.Goal.PARAM2.index()]);
+          goalsToDo.add(new int []{r,c});
+        }
+    }
+    
+    
     private void updatePeople() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti per EnvMap...");
         String[][] persons = core.findAllFacts("ENV", RescueFacts.PersonStatus.factName(), "TRUE", RescueFacts.PersonStatus.slotsArray());
@@ -480,12 +498,20 @@ public class RescueModel extends MonitorModel {
         return pcolumn;
     }
 
+    public String getTypeGoalSelected(){
+        return typeGoalSelected;
+    }
+    
     public ArrayList<int[]> getOpenNodes(){
         return openNodes;
     }
 
     public ArrayList<int[]> getClosedNodes(){
         return closedNodes;
+    }
+    
+    public ArrayList<int[]> getGoalsToDo(){
+        return goalsToDo;
     }
 
     public boolean getBumped(){
