@@ -26,13 +26,14 @@ public abstract class MonitorModel extends Observable implements Runnable {
     private ClipsConsole console;
     private final Thread t;
     private int paramMode = 1;
-    public static final int ex_mode_START = 1;
-    public static final int ex_mode_RUN1 = 2;
-    public static final int ex_mode_STEP = 3;
-    public static final int ex_mode_RUN = 4;
-    public static final int ex_mode_RUNN = 5;
-    public static final int ex_mode_STOP = 6;
-    public static final int ex_mode_BREAK = 7;
+    private boolean partialUpdateEnabled = false;
+    public static final int EX_MODE_START = 1;
+    public static final int EX_MODE_RUN1 = 2;
+    public static final int EX_MODE_STEP = 3;
+    public static final int EX_MODE_RUN = 4;
+    public static final int EX_MODE_RUNN = 5;
+    public static final int EX_MODE_STOP = 6;
+    public static final int EX_MODE_BREAK = 7;
 
 
     //  variabili di esecuzione del modello
@@ -72,9 +73,9 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 long startTime = System.nanoTime();
 
                 switch (executionMode) {
-                    case ex_mode_STEP:
-                    case ex_mode_BREAK:
-                    case ex_mode_RUN:
+                    case EX_MODE_STEP:
+                    case EX_MODE_BREAK:
+                    case EX_MODE_RUN:
                         core.RecFromRouter();
                         core.run();
                         core.StopRecFromRouter();
@@ -82,7 +83,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
                             console.clips(core.GetStdoutFromRouter());
                         }
                         break;
-                    case ex_mode_RUNN:
+                    case EX_MODE_RUNN:
                         core.RecFromRouter();
                         core.run(paramMode);
                         core.StopRecFromRouter();
@@ -90,8 +91,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
                             console.clips(core.GetStdoutFromRouter());
                         }
                         break;
-                    case ex_mode_START:
-                    case ex_mode_STOP:
+                    case EX_MODE_START:
+                    case EX_MODE_STOP:
                     default:
                         break;
 
@@ -109,7 +110,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
          
                 updateStatus();
                 
-                if(clipsMonitorFact.startsWith("update-")){
+                if(partialUpdateEnabled && clipsMonitorFact.startsWith("update-")){
                     suspend = false;
                     update = false;
                     partialUpdateString = clipsMonitorFact;
@@ -125,21 +126,21 @@ public abstract class MonitorModel extends Observable implements Runnable {
                 }
                 else if (clipsMonitorFact.equals("do-step")){
                     update = true;
-                    executionMode = ex_mode_STEP;
+                    executionMode = EX_MODE_STEP;
                 }
-                else if(executionMode == ex_mode_BREAK){
+                else if(executionMode == EX_MODE_BREAK){
                     suspend = true;
                     update = true;
                 }
-                else if(executionMode == ex_mode_STEP && clipsMonitorFact.equals("step-done")){
+                else if(executionMode == EX_MODE_STEP && clipsMonitorFact.equals("step-done")){
                     suspend = true;
                     update = true;
                 }
-                else if(executionMode == ex_mode_STOP || executionMode == ex_mode_RUNN){
+                else if(executionMode == EX_MODE_STOP || executionMode == EX_MODE_RUNN){
                     suspend = true;
                     update = true;
                 }
-                else if(executionMode == ex_mode_RUN && clipsMonitorFact.equals("step-done")){
+                else if(executionMode == EX_MODE_RUN && clipsMonitorFact.equals("step-done")){
                     update = true;
                 }
                 
@@ -321,10 +322,11 @@ public abstract class MonitorModel extends Observable implements Runnable {
     }
 
     public void init() {
-        executionMode = ex_mode_START;
+        executionMode = EX_MODE_START;
         console = ClipsConsole.getInstance();
         core = ClipsCore.getInstance();
         targetUpdateTime = 200;
+        partialUpdateEnabled = false;
         this.setChanged();
         this.notifyObservers("startApp");
     }
@@ -491,6 +493,14 @@ public abstract class MonitorModel extends Observable implements Runnable {
         if(value > 0){
             targetUpdateTime = value;
         }
+    }
+    
+    public boolean getPartialUpdateEnabled() {
+        return partialUpdateEnabled;
+    }
+    
+    public void setPartialUpdateEnabled(boolean value){
+        partialUpdateEnabled = value;
     }
 
     protected void setup(){
