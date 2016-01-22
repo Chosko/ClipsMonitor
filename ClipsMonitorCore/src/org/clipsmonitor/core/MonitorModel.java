@@ -27,6 +27,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
     private final Thread t;
     private int paramMode = 1;
     private boolean partialUpdateEnabled = false;
+    private boolean showGoalEnabled = false;
     public static final int EX_MODE_START = 1;
     public static final int EX_MODE_RUN1 = 2;
     public static final int EX_MODE_STEP = 3;
@@ -174,7 +175,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
                       millisecondsLeft = targetUpdateTime - elapsedMilliseconds;
                     } while(millisecondsLeft > 0);
                 }
-                else if(partialUpdateString != null){
+           else if(partialUpdateString != null){
                     long millisecondsLeft;
                     do{ // Horrible busy waiting
                       long elapsedMilliseconds = (System.nanoTime() - startTime) / 1000000;
@@ -327,6 +328,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
         core = ClipsCore.getInstance();
         targetUpdateTime = 200;
         partialUpdateEnabled = false;
+        showGoalEnabled = false;
         this.setChanged();
         this.notifyObservers("startApp");
     }
@@ -501,6 +503,14 @@ public abstract class MonitorModel extends Observable implements Runnable {
     
     public void setPartialUpdateEnabled(boolean value){
         partialUpdateEnabled = value;
+    }
+    
+    public boolean getShowGoalEnabled() {
+        return showGoalEnabled;
+    }
+    
+    public void setShowGoalEnabled(boolean value){
+        showGoalEnabled = value;
     }
 
     protected void setup(){

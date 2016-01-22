@@ -76,6 +76,8 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         updateCells();
         updatePersonStatus();
         updateAgentStatus();
+        updateGoal();
+        updateGoalsToDo();
         // debugMap("cell");
     }
 
@@ -143,5 +145,44 @@ public class RescueEnvMap extends MonitorMap implements Observer {
             int c = person[1] - 1;
             map[r][c] = map[r][c] + "+person";
         }
+    }
+    
+    public void updateGoal()throws CLIPSError{
+    
+      console.debug("Acquisizione posizione del goal selezionato...");
+      int [] goal = model.getGoalSelected();
+      if(goal[1]!=0 && goal[1]!=0){
+        int r = goal[0]-1;
+        int c = goal[1]-1;
+        map[r][c]+="+"+ images.creatergbafromName("green", 0.6);
+        
+        if (model.getTypeGoalSelected().equals("drill")){
+          map[r][c] +="+D";
+        }
+        if (model.getTypeGoalSelected().equals("explore")){
+          map[r][c] +="+E";
+        }
+        if (model.getTypeGoalSelected().equals("done")){
+          map[r][c] +="+G";
+        }
+ 
+        if (model.getTypeGoalSelected().equals("discover")||  model.getTypeGoalSelected().equals("check")){
+          map[r][c] +="+I";
+        }
+        if (model.getTypeGoalSelected().equals("unload")){
+          map[r][c] +="+G";
+        }
+ 
+      }
+    }
+    
+    public void updateGoalsToDo() throws CLIPSError{
+      console.debug("Acquisizione posizione dei goal nella lista to-do...");
+      ArrayList<int []> goals = model.getGoalsToDo();
+      for(int [] goal : goals){
+         int r = goal[0]-1;
+         int c = goal[1]-1;
+         map[r][c]+="+"+ images.creatergbafromName("orange", 0.5);
+      }
     }
 }

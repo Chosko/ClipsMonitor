@@ -132,7 +132,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         RefreshButton = new javax.swing.JButton();
         jSlider1 = new javax.swing.JSlider();
         jLabel2 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        enablePartialUpdateCheckbox = new javax.swing.JCheckBox();
+        showGoalCheckbox = new javax.swing.JCheckBox();
 
         org.openide.awt.Mnemonics.setLocalizedText(strategyLabel, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.strategyLabel.text")); // NOI18N
 
@@ -297,10 +298,17 @@ public final class ControlsTopComponent extends TopComponent implements Observer
 
         org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jLabel2.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.jCheckBox1.text")); // NOI18N
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(enablePartialUpdateCheckbox, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.enablePartialUpdateCheckbox.text")); // NOI18N
+        enablePartialUpdateCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                enablePartialUpdateCheckboxActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(showGoalCheckbox, org.openide.util.NbBundle.getMessage(ControlsTopComponent.class, "ControlsTopComponent.showGoalCheckbox.text")); // NOI18N
+        showGoalCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showGoalCheckboxActionPerformed(evt);
             }
         });
 
@@ -335,28 +343,31 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                             .addComponent(stepTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
                             .addComponent(timeTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(timeLeftTextField, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(42, 42, 42)
-                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(controlPanelLayout.createSequentialGroup()
-                                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                                    .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                                    .addComponent(runOneButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(loadDefaultFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(controlPanelLayout.createSequentialGroup()
-                                .addComponent(BreakButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ResetPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(42, 42, 42))
                     .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel2)
+                        .addComponent(enablePartialUpdateCheckbox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(showGoalCheckbox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(controlPanelLayout.createSequentialGroup()
                         .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(controlPanelLayout.createSequentialGroup()
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(stepButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                            .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                            .addComponent(runOneButton, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(loadDefaultFileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(resetButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(controlPanelLayout.createSequentialGroup()
+                        .addComponent(BreakButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ResetPathButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,8 +412,9 @@ public final class ControlsTopComponent extends TopComponent implements Observer
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jCheckBox1))))
-                .addContainerGap())
+                            .addComponent(enablePartialUpdateCheckbox)
+                            .addComponent(showGoalCheckbox))))
+                .addGap(6, 6, 6))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -562,12 +574,19 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         }
     }//GEN-LAST:event_jSlider1StateChanged
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+    private void enablePartialUpdateCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enablePartialUpdateCheckboxActionPerformed
        if(model!=null){  
-      model.setPartialUpdateEnabled(jCheckBox1.isSelected());
-        jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+      model.setPartialUpdateEnabled(enablePartialUpdateCheckbox.isSelected());
+        enablePartialUpdateCheckbox.setSelected(model.getPartialUpdateEnabled());
        }
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    }//GEN-LAST:event_enablePartialUpdateCheckboxActionPerformed
+
+    private void showGoalCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGoalCheckboxActionPerformed
+        if (model != null) {
+            model.setShowGoalEnabled(showGoalCheckbox.isSelected());
+            showGoalCheckbox.setSelected(model.getShowGoalEnabled());
+        }
+    }//GEN-LAST:event_showGoalCheckboxActionPerformed
 
     private void setShortcut() {
     /**
@@ -746,12 +765,12 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private javax.swing.JButton RefreshButton;
     private javax.swing.JButton ResetPathButton;
     private javax.swing.JPanel controlPanel;
+    private javax.swing.JCheckBox enablePartialUpdateCheckbox;
     private javax.swing.JLabel envLabel;
     private javax.swing.JLabel envLabel1;
     private javax.swing.JLabel envLabel2;
     private javax.swing.JLabel envLabel3;
     private javax.swing.JComboBox envsSelector;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSlider jSlider1;
@@ -759,6 +778,7 @@ public final class ControlsTopComponent extends TopComponent implements Observer
     private javax.swing.JButton resetButton;
     private javax.swing.JButton runButton;
     private javax.swing.JButton runOneButton;
+    private javax.swing.JCheckBox showGoalCheckbox;
     private javax.swing.JButton stepButton;
     private javax.swing.JTextField stepTextField;
     private javax.swing.JLabel strategyLabel;
@@ -941,7 +961,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
             this.getStepTextField().setText(step.toString());
             this.getpenaltiesField().setText(score.toString());
             jSlider1.setValue((int) model.getTargetUpdateTime());
-            jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+            enablePartialUpdateCheckbox.setSelected(model.getPartialUpdateEnabled());
+            showGoalCheckbox.setSelected(model.getShowGoalEnabled());
         }
     }
 
@@ -959,7 +980,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         envsSelector.setEnabled(true);
         if(model != null){
             jSlider1.setValue((int) model.getTargetUpdateTime());
-            jCheckBox1.setSelected(model.getPartialUpdateEnabled());
+            enablePartialUpdateCheckbox.setSelected(model.getPartialUpdateEnabled());
+            showGoalCheckbox.setSelected(model.getShowGoalEnabled());
         }
     }
 
