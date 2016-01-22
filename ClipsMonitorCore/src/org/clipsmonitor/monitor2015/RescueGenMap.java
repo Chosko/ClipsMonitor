@@ -105,38 +105,44 @@ public class RescueGenMap extends MonitorGenMap {
     
     
    /**
- * Inizializzazione della scena eseguita mettendo nel perimetro della scena
- * l'outdoor e riempiendo il resto con le celle empty. Il metodo risulta
- * chiaramente adattato ai vincoli del progetto e a come si dovrebbe
- * presentare di default uno scenario
- *
- * @param scene matrice di stringe che dovrà essere riempita
- */
+    * Inizializzazione della scena eseguita mettendo nel perimetro della scena
+    * l'outdoor e riempiendo il resto con le celle empty. Il metodo risulta
+    * chiaramente adattato ai vincoli del progetto e a come si dovrebbe
+    * presentare di default uno scenario
+    *
+    * @param scene matrice di stringe che dovrà essere riempita
+    */
 
 
-@Override
-public void initScene(String[][] scene) {
+    @Override
+    public void initScene(String[][] scene) {
 
-    for (int i = 0; i < scene.length; i++) {
-        for (int j = 0; j < scene[i].length; j++) {
-            if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
-                scene[i][j] = "outdoor";
-            } else if (i == 1 || i == scene.length - 2 || j == 1 || j == scene[0].length - 2) {
-                scene[i][j] = "wall";
-            } else {
+        for (int i = 0; i < scene.length; i++) {
+            for (int j = 0; j < scene[i].length; j++) {
+                if (i == 0 || i == scene.length - 1 || j == 0 || j == scene[0].length - 1) {
+                    scene[i][j] = "outdoor";
+                } else if (i == 1 || i == scene.length - 2 || j == 1 || j == scene[0].length - 2) {
+                    scene[i][j] = "wall";
+                } else {
 
-                scene[i][j] = "empty";
+                    scene[i][j] = "empty";
+                }
             }
         }
-    }
 
-    scene[this.agentposition[0]][this.agentposition[1]] = "gate" + "+" + "agent_" + direction + "_" + loaded;
-    this.move = this.clone(scene);
-}
+        scene[this.agentposition[0]][this.agentposition[1]] = "gate" + "+" + "agent_" + direction + "_" + loaded;
+        this.move = this.clone(scene);
+    }
 
   
 
+    private int[] matrixToMap(int i, int j){
+        return new int[]{scene[0].length - j, i+1};
+    }
     
+    private int[] matrixToMap(int[] pos){
+        return new int[]{scene[0].length - pos[1], pos[0]+1};
+    }
 
     /**
      * Genera una stringa rappresentante la history da scrivere successivamante
@@ -151,18 +157,25 @@ public void initScene(String[][] scene) {
     public String exportHistory() {
         String history = "";
         history += "(maxduration " + this.maxduration + ") \n\n";
-        int maxRow = scene[0].length;
-        int agentPosR = maxRow-this.agentposition[1];
-        int agentPosC = this.agentposition[0]+1;
+        int[] agentPos = matrixToMap(this.agentposition);
+        
         // posizione iniziale dell'agente
-        history += "(initial_agentposition ( pos-r " + agentPosR  + ")";
-        history += "( pos-c " + agentPosC + ")";
+        history += "(initial_agentposition ( pos-r " + agentPos[0]  + ")";
+        history += "( pos-c " + agentPos[1] + ")";
         history += "(direction " + this.direction + ")) \n\n";
-
+        
+        for(Person elem : Persons){
+            String personName = elem.getColor();
+            Path firstPath = getPathByName(personName + "_0");
+            StepMove firstMove = firstPath.getMoves().getFirst();
+            int[] firstMovePos = matrixToMap(firstMove.getRow(), firstMove.getColumn());
+            history += RescueFacts.PersonStatus.getPersonStatus(personName, firstMove.getStep(), firstMovePos[0], firstMovePos[1]);
+        }
+        history += "\n";
+        
         Path[] paths = this.getPaths(-1);
         
         for(Path elem : paths){
-            
             String name = elem.getName();
             String person = name.substring(0,name.indexOf("_"));
             int step = elem.getStartStep();
@@ -180,9 +193,9 @@ public void initScene(String[][] scene) {
             LinkedList<StepMove> slist = elem.getMoves(); 
             for( StepMove s : slist){
                 int idstep = s.getStep() - step;
-                int row = maxRow-s.getRow();
+                int[] stepPos = matrixToMap(s.getRow(), s.getColumn());
                 history += "( move-path " + name + " " + idstep + " " + person 
-                            + " " + s.getColumn() + " " + row + " ) \n"; 
+                            + " " + stepPos[0] + " " + stepPos[1] + " ) \n"; 
             
             }
         
@@ -205,19 +218,10 @@ public void initScene(String[][] scene) {
         //variabili per impostare la posizione delle componenti
         String s = "";
         
-        // la matrice di stringhe è salvato per colonne!
-        
-        int maxRow = scene[0].length;
-        int maxColumn = scene.length;
-        // i rappresenta la colonna
-        // j la riga
-        //Scansione della matrice di celle
-        // devo leggere dal basso vero l'alto le righe 
-        
-        for (int i = 0; i < maxColumn; i++) {
-            for (int j = 0; j < maxRow; j++) {
-
-                s += RescueFacts.RealCell.getRealCell(i+1,maxRow-j, scene[i][j], scene[i][j].contains("injured"));
+        for (int i = 0; i < scene.length; i++) {
+            for (int j = 0; j < scene[i].length; j++) {
+                int[] realCellPos = matrixToMap(i,j);
+                s += RescueFacts.RealCell.getRealCell(realCellPos[0],realCellPos[1], scene[i][j], scene[i][j].contains("injured"));
             }
         }
         return s;

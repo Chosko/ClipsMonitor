@@ -390,7 +390,7 @@ public final class RescueFacts{
                 "(" + PersonStatus.POSR.slot     + " " + x       +   ")" +
                 "(" + PersonStatus.POSC.slot     + " " + y       +   ")" +
                 "(" + PersonStatus.ACTIVITY.slot + " out"        +   ")" +
-                ")";
+                ")\n";
 
         return person;
 

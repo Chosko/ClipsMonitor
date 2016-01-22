@@ -128,7 +128,7 @@ public class RescueModel extends MonitorModel {
 
         try {
             console.debug("Esecuzione degli step necessari ad aspettare che l'agente sia pronto.");
-
+            core.RecFromRouter();
             /* Eseguiamo un passo fino a quando il fatto init-agent viene dichiarato
              * con lo slot (done yes): il mondo è pronto.
              */
@@ -141,12 +141,14 @@ public class RescueModel extends MonitorModel {
             for (MonitorMap map : maps.values()) {
                 map.initMap();
             }
+            core.StopRecFromRouter();
             console.debug("Il modello è pronto.");
 
         } catch (CLIPSError ex) {
+            core.StopRecFromRouter();
             console.error("L'inizializzazione è fallita:");
             ex.printStackTrace();
-            console.error(ex);
+            console.error(core.GetStdoutFromRouter());
         }
     }
 

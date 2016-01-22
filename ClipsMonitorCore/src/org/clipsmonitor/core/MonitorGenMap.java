@@ -130,9 +130,6 @@ public abstract class MonitorGenMap {
         this.agentposition[0] = this.defaultagentposition[0];
         this.agentposition[1] = this.defaultagentposition[1];
     }
-     
-    
-       
 
 
     /**
@@ -1662,8 +1659,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
 
     public void LoadFiles(File directory) throws ParseException {
 
-        String jsonMapPath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMap.json";
-        String jsonMovePath = directory.getAbsolutePath() + File.separator + directory.getName() + "_InfoMove.json";
+        String jsonMapPath = directory.getAbsolutePath() + File.separator + "InfoMap.json";
+        String jsonMovePath = directory.getAbsolutePath() + File.separator + "InfoMove.json";
         File jsonMap = new File(jsonMapPath);
         File jsonMove = new File(jsonMovePath);
 
@@ -1707,8 +1704,6 @@ private void LoadScene(File jsonFile) throws ParseException {
             String stato = cell.getString("stato");
 
             if (stato.contains("agent")) {
-                String [] split = stato.split("\\+");
-                stato = split[1];
                 this.SetRobotParams(stato, x, y);
             }
             this.setCell(x, y, stato);
