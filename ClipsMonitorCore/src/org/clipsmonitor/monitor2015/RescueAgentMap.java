@@ -69,8 +69,10 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         updatePersonStatus();
         updateAgentStatus();
         updatePNodes();
-        updateGoal();
-        updateGoalsToDo();
+        if(model.getShowGoalEnabled()){
+            updateGoal();
+            updateGoalsToDo();
+        }
         // debugMap("k-cell");
     }
 

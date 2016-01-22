@@ -199,6 +199,8 @@ public class RescueModel extends MonitorModel {
         }
         else if(partial.equals("update-p-nodes")){
             updatePNodes();
+            updateGoal();
+            updateGoalsToDo();
             MonitorMap agentMap = maps.get("agentMap");
             if(agentMap != null){
                 agentMap.updateMap();
