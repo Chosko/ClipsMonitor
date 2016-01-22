@@ -31,7 +31,7 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         String advise = "";
         if (result.equals("disaster")) {
             advise = "Distaster \n";
-        } else if (model.getTime() >= model.getMaxDuration()) {
+        } else if (model.getTime() > model.getMaxDuration()) {
             advise = "Maxduration has been reached \n";
         } else {
             advise = "The agent says DONE.\n";

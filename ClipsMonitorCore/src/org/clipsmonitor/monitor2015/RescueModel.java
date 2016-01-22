@@ -358,9 +358,12 @@ public class RescueModel extends MonitorModel {
         goalsToDo = new ArrayList<int []>();
         String[][] goals = core.findAllFacts("AGENT", RescueFacts.Goal.factName(), "eq ?f:status to-do", RescueFacts.Goal.slotsArray());
         for(String [] goal : goals){
-          int r = new Integer(goal[RescueFacts.Goal.PARAM1.index()]);
-          int c = new Integer(goal[RescueFacts.Goal.PARAM2.index()]);
-          goalsToDo.add(new int []{r,c});
+            try{
+                int r = new Integer(goal[RescueFacts.Goal.PARAM1.index()]);
+                int c = new Integer(goal[RescueFacts.Goal.PARAM2.index()]);
+                goalsToDo.add(new int[]{r, c});
+            }
+            catch(NumberFormatException e){}
         }
     }
     
