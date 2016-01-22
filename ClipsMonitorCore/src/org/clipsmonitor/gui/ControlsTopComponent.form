@@ -21,7 +21,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="controlPanel" alignment="0" max="32767" attributes="0"/>
+          <Component id="controlPanel" alignment="0" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -36,21 +36,26 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="strategyLabel" alignment="1" pref="186" max="32767" attributes="0"/>
+                              <Component id="strategyLabel" alignment="1" max="32767" attributes="0"/>
                               <Component id="envsSelector" alignment="1" max="32767" attributes="0"/>
-                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="envLabel3" pref="90" max="32767" attributes="0"/>
-                                          <Component id="envLabel" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                          <Component id="envLabel3" min="-2" pref="90" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="RefreshButton" min="-2" pref="24" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="envLabel" min="-2" pref="90" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="RefreshButton" min="-2" pref="24" max="-2" attributes="0"/>
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      </Group>
                                   </Group>
-                                  <Component id="CLPSelector" alignment="0" min="-2" pref="180" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
                               </Group>
+                              <Component id="CLPSelector" alignment="1" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="envLabel2" min="-2" max="-2" attributes="0"/>
                               <Component id="envLabel1" min="-2" max="-2" attributes="0"/>
@@ -64,17 +69,16 @@
                               <Component id="timeTextField" alignment="0" max="32767" attributes="0"/>
                               <Component id="timeLeftTextField" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="enablePartialUpdateCheckbox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="showGoalCheckbox" max="32767" attributes="0"/>
+                          <Component id="showGoalCheckbox" pref="93" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="jSlider1" max="32767" attributes="0"/>
@@ -105,7 +109,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="runButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -122,8 +126,8 @@
                                   <Component id="envLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="RefreshButton" min="-2" pref="22" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Component id="envLabel" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
@@ -132,13 +136,16 @@
                               <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="3" attributes="0">
+                                  <Component id="envLabel3" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                                  <Component id="RefreshButton" min="-2" pref="22" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="PenaltiesTextField" alignment="3" min="-2" max="-2" attributes="0"/>
