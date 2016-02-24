@@ -77,27 +77,28 @@ public abstract class MonitorGenMap {
      * di celle e alla dimensione totale dell'area di visualizzazione della
      * mappa. Inoltre il metodo setta la posizione iniziale dell'agente
      *
-     * @param numCellX : numero di righe
-     * @param numCellY : numero di colonne
+     * @param numCellX : numero di colonne
+     * @param numCellY : numero di righr
      * @param mapWidth : larghezza in pixel della mappa
      * @param mapHeight : altezza in pixel della mappa
      */
-    public void initModelMap(int NumCellX, int NumCellY, float MapWidth, float MapHeight) {
+    public void initModelMap(int NewNumCellX, int NewNumCellY, float NewMapWidth, float NewMapHeight) {
 
-        this.MapWidth = MapWidth;
-        this.MapHeight = MapHeight;
-        this.NumCellX = NumCellX;
-        this.NumCellY = NumCellY;
+        MapWidth = NewMapWidth;
+        MapHeight = NewMapHeight;
+        NumCellX = NewNumCellX;
+        NumCellY = NewNumCellY;
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
+        
         //genero la scena della dimensione specificata
-
+        
         SetSizeCells();
         setAgentDefaultPosition();
         initScene(scene);
         //inizializzo la scena con i valori di default e cioè con i muri su tutto il bordo della scena
-        this.move = this.clone(scene);
-        this.mapActive = scene;
+        move = clone(scene);
+        CopyToActive(scene);
     }
 
     
@@ -429,8 +430,8 @@ public abstract class MonitorGenMap {
            int offset = paramStep - succ.startStep;
            if (succ.move.size() > offset) {
                StepMove s = succ.move.get(offset);
-               int r = s.getRow();
-               int c = s.getColumn();
+               int r = s.getX();
+               int c = s.getY();
                String rgba= MonitorImages.getInstance().creatergbafromName(p.associatedColor, 0.25);
                newmap[r][c] = rgba + "+" + personName;
            }
@@ -448,8 +449,8 @@ public abstract class MonitorGenMap {
 
        while (it.hasNext()) {
            StepMove s = it.next();
-           r = s.getRow();
-           c = s.getColumn();
+           r = s.getX();
+           c = s.getY();
            String rgba= MonitorImages.getInstance().creatergbafromName(splitResult[0], 0.25);
            if(newmap[r][c].equals("")){
              newmap[r][c]= rgba;
@@ -466,6 +467,15 @@ public abstract class MonitorGenMap {
 }
 
 
+    /*
+     * Questo metodo serve per generare la nuova mappa di stringhe move a partire
+     * dalle celle coinvolte. Le celle coinvolte sono state generate prelevando
+     * le informazioni dalla lista linkata delle persone
+     */
+    public void ApplyUpdateOnMoveMap(String[][] cellMove) {
+
+        move = loadMoveonMap(scene, cellMove);
+    }
 
     /*
      * Metodo per il caricamento delle move da visualizzare sulla mappa.Il metodo
@@ -481,11 +491,10 @@ public abstract class MonitorGenMap {
 
         String[][] newmap = new String[map.length][map[0].length];
         for (int i = 0; i < newmap.length; i++) {
-            for (int j = 0; j < newmap.length; j++) {
+            for (int j = 0; j < newmap[0].length; j++) {
+                newmap[i][j] = map[i][j];
                 if (!move[i][j].equals("")) {
-                    newmap[i][j] = map[i][j] + "+" + move[i][j];
-                } else {
-                    newmap[i][j] = map[i][j];
+                    newmap[i][j] += "+" + move[i][j];
                 }
             }
         }
@@ -494,15 +503,6 @@ public abstract class MonitorGenMap {
 
 
 
-    /*
-     * Questo metodo serve per generare la nuova mappa di stringhe move a partire
-     * dalle celle coinvolte. Le celle coinvolte sono state generate prelevando
-     * le informazioni dalla lista linkata delle persone
-     */
-    public void ApplyUpdateOnMoveMap(String[][] cellMove) {
-
-        this.move = this.loadMoveonMap(scene, cellMove);
-    }
 
 
 
@@ -562,22 +562,22 @@ public abstract class MonitorGenMap {
      */
     protected class StepMove {
 
-        protected int row;
-        protected int column;
+        protected int x;
+        protected int y;
         protected int step;
 
         public StepMove(int r, int c, int s) {
-            this.row = r;
-            this.column = c;
+            this.x = r;
+            this.y = c;
             this.step = s;
         }
 
-        public int getRow() {
-            return row;
+        public int getX() {
+            return x;
         }
 
-        public int getColumn() {
-            return column;
+        public int getY() {
+            return y;
         }
 
         public int getStep() {
@@ -585,12 +585,12 @@ public abstract class MonitorGenMap {
             return step;
         }
 
-        public void setRow(int nr) {
-            this.row = nr;
+        public void setX(int nr) {
+            this.x = nr;
         }
 
-        public void setColumn(int nc) {
-            this.column = nc;
+        public void setY(int nc) {
+            this.y = nc;
         }
 
         public void setStep(int ns) {
@@ -935,7 +935,7 @@ public abstract class MonitorGenMap {
                     while (moves.hasNext()) {
                         StepMove s = moves.next();
                         String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                                + "\t (" + s.row + "," + s.column + ")";
+                                + "\t (" + s.x + "," + s.y + ")";
                         moveslist.add(move);
                     }
                 }
@@ -959,7 +959,7 @@ public abstract class MonitorGenMap {
                   if (succ.move.size() > paramStep) {
                       StepMove s = succ.move.get(paramStep);
                       String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                              + "\t (" + s.row + "," + s.column + ")";
+                              + "\t (" + s.x + "," + s.y + ")";
                       moveslist.add(move);
                   }
 
@@ -977,7 +977,7 @@ public abstract class MonitorGenMap {
                   while (moves.hasNext()) {
                       StepMove s = moves.next();
                       String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                              + "\t (" + s.row + "," + s.column + ")";
+                              + "\t (" + s.x + "," + s.y + ")";
                       moveslist.add(move);
                   }
               }
@@ -992,7 +992,7 @@ public abstract class MonitorGenMap {
               while (moves.hasNext()) {
                   StepMove s = moves.next();
                   String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                          + "\t (" + s.row + "," + s.column + ")";
+                          + "\t (" + s.x + "," + s.y + ")";
                   moveslist.add(move);
               }
 
@@ -1113,8 +1113,8 @@ public abstract class MonitorGenMap {
                 StepMove s = its.next();
                 boolean flag = false;
                 while (its.hasNext()) {
-                    if (s.getRow() < 0 || s.getRow() > this.NumCellX || s.getColumn() < 0 || s.getColumn() > this.NumCellY
-                         || !this.PersonPositionIsValid(this.scene[s.getRow()][s.getColumn()])) {
+                    if (s.getX() < 0 || s.getX() > this.NumCellX || s.getY() < 0 || s.getY() > this.NumCellY
+                         || !this.PersonPositionIsValid(this.scene[s.getX()][s.getY()])) {
                       flag = true;
                       break;
                     }
@@ -1152,8 +1152,8 @@ public abstract class MonitorGenMap {
             }
             else{
               StepMove s = p.paths.getLast().getMoves().getLast();
-              pos[0]=s.row;
-              pos[1]=s.column;
+              pos[0]=s.x;
+              pos[1]=s.y;
             }
         }
 
@@ -1276,7 +1276,7 @@ public int UpdateCell(int x, int y, String state) {
 
             int offset = Step - succ.startStep;
             if (offset < succ.move.size()) {
-                if (succ.move.get(offset).getRow() == x && succ.move.get(offset).getColumn() == y) {
+                if (succ.move.get(offset).getX() == x && succ.move.get(offset).getY() == y) {
                     return succ.name;
                 }
             }
@@ -1312,8 +1312,8 @@ public int UpdateCell(int x, int y, String state) {
 
         }
         int start = p.paths.getLast().lastStep + waitStep + 1;
-        int xStartStep = p.paths.getLast().move.getLast().row;
-        int yStartStep = p.paths.getLast().move.getLast().column;
+        int xStartStep = p.paths.getLast().move.getLast().x;
+        int yStartStep = p.paths.getLast().move.getLast().y;
         String result = this.CheckBusyCellFromPerson(xStartStep, yStartStep, start);
 
         if (result.equals("empty")) {
@@ -1364,11 +1364,11 @@ public int UpdateMoveCell(int x, int y, String path) {
             return PersonOverride;
         }
         // distanza di manhattam e check sulla attraversabilità della cella
-        if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 1 &&
+        if (this.ManhattamDistance(s.getX(), s.getY(), x, y) == 1 &&
                 this.PersonPositionIsValid(scene[x][y])) {
             p.AddMove(x, y);
             return Success;
-        } else if (this.ManhattamDistance(s.getRow(), s.getColumn(), x, y) == 0) {
+        } else if (this.ManhattamDistance(s.getX(), s.getY(), x, y) == 0) {
             p.RemoveLast();
             return LastMoveRemove;
         } else {
@@ -1450,8 +1450,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
 
             Person p = this.findByColor(color);
             Path first = p.paths.get(0);
-            first.move.getFirst().setRow(x);
-            first.move.getFirst().setColumn(y);
+            first.move.getFirst().setX(x);
+            first.move.getFirst().setY(y);
             return PersonOverride;
 
         }
@@ -1710,6 +1710,8 @@ private void LoadScene(File jsonFile) throws ParseException {
 
             this.defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
         }
+        
+        CopyToActive(this.scene);
 
     } catch (JSONException ex) {
 
@@ -1758,8 +1760,8 @@ private void LoadScene(File jsonFile) throws ParseException {
                     
                         JSONObject move = new JSONObject();
                         StepMove s = pts.move.get(k);
-                        move.put("row", s.row);
-                        move.put("column", s.column);
+                        move.put("x", s.x);
+                        move.put("y", s.y);
                         move.put("step", s.step);
                         moves.put(move);
                     }
@@ -1824,10 +1826,10 @@ private void LoadScene(File jsonFile) throws ParseException {
                     for (int k = 0; k < arrayMoves.length(); k++) {
                     
                         JSONObject move = arrayMoves.getJSONObject(k);
-                        int row = move.getInt("row");
-                        int column = move.getInt("column");
+                        int x = move.getInt("x");
+                        int y = move.getInt("y");
                         int step = move.getInt("step");
-                        p.paths.getLast().move.add(new StepMove(row, column, step));
+                        p.paths.getLast().move.add(new StepMove(x, y, step));
                     }
                 }
                 this.Persons.add(p);
@@ -1840,6 +1842,21 @@ private void LoadScene(File jsonFile) throws ParseException {
             AppendLogMessage(ex.getMessage(),"error");
         }
 
+    }
+
+    
+
+    protected int[] GenMapToMap(int i, int j){
+        return new int[]{scene[0].length - j, i+1};
+    }
+    
+    protected int[] GenMapToMap(int [] pos){
+        return new int[]{scene[0].length - pos[1], pos[0]+1};
+    }
+    
+    
+    protected int[] MapToGenMap(int i , int j){
+        return new int[]{j-1, scene[0].length - i};
     }
 
 

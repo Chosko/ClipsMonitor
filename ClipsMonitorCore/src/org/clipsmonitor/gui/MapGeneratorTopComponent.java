@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileFilter;
-import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.core.ProjectDirectory;
 import org.clipsmonitor.monitor2015.RescueGenMap;

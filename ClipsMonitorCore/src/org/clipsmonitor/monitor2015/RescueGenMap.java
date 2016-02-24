@@ -135,15 +135,6 @@ public class RescueGenMap extends MonitorGenMap {
     }
 
   
-
-    private int[] matrixToMap(int i, int j){
-        return new int[]{scene[0].length - j, i+1};
-    }
-    
-    private int[] matrixToMap(int[] pos){
-        return new int[]{scene[0].length - pos[1], pos[0]+1};
-    }
-
     /**
      * Genera una stringa rappresentante la history da scrivere successivamante
      * su un file di testo Il testo prodotto contiene le informazioni
@@ -157,7 +148,7 @@ public class RescueGenMap extends MonitorGenMap {
     public String exportHistory() {
         String history = "";
         history += "(maxduration " + this.maxduration + ") \n\n";
-        int[] agentPos = matrixToMap(this.agentposition);
+        int[] agentPos = GenMapToMap(this.agentposition);
         
         // posizione iniziale dell'agente
         history += "(initial_agentposition ( pos-r " + agentPos[0]  + ")";
@@ -168,8 +159,11 @@ public class RescueGenMap extends MonitorGenMap {
             String personName = elem.getColor();
             Path firstPath = getPathByName(personName + "_0");
             StepMove firstMove = firstPath.getMoves().getFirst();
-            int[] firstMovePos = matrixToMap(firstMove.getRow(), firstMove.getColumn());
-            history += RescueFacts.PersonStatus.getPersonStatus(personName, firstMove.getStep(), firstMovePos[0], firstMovePos[1]);
+            int[] firstMovePos = GenMapToMap(firstMove.getX(), firstMove.getY());
+            int step =firstMove.getStep();
+            int r = firstMovePos[0];
+            int c = firstMovePos[1];
+            history += RescueFacts.PersonStatus.getPersonStatus(personName,step , r, c);
         }
         history += "\n";
         
@@ -193,7 +187,7 @@ public class RescueGenMap extends MonitorGenMap {
             LinkedList<StepMove> slist = elem.getMoves(); 
             for( StepMove s : slist){
                 int idstep = s.getStep() - step;
-                int[] stepPos = matrixToMap(s.getRow(), s.getColumn());
+                int[] stepPos = GenMapToMap(s.getX(), s.getY());
                 history += "( move-path " + name + " " + idstep + " " + person 
                             + " " + stepPos[0] + " " + stepPos[1] + " ) \n"; 
             
@@ -220,8 +214,9 @@ public class RescueGenMap extends MonitorGenMap {
         
         for (int i = 0; i < scene.length; i++) {
             for (int j = 0; j < scene[i].length; j++) {
-                int[] realCellPos = matrixToMap(i,j);
-                s += RescueFacts.RealCell.getRealCell(realCellPos[0],realCellPos[1], scene[i][j], scene[i][j].contains("injured"));
+                int[] realCellPos = GenMapToMap(i,j);
+                boolean testInjured = scene[i][j].contains("injured");
+                s += RescueFacts.RealCell.getRealCell(realCellPos[0],realCellPos[1], scene[i][j], testInjured);
             }
         }
         return s;
