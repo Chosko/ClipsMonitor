@@ -1845,6 +1845,17 @@ private void LoadScene(File jsonFile) throws ParseException {
     }
 
     
+    public String getNewPathName(String pathName)
+    {
+      String [] split = pathName.split("_");
+      String newpath =  "";
+      for (int i=0; i<split.length;i++)
+      {
+        newpath += split[i];
+      }
+      
+       return newpath;
+    }
 
     protected int[] GenMapToMap(int i, int j){
         return new int[]{scene[0].length - j, i+1};

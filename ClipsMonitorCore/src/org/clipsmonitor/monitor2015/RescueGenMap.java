@@ -134,6 +134,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.move = this.clone(scene);
     }
 
+    
   
     /**
      * Genera una stringa rappresentante la history da scrivere successivamante
@@ -172,7 +173,8 @@ public class RescueGenMap extends MonitorGenMap {
         for(Path elem : paths){
             String name = elem.getName();
             String person = name.substring(0,name.indexOf("_"));
-            int step = elem.getStartStep();
+            name = getNewPathName(name);
+            int step = elem.getStartStep()+1;
             history += RescueFacts.PersonMove.getPersonMove(step, person,name);
         }
         
@@ -183,10 +185,11 @@ public class RescueGenMap extends MonitorGenMap {
         for(Path elem : paths){
             String name = elem.getName();
             String person = name.substring(0,name.indexOf("_"));
+            name = getNewPathName(name);
             int step = elem.getStartStep();
             LinkedList<StepMove> slist = elem.getMoves(); 
             for( StepMove s : slist){
-                int idstep = s.getStep() - step;
+                int idstep = s.getStep() - step +1;
                 int[] stepPos = GenMapToMap(s.getX(), s.getY());
                 history += "( move-path " + name + " " + idstep + " " + person 
                             + " " + stepPos[0] + " " + stepPos[1] + " ) \n"; 

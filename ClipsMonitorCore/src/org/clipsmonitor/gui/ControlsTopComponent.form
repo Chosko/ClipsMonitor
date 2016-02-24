@@ -132,15 +132,17 @@
                       <Group type="102" attributes="0">
                           <Component id="loadDefaultFileButton" min="-2" pref="62" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" alignment="3" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
                                   <Component id="envLabel3" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                                   <Component id="RefreshButton" min="-2" pref="22" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="stepButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="stepTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="envLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
