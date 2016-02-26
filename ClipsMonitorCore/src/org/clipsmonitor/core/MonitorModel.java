@@ -1,5 +1,12 @@
 package org.clipsmonitor.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Observable;
 import net.sf.clipsrules.jni.CLIPSError;
 import org.clipsmonitor.clips.ClipsConsole;
@@ -186,6 +193,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
 
             // Aggiorna le penalità
             updateStatus();
+            String report = getReport();
+            writeReportOnFile(report);
             this.setChanged();
             this.notifyObservers("disposeDone");
 
@@ -513,6 +522,61 @@ public abstract class MonitorModel extends Observable implements Runnable {
         showGoalEnabled = value;
     }
 
+    
+    
+    public String center (String s, int length) {
+    
+      if (s.length() > length) {
+        return s.substring(0, length);
+    
+      } else if (s.length() == length) {
+        return s;
+      } else {
+        int leftPadding = (length - s.length()) / 2; 
+        StringBuilder leftBuilder = new StringBuilder();
+        for (int i = 0; i < leftPadding; i++) {
+            leftBuilder.append(" ");
+        }
+
+        int rightPadding = length - s.length() - leftPadding;
+        StringBuilder rightBuilder = new StringBuilder();
+        for (int i = 0; i < rightPadding; i++) 
+            rightBuilder.append(" ");
+
+        return leftBuilder.toString() + s 
+                + rightBuilder.toString();
+    }
+}
+    
+    
+    public static String fixedLengthString(String string, int length) {
+      String formattedString = string;
+      if(string.length() >length){
+        formattedString= string.substring(0, length-1);
+      }
+      return String.format("%1$-"+length+ "s", formattedString);
+    }
+    
+    
+    private void writeReportOnFile(String report)  {
+      
+      ProjectDirectory projdir = ProjectDirectory.getInstance();
+      String logpath = projdir.getProjectDirectory().getPath() + File.separator +"log.txt";
+      File log = new File (logpath);
+      try {
+        String text = "";
+        if(!log.exists()){
+          log.createNewFile();
+          text = getLogHeader();
+        }
+        text += report;
+        Files.write(Paths.get(log.getCanonicalPath()), text.getBytes(), StandardOpenOption.APPEND);
+        console.info("Log generato correttamente");
+      }
+      catch (IOException e) {
+          console.error(e.getMessage());
+      }
+    }
     protected void setup(){
         initModel();
     }
@@ -542,5 +606,12 @@ public abstract class MonitorModel extends Observable implements Runnable {
      * @throws CLIPSError 
      */
     protected abstract void partialUpdate(String partial) throws CLIPSError;
+    
+    
+    protected abstract String getReport() ;
 
+    
+    protected abstract String getLogHeader();
+    
+    
 }

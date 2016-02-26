@@ -8,6 +8,7 @@ import org.clipsmonitor.clips.ClipsConsole;
 import org.clipsmonitor.core.MonitorModel;
 import org.clipsmonitor.core.MonitorCore;
 import org.clipsmonitor.core.MonitorMap;
+import org.clipsmonitor.core.ProjectDirectory;
 
 /**
  * L'implementazione della classe ClipsModel specifica per il progetto Rescue 2014/2015.
@@ -637,4 +638,71 @@ public class RescueModel extends MonitorModel {
         console.info("Sending action: " + action);
         evalComandLine(cmd);
     }
+    
+    public int getInjuredCount(){
+    
+      String [][] debrisUnchecked = core.findAllFacts("ENV", RescueFacts.Cell.factName(),"and (eq ?f:injured yes)(eq ?f:discovered no)", RescueFacts.Cell.slotsArray());
+      return debrisUnchecked.length;
+      
+    }
+    
+    public int getUncheckedCount(){
+    
+      String [][] injured = core.findAllFacts("ENV", RescueFacts.Cell.factName(),"and (eq ?f:contains debris)(eq ?f:checked no)", RescueFacts.Cell.slotsArray());
+      return injured.length;
+      
+    }
+    
+    public int getNumPerson(){
+      String [][] persons = core.findAllFacts("ENV", RescueFacts.PersonStatus.factName(),"TRUE", RescueFacts.PersonStatus.slotsArray());
+      return persons.length;
+    }
+    
+    public String getReport(){
+      
+      //  world + strategy + time + score  +  injured  + debris unchecked + numPerson 
+      int countUndiscovered = getInjuredCount();
+      int countUnchecked = getUncheckedCount();
+      int persons = getNumPerson();
+      ProjectDirectory Pdir = ProjectDirectory.getInstance();
+      String env = Pdir.getEnv();
+      String strategy = Pdir.getStrategy();
+      String penalties = Double.toString(score);
+      String maxdur = Integer.toString(maxduration);
+      String countUnd = Integer.toString(countUndiscovered);
+      String countUnc = Integer.toString(countUnchecked);
+      String pers = Integer.toString(countUnchecked);
+      
+      
+      String report = fixedLengthString(strategy,16) + "|" 
+                      + fixedLengthString(env,16) + "|" 
+                      + fixedLengthString(maxdur,8) + "|" 
+                      + fixedLengthString(penalties,8) + "|" 
+                      + fixedLengthString(countUnd,8) + "|" 
+                      + fixedLengthString(countUnc,8) + "|" 
+                      + fixedLengthString(pers,8) + "\n";
+      
+      
+      
+      return report;
+    }
+    
+    /**
+     *  header per il progetto di rescue2015
+     * @return 
+     */
+    
+    public String getLogHeader(){
+    
+      return  fixedLengthString("Strategy",16)   + "|"
+              + fixedLengthString("World",16) + "|"
+              + fixedLengthString("Time",8) + "|"
+              + fixedLengthString("Score",8) + "|"
+              + fixedLengthString("Undiscovered",8) + "|"
+              + fixedLengthString("Unchecked",8) + "|"
+              + fixedLengthString("NumPerson",8) + "\n";
+    }
+    
+    
+    
 }

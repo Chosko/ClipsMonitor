@@ -187,6 +187,7 @@ public class RescueAgentMap extends MonitorMap implements Observer {
         }
     }
     
+    
     public void updateGoal()throws CLIPSError{
     
       console.debug("Acquisizione posizione del goal selezionato...");

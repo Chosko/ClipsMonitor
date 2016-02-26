@@ -516,6 +516,8 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         core = MonitorCore.getInstance();
         try {
             model.startCore(projectDirectory.getAbsolutePath(), strategyFolder_name, envsFolder_name); //Diciamo al modello di partire
+            directory.setEnv(envsFolder_name);
+            directory.setStrategy(strategyFolder_name);
         } catch (CLIPSError ex) {
             Exceptions.printStackTrace(ex);
         }
