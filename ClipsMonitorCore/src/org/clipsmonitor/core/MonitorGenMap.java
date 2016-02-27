@@ -861,6 +861,13 @@ public abstract class MonitorGenMap {
         return list;
     }
 
+    public String getMoveString(String color, int step , String pathname , int x , int y){
+      
+      return "C: " + color + "\t   S: " + step + "\t   Path: " + pathname
+                              + "\t (" + x + "," + y + ")";
+    
+    }
+    
     /*
      *  Ritorna una stringa indicante il numero di step disponibili alla modifica in base
      *  al parametro che li viene dato .
@@ -934,8 +941,7 @@ public abstract class MonitorGenMap {
                     ListIterator<StepMove> moves = succ.move.listIterator();
                     while (moves.hasNext()) {
                         StepMove s = moves.next();
-                        String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                                + "\t (" + s.x + "," + s.y + ")";
+                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
                         moveslist.add(move);
                     }
                 }
@@ -958,8 +964,7 @@ public abstract class MonitorGenMap {
                   int offset = paramStep - succ.startStep;
                   if (succ.move.size() > paramStep) {
                       StepMove s = succ.move.get(paramStep);
-                      String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                              + "\t (" + s.x + "," + s.y + ")";
+                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
                       moveslist.add(move);
                   }
 
@@ -976,8 +981,7 @@ public abstract class MonitorGenMap {
                   ListIterator<StepMove> moves = succ.move.listIterator();
                   while (moves.hasNext()) {
                       StepMove s = moves.next();
-                      String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                              + "\t (" + s.x + "," + s.y + ")";
+                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
                       moveslist.add(move);
                   }
               }
@@ -991,8 +995,7 @@ public abstract class MonitorGenMap {
               ListIterator<StepMove> moves = succ.move.listIterator();
               while (moves.hasNext()) {
                   StepMove s = moves.next();
-                  String move = "C: " + p.associatedColor + "\t   S: " + s.step + "\t   Path: " + succ.name
-                          + "\t (" + s.x + "," + s.y + ")";
+                  String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
                   moveslist.add(move);
               }
 
