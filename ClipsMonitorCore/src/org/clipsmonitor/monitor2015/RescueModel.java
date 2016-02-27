@@ -639,17 +639,40 @@ public class RescueModel extends MonitorModel {
         evalComandLine(cmd);
     }
     
-    public int getInjuredCount(){
     
-      String [][] debrisUnchecked = core.findAllFacts("ENV", RescueFacts.Cell.factName(),"and (eq ?f:injured yes)(eq ?f:discovered no)", RescueFacts.Cell.slotsArray());
-      return debrisUnchecked.length;
+    public int getUndiscoveredCount(){
+      int count = 0; 
+      String conditions = "eq ?f:contains debris";
+      String [][] undiscovered = core.findAllFacts("ENV", RescueFacts.Cell.factName(),conditions, RescueFacts.Cell.slotsArray());
+      for(int i=0;i<undiscovered.length;i++)
+      {
+        String contains = undiscovered[i][RescueFacts.Cell.CONTAINS.index()];
+        String injured = undiscovered[i][RescueFacts.Cell.INJURED.index()];
+        String discovered = undiscovered[i][RescueFacts.Cell.DISCOVERED.index()];
+        if(contains.equals("debris") && injured.contains("yes") && !discovered.equals("yes")){
+          count++;
+        }
+      }
+      return count;
       
     }
     
     public int getUncheckedCount(){
-    
-      String [][] injured = core.findAllFacts("ENV", RescueFacts.Cell.factName(),"and (eq ?f:contains debris)(eq ?f:checked no)", RescueFacts.Cell.slotsArray());
-      return injured.length;
+      
+      int count = 0; 
+      String conditions = "eq ?f:contains debris";
+      String [][] unchecked = core.findAllFacts("ENV", RescueFacts.Cell.factName(),conditions, RescueFacts.Cell.slotsArray());
+      for(int i=0;i<unchecked.length;i++)
+      {
+        String contains = unchecked[i][RescueFacts.Cell.CONTAINS.index()];
+        String injured = unchecked[i][RescueFacts.Cell.INJURED.index()];
+        String discovered = unchecked[i][RescueFacts.Cell.CHECKED.index()];
+        if(contains.equals("debris") && injured.contains("no") && !discovered.equals("done")){
+          count++;
+        }
+      }
+      return count;
+
       
     }
     
@@ -661,8 +684,12 @@ public class RescueModel extends MonitorModel {
     public String getReport(){
       
       //  world + strategy + time + score  +  injured  + debris unchecked + numPerson 
-      int countUndiscovered = getInjuredCount();
+      int countUndiscovered = getUndiscoveredCount();
       int countUnchecked = getUncheckedCount();
+      
+      console.debug("Undiscovered" + countUndiscovered);
+      console.debug("Unchecked" + countUnchecked);
+      
       int persons = getNumPerson();
       ProjectDirectory Pdir = ProjectDirectory.getInstance();
       String env = Pdir.getEnv();
@@ -671,13 +698,13 @@ public class RescueModel extends MonitorModel {
       String maxdur = Integer.toString(maxduration);
       String countUnd = Integer.toString(countUndiscovered);
       String countUnc = Integer.toString(countUnchecked);
-      String pers = Integer.toString(countUnchecked);
+      String pers = Integer.toString(persons);
       
       
       String report = fixedLengthString(strategy,16) + "|" 
                       + fixedLengthString(env,16) + "|" 
                       + fixedLengthString(maxdur,8) + "|" 
-                      + fixedLengthString(penalties,8) + "|" 
+                      + fixedLengthString(penalties,16) + "|" 
                       + fixedLengthString(countUnd,8) + "|" 
                       + fixedLengthString(countUnc,8) + "|" 
                       + fixedLengthString(pers,8) + "\n";
@@ -697,7 +724,7 @@ public class RescueModel extends MonitorModel {
       return  fixedLengthString("Strategy",16)   + "|"
               + fixedLengthString("World",16) + "|"
               + fixedLengthString("Time",8) + "|"
-              + fixedLengthString("Score",8) + "|"
+              + fixedLengthString("Score",16) + "|"
               + fixedLengthString("Undiscovered",8) + "|"
               + fixedLengthString("Unchecked",8) + "|"
               + fixedLengthString("NumPerson",8) + "\n";

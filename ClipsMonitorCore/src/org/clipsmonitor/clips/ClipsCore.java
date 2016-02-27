@@ -283,6 +283,9 @@ public class ClipsCore {
                     result[i][j] = slot;
                 }
             }
+            
+            console.debug("Query:"+ eval );
+            console.debug("Result length :" + result.length);
         }
         catch (NullPointerException ex) {
             console.error("Impossible to find fact: " + template + " with conditions: " + conditions + " in module " + module);

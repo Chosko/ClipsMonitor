@@ -74,20 +74,20 @@ public final class MapGeneratorTopComponent extends TopComponent {
         setToolTipText(Bundle.HINT_MapGeneratorTopComponent());
         model = RescueGenMap.getInstance();
         img = MonitorImages.getInstance();
-        int x =Integer.parseInt(this.XButton.getText());
-        int y =Integer.parseInt(this.YButton.getText());
+        int x =Integer.parseInt(XButton.getText());
+        int y =Integer.parseInt(YButton.getText());
         actualPosClicked = new int [2];
         actualPosClicked[0]=(x/2)+1;
         actualPosClicked[1]=(y/2)+1;
         actualPath = "empty";
-        this.WaitTime.setText("0");
-        this.LogArea.setText(model.getLog());
-        this.initComboBox();
-        this.MakePersonList();
-        this.MakeStepList(-1);
-        this.MakeMoveList(-1,-1,"all");
-        this.MakePathList(-1);
-        this.state=this.InsertionOptionComboBox.getSelectedItem().toString();
+        WaitTime.setText("0");
+        LogArea.setText(model.getLog());
+        initComboBox();
+        MakePersonList();
+        MakeStepList(-1);
+        MakeMoveList(-1,-1,"all");
+        MakePathList(-1);
+        state=InsertionOptionComboBox.getSelectedItem().toString();
         model.initModelMap(x, y, PreviewMap.getWidth(), PreviewMap.getHeight());
         directory = ProjectDirectory.getIstance(new File("./"));
         fc = new JFileChooser();
@@ -97,15 +97,15 @@ public final class MapGeneratorTopComponent extends TopComponent {
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         save.setCurrentDirectory(directory.getProjectDirectory());
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.MapButton.setSelected(true);
-        this.MoveButton.setSelected(false);
-        this.MapButton.setEnabled(false);
-        this.MoveButton.setEnabled(true);
-        this.AddPathButton.setEnabled(false);
-        this.AddPersonButton.setEnabled(false);
-        this.DeletePersonButton.setEnabled(false);
-        this.RemovePathButton.setEnabled(false);
-        this.setListEnable();
+        MapButton.setSelected(true);
+        MoveButton.setSelected(false);
+        MapButton.setEnabled(false);
+        MoveButton.setEnabled(true);
+        AddPathButton.setEnabled(false);
+        AddPersonButton.setEnabled(false);
+        DeletePersonButton.setEnabled(false);
+        RemovePathButton.setEnabled(false);
+        setListEnable();
         updateLogArea();
     }
 
@@ -552,7 +552,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-    this.setLayout(layout);
+    setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -580,18 +580,18 @@ public final class MapGeneratorTopComponent extends TopComponent {
             int x = evt.getX();
             int y = evt.getY();
 
-            this.actualPosClicked = model.getCellPosition(x, y);
-            if(this.MapButton.isSelected()){
-                this.ExecUpdateMap();
+            actualPosClicked = model.getCellPosition(x, y);
+            if(MapButton.isSelected()){
+                ExecUpdateMap();
             }
             else{
                 if(model.findPosByColor(state)!=-1){
-                    this.actualPath= model.getLastPathOfPerson(state);
-                    this.ExecUpdateMove();
+                    actualPath= model.getLastPathOfPerson(state);
+                    ExecUpdateMove();
                 }
                 else{
                     String [][] move;
-                    move = model.getTmpMoveMap(this.actualPosClicked[0],this.actualPosClicked[1], state);
+                    move = model.getTmpMoveMap(actualPosClicked[0],actualPosClicked[1], state);
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
@@ -611,11 +611,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
         //resizeScene che si preoccuperà di ridimensionare la matrice mantenendo
         // i vecchi dati all'interno
         try {
-            int num_row = Integer.parseInt(this.XButton.getText());
-            int num_col = Integer.parseInt(this.YButton.getText());
-            int max_dur = Integer.parseInt(this.MaxDur.getText());
+            int num_row = Integer.parseInt(XButton.getText());
+            int num_col = Integer.parseInt(YButton.getText());
+            int max_dur = Integer.parseInt(MaxDur.getText());
             if (num_row >= 5 && num_col >= 5 && max_dur>0) {
-                if(!this.model.getEmptyPerson()){
+                if(!model.getEmptyPerson()){
                    String message = "La modifica della griglia può causare l'eliminazione"
                    + "dei movimenti inseriti in modalità move. Continuare?";
                    if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Resize",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION);
@@ -628,10 +628,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
                   updateMap(num_row,num_col,max_dur);
                 }
                 PreviewMap.repaint();
-                this.MakePersonList();
-                this.MakeStepList(-1);
-                this.MakeMoveList(-1,-1,"all");
-                this.setListEnable();
+                MakePersonList();
+                MakeStepList(-1);
+                MakeMoveList(-1,-1,"all");
+                setListEnable();
             }
             else{
                 model.error("Input non valido: Verificare che la griglia sia almeno di dimensione 5x5 ");
@@ -639,11 +639,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
         } catch (NumberFormatException err) {
             model.error("Input non valido: Verificare che i valori siano interi \n" );
         }
-        
+
         updateLogArea();
     }//GEN-LAST:event_RefreshButtonActionPerformed
 
-    
+
     private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
 
         int returnVal = fc.showOpenDialog(this);
@@ -651,20 +651,20 @@ public final class MapGeneratorTopComponent extends TopComponent {
             try {
                 File file = fc.getSelectedFile();
                 model.LoadFiles(file);
-                if(!this.MoveButton.isEnabled()){
-                    this.InitColorComboBox();
+                if(!MoveButton.isEnabled()){
+                    InitColorComboBox();
                     if(getActiveColorMap()){
-                        this.InsertionOptionComboBox.enable(true);
-                        this.Icons.enable(true);
+                        InsertionOptionComboBox.enable(true);
+                        Icons.enable(true);
                         Icons.repaint();
                         model.CopySceneToMove();
-                        this.actualPath = model.getLastPathOfPerson(state);
+                        actualPath = model.getLastPathOfPerson(state);
                         String[][] move = model.getMoveCellMap(actualPath,-1);
                         model.ApplyUpdateOnMoveMap(move);
                         model.CopyToActive(model.getMove());
                     }
                     else{
-                        this.InsertionOptionComboBox.enable(true);
+                        InsertionOptionComboBox.enable(true);
                         Icons.enable(true);
                         model.CopySceneToMove();
                         model.CopyToActive(model.getMove());
@@ -672,10 +672,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
                 }
                 PreviewMap.repaint();
-                this.MakePersonList();
-                this.MakeStepList(-1);
-                this.MakeMoveList(-1,-1,"all");
-                this.setListEnable();
+                MakePersonList();
+                MakeStepList(-1);
+                MakeMoveList(-1,-1,"all");
+                setListEnable();
 
             } catch (ParseException ex) {
                 model.error(ex.getMessage());
@@ -692,20 +692,20 @@ public final class MapGeneratorTopComponent extends TopComponent {
             try {
                 File file = fc.getSelectedFile();
                 model.LoadFiles(file);
-                if(!this.MoveButton.isEnabled()){
-                    this.InitColorComboBox();
+                if(!MoveButton.isEnabled()){
+                    InitColorComboBox();
                     if(getActiveColorMap()){
-                        this.InsertionOptionComboBox.enable(true);
-                        this.Icons.enable(true);
+                        InsertionOptionComboBox.enable(true);
+                        Icons.enable(true);
                         Icons.repaint();
                         model.CopySceneToMove();
-                        this.actualPath = model.getLastPathOfPerson(state);
+                        actualPath = model.getLastPathOfPerson(state);
                         String[][] move = model.getMoveCellMap(actualPath,-1);
                         model.ApplyUpdateOnMoveMap(move);
                         model.CopyToActive(model.getMove());
                     }
                     else{
-                        this.InsertionOptionComboBox.enable(true);
+                        InsertionOptionComboBox.enable(true);
                         Icons.enable(true);
                         model.CopySceneToMove();
                         model.CopyToActive(model.getMove());
@@ -713,10 +713,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
                 }
                 PreviewMap.repaint();
-                this.MakePersonList();
-                this.MakeStepList(-1);
-                this.MakeMoveList(-1,-1,"all");
-                this.setListEnable();
+                MakePersonList();
+                MakeStepList(-1);
+                MakeMoveList(-1,-1,"all");
+                setListEnable();
 
             } catch (ParseException ex) {
                 model.error(ex.getMessage());
@@ -745,24 +745,24 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
 
     private void InsertionOptionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertionOptionComboBoxActionPerformed
-        boolean checkButton = this.MapButton.isSelected();
+        boolean checkButton = MapButton.isSelected();
         if(!checkButton){
             setState(InsertionOptionComboBox.getSelectedItem().toString());
-            this.updateLabel(state);
-            this.actualPath = model.getLastPathOfPerson(state);
-            if(!this.actualPath.equals("empty")){
+            updateLabel(state);
+            actualPath = model.getLastPathOfPerson(state);
+            if(!actualPath.equals("empty")){
               int pos = model.findPosByColor(state);
-              this.MakePersonList();
-              this.MakeStepList(-1);
-              this.MakeMoveList(pos,-1,"all");
+              MakePersonList();
+              MakeStepList(-1);
+              MakeMoveList(pos,-1,"all");
             }
             else{
-              this.MakePersonList();
-              this.MakeStepList(-1);
-              this.MakeMoveList(-1,-1,"all");
+              MakePersonList();
+              MakeStepList(-1);
+              MakeMoveList(-1,-1,"all");
 
             }
-            this.setListEnable();
+            setListEnable();
             String[][] move = model.getMoveCellMap(actualPath,-1);
             model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
@@ -770,83 +770,83 @@ public final class MapGeneratorTopComponent extends TopComponent {
         }
         else{
             setState(InsertionOptionComboBox.getSelectedItem().toString());
-            this.updateLabel(state);
+            updateLabel(state);
         }
         Icons.repaint();
         updateLogArea();
     }//GEN-LAST:event_InsertionOptionComboBoxActionPerformed
 
     private void AddPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPersonButtonActionPerformed
-        this.ExecAddPerson();
+        ExecAddPerson();
 
     }//GEN-LAST:event_AddPersonButtonActionPerformed
 
     private void DeletePersonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletePersonButtonActionPerformed
-        this.ExecRemove();
+        ExecRemove();
     }//GEN-LAST:event_DeletePersonButtonActionPerformed
 
 
     private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
-        this.MapButton.setSelected(true);
-        this.MoveButton.setSelected(false);
-        this.MapButton.setEnabled(false);
-        this.MoveButton.setEnabled(true);
-        this.XButton.setEditable(true);
-        this.YButton.setEditable(true);
-        this.MaxDur.setEditable(true);
-        this.AddPathButton.setEnabled(false);
-        this.AddPersonButton.setEnabled(false);
-        this.DeletePersonButton.setEnabled(false);
-        this.RemovePathButton.setEnabled(false);
-        this.model.setMode("scene");
-        this.InitMapComboBox();
-        this.InsertionOptionComboBox.enable(true);
-        this.Icons.enable(true);
+        MapButton.setSelected(true);
+        MoveButton.setSelected(false);
+        MapButton.setEnabled(false);
+        MoveButton.setEnabled(true);
+        XButton.setEditable(true);
+        YButton.setEditable(true);
+        MaxDur.setEditable(true);
+        AddPathButton.setEnabled(false);
+        AddPersonButton.setEnabled(false);
+        DeletePersonButton.setEnabled(false);
+        RemovePathButton.setEnabled(false);
+        model.setMode("scene");
+        InitMapComboBox();
+        InsertionOptionComboBox.enable(true);
+        Icons.enable(true);
         Icons.repaint();
         model.CopyToActive(model.getScene());
-        this.MakePersonList();
-        this.MakeStepList(-1);
-        this.MakeMoveList(-1,-1,"all");
-        this.MakePathList(-1);
+        MakePersonList();
+        MakeStepList(-1);
+        MakeMoveList(-1,-1,"all");
+        MakePathList(-1);
         PreviewMap.repaint();
-        this.StepList.setEnabled(false);
-        this.PersonPathList.setEnabled(false);
-        this.PersonsList.setEnabled(false);
+        StepList.setEnabled(false);
+        PersonPathList.setEnabled(false);
+        PersonsList.setEnabled(false);
 
     }//GEN-LAST:event_MapButtonActionPerformed
 
 
 
     private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
-        this.MapButton.setSelected(false);
-        this.MoveButton.setSelected(true);
-        this.MapButton.setEnabled(true);
-        this.MoveButton.setEnabled(false);
-        this.XButton.setEditable(false);
-        this.YButton.setEditable(false);
-        this.MaxDur.setEditable(false);
-        this.AddPathButton.setEnabled(true);
-        this.AddPersonButton.setEnabled(true);
-        this.DeletePersonButton.setEnabled(true);
-        this.RemovePathButton.setEnabled(true);
-        this.model.setMode("move");
-        this.StepList.setEnabled(true);
-        this.PersonPathList.setEnabled(true);
-        this.PersonsList.setEnabled(true);
+        MapButton.setSelected(false);
+        MoveButton.setSelected(true);
+        MapButton.setEnabled(true);
+        MoveButton.setEnabled(false);
+        XButton.setEditable(false);
+        YButton.setEditable(false);
+        MaxDur.setEditable(false);
+        AddPathButton.setEnabled(true);
+        AddPersonButton.setEnabled(true);
+        DeletePersonButton.setEnabled(true);
+        RemovePathButton.setEnabled(true);
+        model.setMode("move");
+        StepList.setEnabled(true);
+        PersonPathList.setEnabled(true);
+        PersonsList.setEnabled(true);
 
-        this.InitColorComboBox();
+        InitColorComboBox();
         if(getActiveColorMap()){
-            this.InsertionOptionComboBox.enable(true);
-            this.Icons.enable(true);
+            InsertionOptionComboBox.enable(true);
+            Icons.enable(true);
             Icons.repaint();
             model.CopySceneToMove();
-            this.actualPath = model.getLastPathOfPerson(state);
+            actualPath = model.getLastPathOfPerson(state);
             String[][] move = model.getMoveCellMap(actualPath,-1);
             model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
         }
         else{
-            this.InsertionOptionComboBox.enable(true);
+            InsertionOptionComboBox.enable(true);
             Icons.enable(true);
             model.CopySceneToMove();
             model.CopyToActive(model.getMove());
@@ -854,11 +854,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
 
         PreviewMap.repaint();
-        this.MakePersonList();
-        this.MakeStepList(-1);
-        this.MakePathList(-1);
-        this.MakeMoveList(-1,-1,"all");
-        this.setListEnable();
+        MakePersonList();
+        MakeStepList(-1);
+        MakePathList(-1);
+        MakeMoveList(-1,-1,"all");
+        setListEnable();
     }//GEN-LAST:event_MoveButtonActionPerformed
 
 
@@ -869,16 +869,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
         if(evt.getFirstIndex()!=persons.length-1){
             String val = persons[evt.getFirstIndex()];
             String[] split = val.split("_");
-            this.MakePersonList();
+            MakePersonList();
             int pos = model.findPosByColor(split[1]);
-            this.MakeStepList(-1);
-            this.MakeMoveList(pos,-1,"all");
-            this.MakePathList(pos);
-            this.setListEnable();
+            MakeStepList(-1);
+            MakeMoveList(pos,-1,"all");
+            MakePathList(pos);
+            setListEnable();
             setState(split[1]);
-            this.updateLabel(state);
-            this.actualPath = model.getLastPathOfPerson(state);
-            if(!this.actualPath.equals("empty")){
+            updateLabel(state);
+            actualPath = model.getLastPathOfPerson(state);
+            if(!actualPath.equals("empty")){
                 String[][] move = model.getMoveCellMap(actualPath,-1);
                 model.ApplyUpdateOnMoveMap(move);
             }
@@ -887,47 +887,47 @@ public final class MapGeneratorTopComponent extends TopComponent {
             PreviewMap.repaint();
         }
         else{
-            this.MakePersonList();
-            this.MakeStepList(-1);
-            this.MakeMoveList(-1,-1,"all");
-            this.MakePathList(-1);
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,"all");
+            MakePathList(-1);
         }
     }//GEN-LAST:event_PersonsListValueChanged
 
 
     private void StepListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_StepListValueChanged
 
-        String value = (String) this.StepList.getModel().getElementAt(evt.getFirstIndex());
+        String value = (String) StepList.getModel().getElementAt(evt.getFirstIndex());
         String intSubStr = value.substring(5); // "Step " length
         int step = Integer.parseInt(intSubStr);
-        this.MakeStepList(-1);
-        this.MakePathList(-1);
-        this.MakeMoveList(-1,step,"all");
+        MakeStepList(-1);
+        MakePathList(-1);
+        MakeMoveList(-1,step,"all");
         String [][] move = model.getMoveCellMap("none",step);
         model.ApplyUpdateOnMoveMap(move);
         model.CopyToActive(model.getMove());
         PreviewMap.repaint();
-        this.setListEnable();
+        setListEnable();
     }//GEN-LAST:event_StepListValueChanged
 
     private void AddPathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddPathButtonActionPerformed
-        this.ExecAddPath();
+        ExecAddPath();
 
     }//GEN-LAST:event_AddPathButtonActionPerformed
 
     private void RemovePathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemovePathButtonActionPerformed
-        this.ExecRemovePath();
+        ExecRemovePath();
     }//GEN-LAST:event_RemovePathButtonActionPerformed
 
   private void PersonPathListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_PersonPathListValueChanged
-      ListModel<String> listmodel = this.PersonPathList.getModel();
+      ListModel<String> listmodel = PersonPathList.getModel();
       String pathname = listmodel.getElementAt(evt.getFirstIndex());
-      this.MakeMoveList(-1,-1,pathname);
+      MakeMoveList(-1,-1,pathname);
       String [][] move = model.getMoveCellMap(pathname,-1);
       model.ApplyUpdateOnMoveMap(move);
       model.CopyToActive(model.getMove());
       PreviewMap.repaint();
-      this.setListEnable();
+      setListEnable();
   }//GEN-LAST:event_PersonPathListValueChanged
 
   private void PersonsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PersonsListMouseClicked
@@ -939,16 +939,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
        JLabel DimensionLabel = new javax.swing.JLabel();
        if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Clear scene",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
        {
-         
+
          model.clear();
          model = RescueGenMap.getInstance();
-         int x =Integer.parseInt(this.XButton.getText());
-         int y =Integer.parseInt(this.YButton.getText()); 
+         int x =Integer.parseInt(XButton.getText());
+         int y =Integer.parseInt(YButton.getText()); 
          model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
          model.initModelMap(x, y, PreviewMap.getWidth(),PreviewMap.getHeight());
          model.setMaxDuration(model.getMaxDuration());
          model.CopyToActive(model.getScene());
-         PreviewMap.repaint(); 
+         PreviewMap.repaint();
          updateLogArea();
        }
   }//GEN-LAST:event_ClearButtonActionPerformed
@@ -1025,15 +1025,15 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void InitMapComboBox(){
 
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKey(),this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(model.getSetKey(),InsertionOptionComboBox, Icons);
+        updateLabel(InsertionOptionComboBox.getSelectedItem().toString());
     }
 
     private void InitColorComboBox(){
 
 
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKeyColor(),this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(model.getSetKeyColor(),InsertionOptionComboBox, Icons);
+        updateLabel(InsertionOptionComboBox.getSelectedItem().toString());
      }
 
 
@@ -1056,7 +1056,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             Icons.setText(null);
         }
         catch(NullPointerException e){
-           
+
           if(!img.getMapImg().isEmpty()){
            Icons.setText("Image not found");
            model.error(e.getLocalizedMessage());
@@ -1080,7 +1080,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-        ListRenderer render = new ListRenderer(this.PersonsList,list);
+        ListRenderer render = new ListRenderer(PersonsList,list);
 
     }
 
@@ -1093,7 +1093,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(this.StepList,list);
+            ListRenderer render = new ListRenderer(StepList,list);
 
     }
 
@@ -1106,7 +1106,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(this.MovementList,list);
+            ListRenderer render = new ListRenderer(MovementList,list);
 
     }
 
@@ -1117,7 +1117,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(this.PersonPathList,list);
+            ListRenderer render = new ListRenderer(PersonPathList,list);
 
     }
 
@@ -1128,8 +1128,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void initComboBox(){
 
-        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(this.model.getSetKey(),this.InsertionOptionComboBox, this.Icons);
-        updateLabel(this.InsertionOptionComboBox.getSelectedItem().toString());
+        ComboBoxRenderer IconsComboBox = new ComboBoxRenderer(model.getSetKey(),InsertionOptionComboBox, Icons);
+        updateLabel(InsertionOptionComboBox.getSelectedItem().toString());
 
     }
 
@@ -1138,18 +1138,18 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void ExecRemove(){
 
-        boolean result = this.model.Remove(state);
+        boolean result = model.Remove(state);
         if(result){
             model.log(state + " rimosso correttamente ");
             String[][] move = model.getMoveCellMap("none",0);
                     model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
             PreviewMap.repaint();
-            this.MakePersonList();
-            this.MakeStepList(-1);
-            this.MakeMoveList(-1,-1,"all");
-            this.MakePathList(-1);
-            this.setListEnable();
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,"all");
+            MakePathList(-1);
+            setListEnable();
         }
         else{
             model.error(state + " non presente nello scenario");
@@ -1171,22 +1171,22 @@ public final class MapGeneratorTopComponent extends TopComponent {
         final int IllegalAgentPosition = 5;
         final int PersonOverride = 6;
 
-        int wait = Integer.parseInt(this.WaitTime.getText());
+        int wait = Integer.parseInt(WaitTime.getText());
 
-        int result = this.model.AddNewPerson(this.actualPosClicked[0],this.actualPosClicked[1], state,wait);
+        int result = model.AddNewPerson(actualPosClicked[0],actualPosClicked[1], state,wait);
             switch(result){
                 case Success :
                     model.log("Modifica della mappa eseguita con successo");
-                    this.actualPath = model.getLastPathOfPerson(state);
+                    actualPath = model.getLastPathOfPerson(state);
                     String [][]move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
-                    this.MakePersonList();
-                    this.MakeStepList(-1);
-                    this.MakeMoveList(-1,-1,"all");
-                    this.MakePathList(-1);
-                    this.setListEnable();
+                    MakePersonList();
+                    MakeStepList(-1);
+                    MakeMoveList(-1,-1,"all");
+                    MakePathList(-1);
+                    setListEnable();
                 break;
 
                 case IllegalPosition :
@@ -1225,7 +1225,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         final int PersonOverride = 3;
 
         try{
-            int wait = Integer.parseInt(this.WaitTime.getText());
+            int wait = Integer.parseInt(WaitTime.getText());
             if(wait<0){
                 throw new NumberFormatException();
             }
@@ -1235,16 +1235,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
                 case Success :
                     model.log("Path aggiunto correttamente");
-                    this.actualPath = model.getLastPathOfPerson(state);
+                    actualPath = model.getLastPathOfPerson(state);
                     String[][] move = model.getMoveCellMap(actualPath,-1);
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
-                    this.MakePersonList();
-                    this.MakeStepList(-1);
-                    this.MakeMoveList(-1,-1,"all");
-                    this.MakePathList(-1);
-                    this.setListEnable();
+                    MakePersonList();
+                    MakeStepList(-1);
+                    MakeMoveList(-1,-1,"all");
+                    MakePathList(-1);
+                    setListEnable();
                 break;
                 case IllegalStartCell :
                     model.error("Illegal start cell");
@@ -1278,16 +1278,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
             case Success :
                 model.log("Rimozione eseguita correttamente");
-                this.actualPath = model.getLastPathOfPerson(state);
+                actualPath = model.getLastPathOfPerson(state);
                 String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
                 model.ApplyUpdateOnMoveMap(move);
                 model.CopyToActive(model.getMove());
                 PreviewMap.repaint();
-                this.MakePersonList();
-                this.MakeStepList(-1);
-                this.MakeMoveList(-1,-1,"all");
-                this.MakePathList(-1);
-                this.setListEnable();
+                MakePersonList();
+                MakeStepList(-1);
+                MakeMoveList(-1,-1,"all");
+                MakePathList(-1);
+                setListEnable();
             break;
 
             case PersonNotFound :
@@ -1317,9 +1317,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
         final int UnavaiblePosition = 2 ;
         final int PersonOverride = 3;
         final int LastMoveRemove = 4;
-        this.actualPath = model.getLastPathOfPerson(state);
+        actualPath = model.getLastPathOfPerson(state);
         String[][] move;
-        int result = model.UpdateMoveCell(this.actualPosClicked[0],this.actualPosClicked[1],actualPath);
+        int result = model.UpdateMoveCell(actualPosClicked[0],actualPosClicked[1],actualPath);
         switch(result){
                 case Success :
                     model.log("Movimento agente aggiunto con successo");
@@ -1327,11 +1327,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
-                    this.MakePersonList();
-                    this.MakeStepList(-1);
-                    this.MakeMoveList(-1,-1,actualPath);
-                    this.MakePathList(-1);
-                    this.setListEnable();
+                    MakePersonList();
+                    MakeStepList(-1);
+                    MakeMoveList(-1,-1,actualPath);
+                    MakePathList(-1);
+                    setListEnable();
                 break;
 
                 case IllegalPosition :
@@ -1351,11 +1351,11 @@ public final class MapGeneratorTopComponent extends TopComponent {
                     model.ApplyUpdateOnMoveMap(move);
                     model.CopyToActive(model.getMove());
                     PreviewMap.repaint();
-                    this.MakePersonList();
-                    this.MakeStepList(-1);
-                    this.MakeMoveList(-1,-1,actualPath);
-                    this.MakePathList(-1);
-                    this.setListEnable();
+                    MakePersonList();
+                    MakeStepList(-1);
+                    MakeMoveList(-1,-1,actualPath);
+                    MakePathList(-1);
+                    setListEnable();
                 break;
                 default :
 
@@ -1381,17 +1381,17 @@ public final class MapGeneratorTopComponent extends TopComponent {
         final int IllegalAgentPosition = 5;
         final int PersonOverride = 6;
 
-        int result = model.UpdateCell(this.actualPosClicked[0],this.actualPosClicked[1], state);
+        int result = model.UpdateCell(actualPosClicked[0],actualPosClicked[1], state);
         switch(result){
             case Success :
                  model.log("Modifica della mappa eseguita con successo");
                  model.CopyToActive(model.getScene());
                  PreviewMap.repaint();
-                 this.MakePersonList();
-                 this.MakeStepList(-1);
-                 this.MakeMoveList(-1,-1,"all");
-                 this.MakePathList(-1);
-                 this.setListEnable();
+                 MakePersonList();
+                 MakeStepList(-1);
+                 MakeMoveList(-1,-1,"all");
+                 MakePathList(-1);
+                 setListEnable();
             break;
 
             case IllegalPosition :
@@ -1445,7 +1445,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     void updateLogArea(){
       String log = model.getLog();
-      this.LogArea.setText(log);
+      LogArea.setText(log);
     }
 
     String getState() {
@@ -1493,23 +1493,23 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
 
     private void setListEnable(){
-      if(this.PersonsList.getModel().getSize()<=1){
-        this.PersonsList.setEnabled(false);
+      if(PersonsList.getModel().getSize()<=1){
+        PersonsList.setEnabled(false);
       }
       else{
-        this.PersonsList.setEnabled(true);
+        PersonsList.setEnabled(true);
       }
-      if(this.PersonPathList.getModel().getSize()<1){
-        this.PersonPathList.setEnabled(false);
-      }
-      else{
-        this.PersonPathList.setEnabled(true);
-      }
-      if(this.StepList.getModel().getSize()<1){
-        this.StepList.setEnabled(false);
+      if(PersonPathList.getModel().getSize()<1){
+        PersonPathList.setEnabled(false);
       }
       else{
-        this.StepList.setEnabled(true);
+        PersonPathList.setEnabled(true);
+      }
+      if(StepList.getModel().getSize()<1){
+        StepList.setEnabled(false);
+      }
+      else{
+        StepList.setEnabled(true);
       }
 
     }

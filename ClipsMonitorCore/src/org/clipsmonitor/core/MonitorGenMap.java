@@ -90,9 +90,9 @@ public abstract class MonitorGenMap {
         NumCellY = NewNumCellY;
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
-        
+
         //genero la scena della dimensione specificata
-        
+
         SetSizeCells();
         setAgentDefaultPosition();
         initScene(scene);
@@ -101,7 +101,7 @@ public abstract class MonitorGenMap {
         CopyToActive(scene);
     }
 
-    
+
     /**
      * Metodo per il ridimensionamento delle celle a seguito della modifica
      * della dimensione della griglia.
@@ -113,23 +113,23 @@ public abstract class MonitorGenMap {
     //creo una scena con la nuova dimensione
         //salvo il numero di celle sulle x e sulle y
         //calcolo la larghezza delle celle
-        this.CellWidth = (this.MapWidth - 20) / NumCellX;
-        this.CellHeight = (this.MapHeight - 20) / NumCellY;
+        CellWidth = (MapWidth - 20) / NumCellX;
+        CellHeight = (MapHeight - 20) / NumCellY;
 
-        if (this.CellWidth > this.CellHeight) {
-            this.CellWidth = this.CellHeight;
+        if (CellWidth > CellHeight) {
+            CellWidth = CellHeight;
         } else {
-            this.CellHeight = this.CellWidth;
+            CellHeight = CellWidth;
         }
 
     }
-    
+
     public void setAgentDefaultPosition(){
         // aggiorno la posizione dell'agent in base alla nuova dimensione della griglia
-        this.defaultagentposition[0] = NumCellX / 2;
-        this.defaultagentposition[1] = NumCellY - 2;
-        this.agentposition[0] = this.defaultagentposition[0];
-        this.agentposition[1] = this.defaultagentposition[1];
+        defaultagentposition[0] = NumCellX / 2;
+        defaultagentposition[1] = NumCellY - 2;
+        agentposition[0] = defaultagentposition[0];
+        agentposition[1] = defaultagentposition[1];
     }
 
 
@@ -145,12 +145,12 @@ public abstract class MonitorGenMap {
      */
     public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
 
-        BufferedImage[][] icons = this.makeIconMatrix();
+        BufferedImage[][] icons = makeIconMatrix();
 
 
         //aggiorno le dimensioni della finestra
-        this.MapWidth = MapWidth;
-        this.MapHeight = MapHeight;
+        MapWidth = MapWidth;
+        MapHeight = MapHeight;
 
         //calcolo la larghezza delle celle
         CellWidth = (MapWidth - 20) / NumCellX;
@@ -250,8 +250,8 @@ public abstract class MonitorGenMap {
      * @param NumCellY
      */
     public void setNumCell(int NumCellX, int NumCellY) {
-        this.NumCellX = NumCellX;
-        this.NumCellY = NumCellY;
+        NumCellX = NumCellX;
+        NumCellY = NumCellY;
 
     }
 
@@ -269,35 +269,35 @@ public abstract class MonitorGenMap {
 
 
     public void setSizeScreen(float MapWidth, float MapHeight) {
-        this.MapHeight = MapHeight;
-        this.MapWidth = MapWidth;
+        MapHeight = MapHeight;
+        MapWidth = MapWidth;
     }
 
 
     public void setMaxDuration(int max_dur) {
-      this.maxduration = max_dur;
+      maxduration = max_dur;
     }
 
     public void setMode(String mode) {
-      this.mode = mode;
+      mode = mode;
     }
 
 
     public void setKeyMap(String[] keys) {
-      this.setKeyMap = keys;
+      setKeyMap = keys;
     }
 
     public void setLog(String log){
-      this.log= log;
+      log= log;
 
     }
 
     public void setKeyColor(String[] keys) {
-      this.setKeyColor = keys;
+      setKeyColor = keys;
     }
 
     public String[][] getScene() {
-      return this.scene;
+      return scene;
     }
 
     public String getLog(){
@@ -306,35 +306,35 @@ public abstract class MonitorGenMap {
 
 
     public String[][] getMove() {
-      return this.move;
+      return move;
     }
 
 
     public int getNumx() {
-        return this.NumCellX;
+        return NumCellX;
     }
 
     public int getNumy() {
-        return this.NumCellY;
+        return NumCellY;
     }
 
     public int getMaxDuration(){
-        return this.maxduration;
+        return maxduration;
     }
 
 
     public String[] getSetKey() {
 
-        return this.setKeyMap;
+        return setKeyMap;
     }
 
 
     public String[] getSetKeyColor() {
-      return this.setKeyColor;
+      return setKeyColor;
     }
 
     public String getMode() {
-          return this.mode;
+          return mode;
     }
 
 
@@ -349,7 +349,7 @@ public abstract class MonitorGenMap {
      */
     public void CopyToActive(String[][] map) {
 
-        this.mapActive = this.clone(map);
+        mapActive = clone(map);
     }
 
     /**
@@ -359,7 +359,7 @@ public abstract class MonitorGenMap {
      */
     public void CopySceneToMove() {
 
-        this.move = this.clone(scene);
+        move = clone(scene);
     }
 
      /*
@@ -371,12 +371,12 @@ public abstract class MonitorGenMap {
      */
     public String[][] getTmpMoveMap(int x, int y, String color) {
 
-        String[][] newmap = new String[this.NumCellX][this.NumCellY];
+        String[][] newmap = new String[NumCellX][NumCellY];
 
         for (int i = 0; i < newmap.length; i++) {
 
             for (int j = 0; j < newmap[0].length; j++) {
-                String result = this.CheckBusyCellFromPerson(i, j, 0);
+                String result = CheckBusyCellFromPerson(i, j, 0);
                 if (!(result.equals("empty"))) {
                     String[] resultSplit = result.split("_");
                     newmap[i][j] = resultSplit[0];
@@ -402,7 +402,7 @@ public abstract class MonitorGenMap {
 
     public String[][] getMoveCellMap(String paramPath, int paramStep) {
 
-   String[][] newmap = new String[this.NumCellX][this.NumCellY];
+   String[][] newmap = new String[NumCellX][NumCellY];
 
    for (int i = 0; i < newmap.length; i++) {
 
@@ -416,7 +416,7 @@ public abstract class MonitorGenMap {
 
    // caso di richiesta di uno specifico step
    if (paramPath.equals("none")) {
-       ListIterator<Person> it = this.Persons.listIterator();
+       ListIterator<Person> it = Persons.listIterator();
        while (it.hasNext()) {
            Person p = it.next();
            ListIterator<Path> itPath = p.paths.listIterator();
@@ -443,7 +443,7 @@ public abstract class MonitorGenMap {
        int r = 0;
        int c = 0;
 
-       Path result = this.getPathByName(paramPath);
+       Path result = getPathByName(paramPath);
        String[] splitResult = result.name.split("_");
        ListIterator<StepMove> it = result.move.listIterator();
 
@@ -517,9 +517,9 @@ public abstract class MonitorGenMap {
 
         BufferedImage[][] iconMatrix = new BufferedImage[mapActive.length][mapActive[0].length];
 
-            for (int i = 0; i < this.NumCellX; i++) {
+            for (int i = 0; i < NumCellX; i++) {
 
-                for (int j = 0; j < this.NumCellY; j++) {
+                for (int j = 0; j < NumCellY; j++) {
 
                   BufferedImage tmpImage;
 
@@ -567,9 +567,9 @@ public abstract class MonitorGenMap {
         protected int step;
 
         public StepMove(int r, int c, int s) {
-            this.x = r;
-            this.y = c;
-            this.step = s;
+            x = r;
+            y = c;
+            step = s;
         }
 
         public int getX() {
@@ -586,16 +586,16 @@ public abstract class MonitorGenMap {
         }
 
         public void setX(int nr) {
-            this.x = nr;
+            x = nr;
         }
 
         public void setY(int nc) {
-            this.y = nc;
+            y = nc;
         }
 
         public void setStep(int ns) {
 
-            this.step = ns;
+            step = ns;
         }
 
     }
@@ -609,51 +609,51 @@ public abstract class MonitorGenMap {
 
         public Path(String name, int startStep) {
 
-            this.name = name;
-            this.startStep = startStep;
-            this.lastStep = startStep;
+            name = name;
+            startStep = startStep;
+            lastStep = startStep;
             move = new LinkedList<StepMove>();
 
         }
 
         private Path(String name, int startStep, int lastStep) {
 
-            this.name = name;
-            this.startStep = startStep;
-            this.lastStep = lastStep;
+            name = name;
+            startStep = startStep;
+            lastStep = lastStep;
             move = new LinkedList<StepMove>();
 
         }
 
         public LinkedList<StepMove> getMoves() {
 
-            return this.move;
+            return move;
         }
 
         public String getName(){
 
-            return this.name;
+            return name;
         }
 
         public int getLastStep(){
-            return this.lastStep;
+            return lastStep;
         }
 
         public int getStartStep(){
-            return this.startStep;
+            return startStep;
         }
 
         public void AddMove(int r, int c) {
 
-            int step = (this.move.size() == 0) ? startStep : lastStep + 1;
+            int step = (move.size() == 0) ? startStep : lastStep + 1;
             move.add(new StepMove(r, c, step));
-            this.lastStep = step;
+            lastStep = step;
         }
 
         public void RemoveLast() {
-            if (this.move.size() > 1) {
-                this.move.removeLast();
-                this.lastStep = this.move.getLast().step;
+            if (move.size() > 1) {
+                move.removeLast();
+                lastStep = move.getLast().step;
             }
         }
 
@@ -673,25 +673,25 @@ public abstract class MonitorGenMap {
 
         public Person(String color) {
 
-            this.associatedColor = color;
+            associatedColor = color;
             paths = new LinkedList<Path>();
         }
 
         public String getColor() {
 
-            return this.associatedColor;
+            return associatedColor;
         }
 
         public LinkedList<Path> getPaths() {
 
-            return this.paths;
+            return paths;
         }
 
         public void AddPath(int waitTime) {
-            String name = this.associatedColor + "_" + this.paths.size();
+            String name = associatedColor + "_" + paths.size();
             int startStep;
-            if (this.paths.size() > 0) {
-                startStep = this.paths.getLast().lastStep + waitTime + 1;
+            if (paths.size() > 0) {
+                startStep = paths.getLast().lastStep + waitTime + 1;
             } else {
                 startStep = waitTime;
             }
@@ -706,8 +706,8 @@ public abstract class MonitorGenMap {
 
         public void RemoveLastPath() {
 
-            if (this.paths.size() > 1) {
-                this.paths.removeLast();
+            if (paths.size() > 1) {
+                paths.removeLast();
             }
         }
 
@@ -735,7 +735,7 @@ public abstract class MonitorGenMap {
         }
         String[] nameSplit = name.split("_");
         String color = nameSplit[0];
-        Person p = this.findByColor(color);
+        Person p = findByColor(color);
         int numPath = Integer.parseInt(nameSplit[1]);
         Path result = p.paths.get(numPath);
         return result;
@@ -743,9 +743,9 @@ public abstract class MonitorGenMap {
 
     public int getLastStepofPerson(String state){
       int lastStep=0;
-        int pos = this.findPosByColor(state);
+        int pos = findPosByColor(state);
         if (pos != -1) {
-            Person p = this.Persons.get(pos);
+            Person p = Persons.get(pos);
             lastStep = p.paths.getLast().lastStep;
 
         }
@@ -757,9 +757,9 @@ public abstract class MonitorGenMap {
      */
     public String getLastPathOfPerson(String state) {
         String pathName = "empty";
-        int pos = this.findPosByColor(state);
+        int pos = findPosByColor(state);
         if (pos != -1) {
-            Person p = this.Persons.get(pos);
+            Person p = Persons.get(pos);
             pathName = p.paths.getLast().name;
 
         }
@@ -775,7 +775,7 @@ public abstract class MonitorGenMap {
     public int findPosByColor(String color) {
 
         int position = 0;
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         Person p = null;
         while (it.hasNext()) {
             p = it.next();
@@ -794,7 +794,7 @@ public abstract class MonitorGenMap {
      */
     public Person findByColor(String color) {
 
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         Person result = null;
         Person succ = null;
         while (it.hasNext()) {
@@ -817,7 +817,7 @@ public abstract class MonitorGenMap {
      */
     public String[] getListColorActive() {
 
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         ArrayList<String> listColor = new ArrayList<String>();
         String[] colors;
 
@@ -844,10 +844,10 @@ public abstract class MonitorGenMap {
     public String[] getListPerson() {
 
         String[] list = null;
-        if (this.Persons.size() > 0) {
+        if (Persons.size() > 0) {
 
-            list = new String[this.Persons.size() + 1];
-            ListIterator<Person> it = this.Persons.listIterator();
+            list = new String[Persons.size() + 1];
+            ListIterator<Person> it = Persons.listIterator();
             int i = 0;
 
             while (it.hasNext()) {
@@ -856,18 +856,18 @@ public abstract class MonitorGenMap {
                 i++;
             }
 
-            list[this.Persons.size()] = "all";
+            list[Persons.size()] = "all";
         }
         return list;
     }
 
     public String getMoveString(String color, int step , String pathname , int x , int y){
-      
+
       return "C: " + color + "\t   S: " + step + "\t   Path: " + pathname
                               + "\t (" + x + "," + y + ")";
-    
+
     }
-    
+
     /*
      *  Ritorna una stringa indicante il numero di step disponibili alla modifica in base
      *  al parametro che li viene dato .
@@ -880,7 +880,7 @@ public abstract class MonitorGenMap {
         String[] list = null;
         int maxStep = 0;
         if (param == -1) {
-            ListIterator<Person> it = this.Persons.listIterator();
+            ListIterator<Person> it = Persons.listIterator();
             while (it.hasNext()) {
                 ListIterator<Path> itp = it.next().paths.listIterator();
                 int numStepPerson = 0;
@@ -897,7 +897,7 @@ public abstract class MonitorGenMap {
 
         } else {
 
-            Person paramPerson = this.Persons.get(param);
+            Person paramPerson = Persons.get(param);
             ListIterator<Path> itp = paramPerson.paths.listIterator();
             int numStepPerson = 0;
             while (itp.hasNext()) {
@@ -929,9 +929,9 @@ public abstract class MonitorGenMap {
         ArrayList<String> moveslist = new ArrayList<String>();
         // richiesta della lista completa degli step;
         if (paramPerson == -1 && paramStep == -1 && paramPath.equals("all")) {
-            
-            
-            ListIterator<Person> it = this.Persons.listIterator();
+
+
+            ListIterator<Person> it = Persons.listIterator();
             while (it.hasNext()) {
                 Person p = it.next();
                 ListIterator<Path> itpath = p.paths.listIterator();
@@ -941,7 +941,7 @@ public abstract class MonitorGenMap {
                     ListIterator<StepMove> moves = succ.move.listIterator();
                     while (moves.hasNext()) {
                         StepMove s = moves.next();
-                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
+                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
                         moveslist.add(move);
                     }
                 }
@@ -950,7 +950,7 @@ public abstract class MonitorGenMap {
         else{
           // richiesta della lista completa delle move in un determinato step
           if (paramStep > -1) {
-              ListIterator<Person> itPerson = this.Persons.listIterator();
+              ListIterator<Person> itPerson = Persons.listIterator();
               while (itPerson.hasNext()) {
                   Person p = itPerson.next();
                   ListIterator<Path> itPath = p.paths.listIterator();
@@ -964,7 +964,7 @@ public abstract class MonitorGenMap {
                   int offset = paramStep - succ.startStep;
                   if (succ.move.size() > paramStep) {
                       StepMove s = succ.move.get(paramStep);
-                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
+                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
                       moveslist.add(move);
                   }
 
@@ -974,14 +974,14 @@ public abstract class MonitorGenMap {
           // richiesta della lista delle move eseguita da una determinata persona
           else if (paramPerson > -1) {
 
-              Person p = this.Persons.get(paramPerson);
+              Person p = Persons.get(paramPerson);
               ListIterator<Path> itPath = p.paths.listIterator();
               while (itPath.hasNext()) {
                   Path succ = itPath.next();
                   ListIterator<StepMove> moves = succ.move.listIterator();
                   while (moves.hasNext()) {
                       StepMove s = moves.next();
-                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
+                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
                       moveslist.add(move);
                   }
               }
@@ -989,13 +989,13 @@ public abstract class MonitorGenMap {
           }
           // richiesta della lista delle move eseguite all'interno di un determinato path
           else{
-              Path succ = this.getPathByName(paramPath);
+              Path succ = getPathByName(paramPath);
               String[] split = paramPath.split("_");
-              Person p = this.findByColor(split[0]);
+              Person p = findByColor(split[0]);
               ListIterator<StepMove> moves = succ.move.listIterator();
               while (moves.hasNext()) {
                   StepMove s = moves.next();
-                  String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y); 
+                  String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
                   moveslist.add(move);
               }
 
@@ -1024,7 +1024,7 @@ public abstract class MonitorGenMap {
 
         if (paramPerson == -1) {
 
-            ListIterator<Person> it = this.Persons.listIterator();
+            ListIterator<Person> it = Persons.listIterator();
             while (it.hasNext()) {
 
                 Person p = it.next();
@@ -1037,7 +1037,7 @@ public abstract class MonitorGenMap {
             }
         } else {
 
-            Person p = this.Persons.get(paramPerson);
+            Person p = Persons.get(paramPerson);
 
             ListIterator<Path> itPath = p.paths.listIterator();
             while (itPath.hasNext()) {
@@ -1066,7 +1066,7 @@ public abstract class MonitorGenMap {
 
         if (paramPerson == -1) {
 
-            ListIterator<Person> it = this.Persons.listIterator();
+            ListIterator<Person> it = Persons.listIterator();
             while (it.hasNext()) {
 
                 Person p = it.next();
@@ -1079,7 +1079,7 @@ public abstract class MonitorGenMap {
             }
         } else {
 
-            Person p = this.Persons.get(paramPerson);
+            Person p = Persons.get(paramPerson);
             ListIterator<Path> itPath = p.paths.listIterator();
             while (itPath.hasNext()) {
                 Path succ = itPath.next();
@@ -1106,7 +1106,7 @@ public abstract class MonitorGenMap {
     public int [] RemoveStepAfterResize() {
 
         int [] pos = new int [2];
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         while (it.hasNext()) {
             Person p = it.next();
             ListIterator<Path> itPath = p.paths.listIterator();
@@ -1116,8 +1116,8 @@ public abstract class MonitorGenMap {
                 StepMove s = its.next();
                 boolean flag = false;
                 while (its.hasNext()) {
-                    if (s.getX() < 0 || s.getX() > this.NumCellX || s.getY() < 0 || s.getY() > this.NumCellY
-                         || !this.PersonPositionIsValid(this.scene[s.getX()][s.getY()])) {
+                    if (s.getX() < 0 || s.getX() > NumCellX || s.getY() < 0 || s.getY() > NumCellY
+                         || !PersonPositionIsValid(scene[s.getX()][s.getY()])) {
                       flag = true;
                       break;
                     }
@@ -1150,8 +1150,8 @@ public abstract class MonitorGenMap {
 
 
             if(p.paths.getFirst().move.isEmpty()){
-              this.RemoveLastPath(p.associatedColor);
-              this.Remove(p.associatedColor);
+              RemoveLastPath(p.associatedColor);
+              Remove(p.associatedColor);
             }
             else{
               StepMove s = p.paths.getLast().getMoves().getLast();
@@ -1210,17 +1210,17 @@ public int UpdateCell(int x, int y, String state) {
         if (state.contains("agent")) {
 
             // se la nuova posizione agente è diversa dalla precedente
-            if (x != this.agentposition[0] || y != this.agentposition[1]) {
+            if (x != agentposition[0] || y != agentposition[1]) {
 
-                if (this.RobotPositionIsValid(scene[x][y])) {
+                if (RobotPositionIsValid(scene[x][y])) {
 
                     // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
                     // e successivamente inserisco il nuovo agente
-                    String [] split = scene[this.agentposition[0]][this.agentposition[1]].split("\\+");
+                    String [] split = scene[agentposition[0]][agentposition[1]].split("\\+");
                     String background = split[0];
                     scene[x][y] += "+" + state;
-                    scene[this.agentposition[0]][this.agentposition[1]] = background;
-                    this.SetRobotParams(state, x, y);
+                    scene[agentposition[0]][agentposition[1]] = background;
+                    SetRobotParams(state, x, y);
                 }
                 else {
                     return IllegalRobotPosition;
@@ -1238,11 +1238,11 @@ public int UpdateCell(int x, int y, String state) {
         else {
             // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
             // allora semplicemente reimposto la posizione di default dell'agente
-            if (x == this.agentposition[0] && y == this.agentposition[1]) {
+            if (x == agentposition[0] && y == agentposition[1]) {
                 scene[x][y] = state;
-                this.agentposition[0] = this.defaultagentposition[0];
-                this.agentposition[1] = this.defaultagentposition[1];
-                scene[this.agentposition[0]][this.agentposition[1]] = this.defaulagentcondition;
+                agentposition[0] = defaultagentposition[0];
+                agentposition[1] = defaultagentposition[1];
+                scene[agentposition[0]][agentposition[1]] = defaulagentcondition;
             } else {
                 scene[x][y] = state;
             }
@@ -1263,7 +1263,7 @@ public int UpdateCell(int x, int y, String state) {
      *   @param
      */
     public String CheckBusyCellFromPerson(int x, int y, int Step) {
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         Person p = null;
         while (it.hasNext()) {
             p = it.next();
@@ -1309,7 +1309,7 @@ public int UpdateCell(int x, int y, String state) {
         final int IllegalStartCell = 1;
         final int IllegalPerson = 2;
         final int PersonOverride = 3;
-        Person p = this.findByColor(color);
+        Person p = findByColor(color);
         if (p == null) {
             return IllegalPerson;
 
@@ -1317,10 +1317,10 @@ public int UpdateCell(int x, int y, String state) {
         int start = p.paths.getLast().lastStep + waitStep + 1;
         int xStartStep = p.paths.getLast().move.getLast().x;
         int yStartStep = p.paths.getLast().move.getLast().y;
-        String result = this.CheckBusyCellFromPerson(xStartStep, yStartStep, start);
+        String result = CheckBusyCellFromPerson(xStartStep, yStartStep, start);
 
         if (result.equals("empty")) {
-            if (this.PersonPositionIsValid(scene[xStartStep][yStartStep])) {
+            if (PersonPositionIsValid(scene[xStartStep][yStartStep])) {
                 p.AddPath(waitStep);
                 p.paths.getLast().AddMove(xStartStep, yStartStep);
                 return Success;
@@ -1356,22 +1356,22 @@ public int UpdateMoveCell(int x, int y, String path) {
     String[] pathSplit = path.split("_");
     String color = pathSplit[0];
 
-    Path p = this.getPathByName(path);
+    Path p = getPathByName(path);
 
     if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
         StepMove s = p.getMoves().getLast();
         int step = p.getMoves().getLast().getStep() + 1;
-        String result = this.CheckBusyCellFromPerson(x, y, step);
+        String result = CheckBusyCellFromPerson(x, y, step);
         if (!(result.equals("empty"))) {
             return PersonOverride;
         }
         // distanza di manhattam e check sulla attraversabilità della cella
-        if (this.ManhattamDistance(s.getX(), s.getY(), x, y) == 1 &&
-                this.PersonPositionIsValid(scene[x][y])) {
+        if (ManhattamDistance(s.getX(), s.getY(), x, y) == 1 &&
+                PersonPositionIsValid(scene[x][y])) {
             p.AddMove(x, y);
             return Success;
-        } else if (this.ManhattamDistance(s.getX(), s.getY(), x, y) == 0) {
+        } else if (ManhattamDistance(s.getX(), s.getY(), x, y) == 0) {
             p.RemoveLast();
             return LastMoveRemove;
         } else {
@@ -1396,13 +1396,13 @@ public int UpdateMoveCell(int x, int y, String path) {
      */
     public boolean Remove(String color) {
 
-        ListIterator<Person> it = this.Persons.listIterator();
+        ListIterator<Person> it = Persons.listIterator();
         while (it.hasNext()) {
 
             Person p = it.next();
             if (p.getColor().equals(color)) {
-                this.Persons.remove(p);
-                this.NumPerson--;
+                Persons.remove(p);
+                NumPerson--;
                 return true;
             }
         }
@@ -1433,25 +1433,25 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
     if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
 
         // keycolor non ancora inizializzato
-        if (this.setKeyColor.length == 0) {
+        if (setKeyColor.length == 0) {
             return keyColorEmpty;
         }
 
         // sovrascrittura dell'agente
-        if (x == this.agentposition[0] && y == this.agentposition[1]) {
+        if (x == agentposition[0] && y == agentposition[1]) {
 
             return IllegalAgentPosition;
         }
-        
-        result = this.CheckBusyCellFromPerson(x, y, 0);
+
+        result = CheckBusyCellFromPerson(x, y, 0);
         if (!result.equals("empty")) {
 
             return PersonOverride;
         }
 
-        if (this.findPosByColor(color) != -1) {
+        if (findPosByColor(color) != -1) {
 
-            Person p = this.findByColor(color);
+            Person p = findByColor(color);
             Path first = p.paths.get(0);
             first.move.getFirst().setX(x);
             first.move.getFirst().setY(y);
@@ -1460,13 +1460,13 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         }
 
         // ho ancora disponibilita di colori per indicare le person
-        if (this.NumPerson < this.MaxNumPerson) {
-            this.NumPerson++;
-            this.Persons.add(new Person(color));
-            this.Persons.getLast().AddPath(waitTime);
+        if (NumPerson < MaxNumPerson) {
+            NumPerson++;
+            Persons.add(new Person(color));
+            Persons.getLast().AddPath(waitTime);
 
-            if (this.PersonPositionIsValid(move[x][y])) {
-                this.Persons.getLast().paths.getLast().AddMove(x, y);
+            if (PersonPositionIsValid(move[x][y])) {
+                Persons.getLast().paths.getLast().AddMove(x, y);
                 String background = move[x][y];
                 move[x][y] = background + "+" + color + "+" + personName;
             } else {
@@ -1500,7 +1500,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         final int PersonNotFound = 1;
         final int FirstPathRemove = 2;
 
-        Person p = this.findByColor(color);
+        Person p = findByColor(color);
         if (p != null) {
 
             if (p.paths.size() > 1) {
@@ -1532,8 +1532,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
     public String SaveFiles(File directory) throws JSONException {
 
         String consoleOutput = "";
-        consoleOutput += this.WriteSceneOnFile(directory);
-        consoleOutput += this.WriteHistoryOnFile(directory);
+        consoleOutput += WriteSceneOnFile(directory);
+        consoleOutput += WriteHistoryOnFile(directory);
         return consoleOutput;
 
     }
@@ -1546,7 +1546,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
      */
     private String WriteSceneOnFile(File directory) throws JSONException {
         //richiamo l'export della scena il quale mi dará una stringa con tutto il codice clips corrispondente
-        String sceneFile = this.exportScene();
+        String sceneFile = exportScene();
 
         String DirName = "";
         String Parent = "";
@@ -1563,7 +1563,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
 
             String JSONMapPath = Parent + File.separator + DirName + File.separator + "InfoMap.json";
             //scrivo il file json con la mappa scritta
-            this.saveJSONMap(JSONMapPath);
+            saveJSONMap(JSONMapPath);
             consoleOutput += "File creato \n" + Paths.get(JSONMapPath);
 
         } catch (IOException err) {
@@ -1584,7 +1584,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
      */
     private String WriteHistoryOnFile(File directory) throws JSONException {
 
-        String historyFile = this.exportHistory();
+        String historyFile = exportHistory();
         String DirName = "";
         String Parent = "";
         String consoleOutput = "";
@@ -1602,7 +1602,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             }
             //scrivo il file json con la mappa scritta
             String JSONMovePath = Parent + File.separator + DirName + File.separator + "InfoMove.json";
-            boolean result = this.saveJSONMoves(JSONMovePath);
+            boolean result = saveJSONMoves(JSONMovePath);
             if (result) {
                 consoleOutput += "File creato \n" + Paths.get(JSONMovePath);
             }
@@ -1630,14 +1630,14 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         try {
             //Creo la radice con le informazioni sulla griglia
             JSONObject info = new JSONObject();
-            info.put("cell_x", this.getNumx());
-            info.put("cell_y", this.getNumy());
-            info.put("robot_x_default", this.defaultagentposition[0]);
-            info.put("robot_y_default", this.defaultagentposition[1]);
+            info.put("cell_x", getNumx());
+            info.put("cell_y", getNumy());
+            info.put("robot_x_default", defaultagentposition[0]);
+            info.put("robot_y_default", defaultagentposition[1]);
             //ciclo sulla matrice degli stati per creare la struttura
             JSONArray ArrayCells = new JSONArray();
-            for (int i = 0; i < this.getNumx(); i++) {
-                for (int j = 0; j < this.getNumy(); j++) {
+            for (int i = 0; i < getNumx(); i++) {
+                for (int j = 0; j < getNumy(); j++) {
                     JSONObject cell = new JSONObject();
                     cell.put("x", i);
                     cell.put("y", j);
@@ -1651,7 +1651,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             //salvo le informazioni in un file JSON della scenea
             Files.write(Paths.get(nome), info.toString(2).getBytes());
         } catch (IOException ex) {
-            this.AppendLogMessage(ex.getMessage(),"error");
+            AppendLogMessage(ex.getMessage(),"error");
             Logger.getLogger(RescueGenMap.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -1667,8 +1667,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         File jsonMap = new File(jsonMapPath);
         File jsonMove = new File(jsonMovePath);
 
-        this.LoadScene(jsonMap);
-        this.LoadMoves(jsonMove);
+        LoadScene(jsonMap);
+        LoadMoves(jsonMove);
     }
 
 
@@ -1695,8 +1695,8 @@ private void LoadScene(File jsonFile) throws ParseException {
         int NumCellY = Integer.parseInt(json.get("cell_y").toString());
 
         //setto il numero di celle nella scena
-        this.setNumCell(NumCellX, NumCellY);
-        this.initModelMap(NumCellX, NumCellY, MapWidth, MapHeight);
+        setNumCell(NumCellX, NumCellY);
+        initModelMap(NumCellX, NumCellY, MapWidth, MapHeight);
         //estraggo il JSONArray dalla radice
         JSONArray arrayCelle = json.getJSONArray("celle");
         for (int i = 0; i < arrayCelle.length(); i++) {
@@ -1707,14 +1707,14 @@ private void LoadScene(File jsonFile) throws ParseException {
             String stato = cell.getString("stato");
 
             if (stato.contains("agent")) {
-                this.SetRobotParams(stato, x, y);
+                SetRobotParams(stato, x, y);
             }
-            this.setCell(x, y, stato);
+            setCell(x, y, stato);
 
-            this.defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
+            defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
         }
-        
-        CopyToActive(this.scene);
+
+        CopyToActive(scene);
 
     } catch (JSONException ex) {
 
@@ -1739,28 +1739,28 @@ private void LoadScene(File jsonFile) throws ParseException {
     private boolean saveJSONMoves(String name) throws JSONException {
 
         try {
-            
+
             JSONObject Info = new JSONObject();
             JSONArray PersonsArray = new JSONArray();
-            
-            for (int i = 0; i < this.Persons.size(); i++) {
-                
-                Person p = this.Persons.get(i);
+
+            for (int i = 0; i < Persons.size(); i++) {
+
+                Person p = Persons.get(i);
                 JSONObject person = new JSONObject();
                 person.put("color", p.associatedColor);
                 JSONArray paths = new JSONArray();
-                
+
                 for (int j = 0; j < p.paths.size(); j++) {
-                
+
                     Path pts = p.paths.get(j);
                     JSONObject path = new JSONObject();
                     path.put("name", pts.name);
                     path.put("startStep", pts.startStep);
                     path.put("lastStep", pts.lastStep);
                     JSONArray moves = new JSONArray();
-                    
+
                     for (int k = 0; k < pts.move.size(); k++) {
-                    
+
                         JSONObject move = new JSONObject();
                         StepMove s = pts.move.get(k);
                         move.put("x", s.x);
@@ -1768,11 +1768,11 @@ private void LoadScene(File jsonFile) throws ParseException {
                         move.put("step", s.step);
                         moves.put(move);
                     }
-                    
+
                     path.put("moves", moves);
                     paths.put(path);
                 }
-                
+
                 person.put("paths", paths);
                 PersonsArray.put(person);
             }
@@ -1781,9 +1781,9 @@ private void LoadScene(File jsonFile) throws ParseException {
 
             Files.write(Paths.get(name), Info.toString(2).getBytes());
             return true;
-        
+
         } catch (IOException err) {
-            
+
             AppendLogMessage(err.getMessage(),"error");
             return false;
         }
@@ -1806,7 +1806,7 @@ private void LoadScene(File jsonFile) throws ParseException {
             jsonreader.close();
             JSONObject json = new JSONObject(jsonstring);
 
-            this.Persons = new LinkedList<Person>();
+            Persons = new LinkedList<Person>();
 
             //estraggo il JSONArray dalla radice
             JSONArray arrayPersons = json.getJSONArray("personList");
@@ -1816,18 +1816,18 @@ private void LoadScene(File jsonFile) throws ParseException {
                 String color = person.getString("color");
                 Person p = new Person(color);
                 JSONArray arrayPaths = person.getJSONArray("paths");
-                
+
                 for (int j = 0; j < arrayPaths.length(); j++) {
-                    
+
                     JSONObject path = arrayPaths.getJSONObject(j);
                     String pathName = path.getString("name");
                     int startStep = path.getInt("startStep");
                     int lastStep = path.getInt("lastStep");
                     p.paths.add(new Path(pathName, startStep, lastStep));
                     JSONArray arrayMoves = path.getJSONArray("moves");
-                    
+
                     for (int k = 0; k < arrayMoves.length(); k++) {
-                    
+
                         JSONObject move = arrayMoves.getJSONObject(k);
                         int x = move.getInt("x");
                         int y = move.getInt("y");
@@ -1835,7 +1835,7 @@ private void LoadScene(File jsonFile) throws ParseException {
                         p.paths.getLast().move.add(new StepMove(x, y, step));
                     }
                 }
-                this.Persons.add(p);
+                Persons.add(p);
             }
         } catch (JSONException ex) {
             AppendLogMessage(ex.getMessage(),"error");
@@ -1847,7 +1847,7 @@ private void LoadScene(File jsonFile) throws ParseException {
 
     }
 
-    
+
     public String getNewPathName(String pathName)
     {
       String [] split = pathName.split("_");
@@ -1856,19 +1856,19 @@ private void LoadScene(File jsonFile) throws ParseException {
       {
         newpath += split[i];
       }
-      
+
        return newpath;
     }
 
     protected int[] GenMapToMap(int i, int j){
         return new int[]{scene[0].length - j, i+1};
     }
-    
+
     protected int[] GenMapToMap(int [] pos){
         return new int[]{scene[0].length - pos[1], pos[0]+1};
     }
-    
-    
+
+
     protected int[] MapToGenMap(int i , int j){
         return new int[]{j-1, scene[0].length - i};
     }
@@ -1882,7 +1882,7 @@ private void LoadScene(File jsonFile) throws ParseException {
       else{
         logMessage=CreateLogMessage(newLog);
       }
-      this.log= log + logMessage + "\n";
+      log= log + logMessage + "\n";
     }
 
 

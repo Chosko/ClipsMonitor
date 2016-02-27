@@ -1,8 +1,6 @@
 package org.clipsmonitor.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -524,31 +522,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
 
     
     
-    public String center (String s, int length) {
-    
-      if (s.length() > length) {
-        return s.substring(0, length);
-    
-      } else if (s.length() == length) {
-        return s;
-      } else {
-        int leftPadding = (length - s.length()) / 2; 
-        StringBuilder leftBuilder = new StringBuilder();
-        for (int i = 0; i < leftPadding; i++) {
-            leftBuilder.append(" ");
-        }
-
-        int rightPadding = length - s.length() - leftPadding;
-        StringBuilder rightBuilder = new StringBuilder();
-        for (int i = 0; i < rightPadding; i++) 
-            rightBuilder.append(" ");
-
-        return leftBuilder.toString() + s 
-                + rightBuilder.toString();
-    }
-}
-    
-    
+ 
+      
     public static String fixedLengthString(String string, int length) {
       String formattedString = string;
       if(string.length() >length){

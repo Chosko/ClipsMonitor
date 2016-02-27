@@ -76,8 +76,10 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         updateCells();
         updatePersonStatus();
         updateAgentStatus();
-        updateGoal();
-        updateGoalsToDo();
+        if(model.getShowGoalEnabled()){
+            updateGoal();
+            updateGoalsToDo();
+        }
         // debugMap("cell");
     }
 
@@ -170,7 +172,7 @@ public class RescueEnvMap extends MonitorMap implements Observer {
           map[r][c] +="+I";
         }
         if (model.getTypeGoalSelected().equals("unload")){
-          map[r][c] +="+G";
+          map[r][c] +="+U";
         }
  
       }
