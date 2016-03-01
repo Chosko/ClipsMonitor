@@ -5,12 +5,9 @@
  */
 package org.clipsmonitor.gui;
 
-import java.util.LinkedList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import org.clipsmonitor.core.MonitorModel;
 
 /**
  *

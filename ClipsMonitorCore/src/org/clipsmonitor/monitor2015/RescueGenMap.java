@@ -5,10 +5,24 @@
  */
 package org.clipsmonitor.monitor2015;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import org.clipsmonitor.core.MonitorGenMap;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.monitor2015.RescueFacts;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.openide.util.Exceptions;
 
 /*
  * Classe che definisce il concetto di scena all'interno del progetto e tutti i metodi per accedervi e
@@ -305,4 +319,274 @@ public class RescueGenMap extends MonitorGenMap {
   public void clear() {
      instance=null;
   }
+  
+  
+  
+ public int[] GetJsonMapDimension(File jsonMap){
+ 
+   try {
+        //converto il file in un oggetto JSON
+        FileReader jsonreader = new FileReader(jsonMap);
+        char[] chars = new char[(int) jsonMap.length()];
+        jsonreader.read(chars);
+        String jsonstring = new String(chars);
+        jsonreader.close();
+        JSONObject json = new JSONObject(jsonstring);
+        //leggo il numero di celle dalla radice del JSON
+
+        int NumCellX = Integer.parseInt(json.get("cell_x").toString());
+        int NumCellY = Integer.parseInt(json.get("cell_y").toString());
+
+        return new int[]{NumCellX,NumCellY};
+   }
+   catch (JSONException ex) {
+
+        AppendLogMessage(ex.getMessage(),"error");
+    } catch (IOException ex) {
+        AppendLogMessage(ex.getMessage(),"error");
+    } catch (NumberFormatException ex) {
+        AppendLogMessage(ex.getMessage(),"error");
+    }
+ 
+    return null;
+ } 
+  
+ public void createJsonScene(File map){
+      try {
+        BufferedReader mapread = new BufferedReader(new FileReader(map));
+        String l = "";
+        log(map.getName());
+        String regex = "\\s*(\\(real_cell\\s*(\\(pos-r (\\d+)\\))\\s*(\\(pos-c (\\d+)\\))\\s*(\\(contains ([a-z]+)\\))\\s*(\\(injured (yes|no)\\))\\)\\s*)";
+        Pattern p = Pattern.compile(regex);
+        int maxR=0 ;
+        int maxC=0 ;
+        String posR = "";
+        String posC = "";
+        String contains = "";
+        String injured = "";
+        String state = "";
+        JSONObject Info = new JSONObject();
+        
+        while((l=mapread.readLine())!=null ){
+          Matcher m = p.matcher(l);
+          boolean match = m.find();
+          if(match){
+            posR = m.group(3);
+            posC = m.group(5);
+            int r = Integer.parseInt(posR);
+            int c = Integer.parseInt(posC);
+            if(maxR<r){
+              maxR=r;
+            }
+            if(maxC<c){
+              maxC=c;
+            }
+            
+         }
+       }
+        
+        mapread = new BufferedReader(new FileReader(map));
+        Info.put("cell_x", maxC);
+        Info.put("cell_y", maxR);
+        JSONArray ArrayCells = new JSONArray();
+        
+        while((l=mapread.readLine())!=null ){
+          Matcher m = p.matcher(l);
+          boolean match = m.find();
+          if(match){
+            posR = m.group(3);
+            posC = m.group(5);
+            contains = m.group(7);
+            injured = m.group(9);
+            int r = Integer.parseInt(posR);
+            int c = Integer.parseInt(posC);
+            JSONObject cell = new JSONObject();
+            int[] GenToMap = this.MapToGenMap(r,c,maxR);
+            
+            cell.put("x", GenToMap[0]);
+            cell.put("y", GenToMap[1]);
+            state = contains;
+            if(contains.contains("debris")){
+              if(injured.contains("yes")){
+                state="debris_injured";
+              }
+              else{
+                state="debris";
+              }
+            }
+            cell.put("state",state);
+            //salvo solo l'intero dello stato che viene
+            //scenepato internamente;
+            ArrayCells.put(cell);
+         }
+       }
+        Info.put("cells", ArrayCells);
+        File jsonfile = new File(map.getParent()+File.separator+"infoMap.json");
+        Files.write(Paths.get(jsonfile.getAbsolutePath()), Info.toString(2).getBytes());
+      }
+      catch (FileNotFoundException ex) {
+        Exceptions.printStackTrace(ex);
+      } catch (IOException ex) {
+        Exceptions.printStackTrace(ex);
+      } catch (JSONException ex) {
+        Exceptions.printStackTrace(ex);
+      }
+ }
+ 
+ public void createJsonHistory(File history,File jsonMap){
+   try {
+        JSONObject Info = new JSONObject();
+        BufferedReader mapread = new BufferedReader(new FileReader(history));
+        String l = "";
+        String timeRegex = "\\s*(\\(maxduration\\s*(\\d+)\\s*\\)\\s*)";
+        String agentPosRegex = 	"\\s*(\\(initial_agentposition\\s*"
+                + "(\\(pos-r (\\d+)\\))\\s*"
+                + "(\\(pos-c (\\d+)\\))\\s*"
+                + "(\\(direction ([a-z]+)\\))\\s*\\))";
+        
+        String perStatusRegex = "\\s*(\\(\\s*personstatus\\s*"
+                + "(\\(step (\\d+)\\))"
+                + "\\s*(\\(time (\\d+)\\))\\s*"
+                + "(\\(ident [A-Za-z0-9]+\\))\\s*"
+                + "(\\(pos-r (\\d+)\\))\\s*"
+                + "(\\(pos-c (\\d+)\\))\\s*"
+                + "(\\(activity out\\))\\s*\\))";
+        
+        String perMoveRegex = "\\s*(\\(\\s*personmove\\s*"
+                + "(\\(step (\\d+)\\))\\s*"
+                + "(\\(ident ([A-Za-z0-9]+)\\))\\s*"
+                + "(\\(path-id ([A-Za-z0-9]+)\\))\\s*\\))";
+        
+        String movePathRegex = 	"\\s*(\\(\\s*move\\-path\\s+"
+                + "([A-Za-z0-9]+)\\s+"
+                + "(\\d+)\\s+"
+                + "([A-Za-z0-9]+)\\s+"
+                + "(\\d+)\\s+(\\d+)\\s*\\))";
+        
+        
+        // recupero dal json della mappa la dimensione in celle della mappa
+        // per eseguire le operazioni di trasformazione delle coordinate 
+        // anche sulle move degli agenti
+        
+        int [] mapDimension = GetJsonMapDimension(jsonMap);
+        
+        Pattern timeDuration = Pattern.compile(timeRegex);
+        Pattern agent = Pattern.compile(agentPosRegex);
+        Pattern personStatus = Pattern.compile(perStatusRegex);
+        Pattern personMove = Pattern.compile(perMoveRegex);
+        Pattern moves = Pattern.compile(movePathRegex);
+        
+        while((l=mapread.readLine())!=null){
+          Matcher tdm = timeDuration.matcher(l);
+          Matcher agm = agent.matcher(l);
+          Matcher psm = personStatus.matcher(l);
+          Matcher pmm = personMove.matcher(l);
+          Matcher mm = moves.matcher(l);
+          
+          // inserisco la maxduration 
+          if(tdm.find()){
+            String timeDur = tdm.group(2);
+            int t = Integer.parseInt(timeDur);
+            Info.put("time",t);
+          }
+          // inserisco le informazioni sull'agent
+          if(agm.find()){
+            String posR = agm.group(3);
+            String posC = agm.group(5);
+            String direction = agm.group(7);
+            int r= Integer.parseInt(posR);
+            int c= Integer.parseInt(posC);
+            int [] InitAgentPos = MapToGenMap(r,c,mapDimension[1]);
+            Info.put("robot_x", InitAgentPos[0]);
+            Info.put("robot_y", InitAgentPos[1]);
+            Info.put("robot_direction", direction);
+            Info.put("robot_loaded", "unloaded");
+          }
+          if(psm.find()){
+            
+          }
+          if(pmm.find()){
+          
+          }
+          if(mm.find()){
+          
+          }
+        }
+        JSONArray PersonsArray = new JSONArray();
+        Info.put("personList", PersonsArray);
+        File jsonfile = new File(history.getParent()+File.separator+"infoMove.json");
+        Files.write(Paths.get(jsonfile.getAbsolutePath()), Info.toString(2).getBytes());
+       
+      } catch (FileNotFoundException ex) {
+        Exceptions.printStackTrace(ex);
+      } catch (IOException ex) {
+        Exceptions.printStackTrace(ex);
+      } catch (JSONException ex) {
+        Exceptions.printStackTrace(ex);
+      }
+ }
+ 
+    public void LoadJsonRobotParams(File jsonFile)
+    {
+      try {
+            //converto il file in un oggetto JSON
+            FileReader jsonreader = new FileReader(jsonFile);
+            char[] chars = new char[(int) jsonFile.length()];
+            jsonreader.read(chars);
+            String jsonstring = new String(chars);
+            jsonreader.close();
+            JSONObject json = new JSONObject(jsonstring);
+            agentposition = new int[]{json.getInt("robot_x"), json.getInt("robot_y")};
+            defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
+            
+            direction = json.getString("robot_direction");
+            loaded = json.getString("robot_loaded");
+            scene[agentposition[0]][agentposition[1]] +="+"+ "agent_"+ direction + "_" + loaded;
+            defaulagentcondition=scene[agentposition[0]][agentposition[1]];
+      
+      }
+      
+      catch (JSONException ex) {
+            AppendLogMessage(ex.getMessage(),"error");
+        } catch (IOException ex) {
+            AppendLogMessage(ex.getMessage(),"error");
+        } catch (NumberFormatException ex) {
+            AppendLogMessage(ex.getMessage(),"error");
+       }
+    }
+            
+    /**
+     * Salva sul json passato in input le informazioni relative all'agente 
+     * da utilizzare per ricaricare la scena
+     * @param json 
+     */
+    
+    public boolean SaveJsonRobotParams(File json)
+    {
+      try{
+        JSONObject Info = new JSONObject();
+        Info.put("robot_x", agentposition[0]);
+        Info.put("robot_y", agentposition[1]);
+        Info.put("robot_x_default", agentposition[0]);
+        Info.put("robot_y_default", agentposition[1]);
+        Info.put("robot_direction", direction);
+        Info.put("robot_loaded", loaded);
+        Files.write(Paths.get(json.getAbsolutePath()), Info.toString(2).getBytes(),StandardOpenOption.APPEND);
+        return true;
+      }
+      catch (JSONException ex) {
+        AppendLogMessage(ex.getMessage(),"error");
+        return false;
+        
+        
+      } 
+      catch (NumberFormatException ex) {
+        AppendLogMessage(ex.getMessage(),"error");
+        return false;
+      } 
+      catch (IOException ex) {
+        Exceptions.printStackTrace(ex);
+        return false;
+      }
+    }
 }

@@ -133,6 +133,10 @@ public abstract class MonitorGenMap {
     }
 
 
+    
+    
+    
+    
     /**
      * Metodo per il disegno della scena utilizzando i valori in stringhe della
      * mappa.le mappe sono di due tipologie per cui devono essere riempite in
@@ -249,7 +253,7 @@ public abstract class MonitorGenMap {
      * @param NumCellX
      * @param NumCellY
      */
-    public void setNumCell(int NumCellX, int NumCellY) {
+    public void SetNumCell(int NumCellX, int NumCellY) {
         NumCellX = NumCellX;
         NumCellY = NumCellY;
 
@@ -1564,6 +1568,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             String JSONMapPath = Parent + File.separator + DirName + File.separator + "InfoMap.json";
             //scrivo il file json con la mappa scritta
             saveJSONMap(JSONMapPath);
+            
             consoleOutput += "File creato \n" + Paths.get(JSONMapPath);
 
         } catch (IOException err) {
@@ -1602,8 +1607,10 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             }
             //scrivo il file json con la mappa scritta
             String JSONMovePath = Parent + File.separator + DirName + File.separator + "InfoMove.json";
-            boolean result = saveJSONMoves(JSONMovePath);
-            if (result) {
+            boolean MoveResult = saveJSONMoves(JSONMovePath);
+            File json = new File(JSONMovePath);
+            boolean RobotResult = this.SaveJsonRobotParams(json);
+            if (MoveResult && RobotResult) {
                 consoleOutput += "File creato \n" + Paths.get(JSONMovePath);
             }
 
@@ -1613,6 +1620,21 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
 
         return consoleOutput;
 
+    }
+
+
+
+
+    public void LoadFiles(File directory) throws ParseException {
+
+        String jsonMapPath = directory.getAbsolutePath() + File.separator + "InfoMap.json";
+        String jsonMovePath = directory.getAbsolutePath() + File.separator + "InfoMove.json";
+        File jsonMap = new File(jsonMapPath);
+        File jsonMove = new File(jsonMovePath);
+
+        LoadJsonMap(jsonMap);
+        LoadMoves(jsonMove);
+        LoadJsonRobotParams(jsonMove);
     }
 
     /**
@@ -1632,8 +1654,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             JSONObject info = new JSONObject();
             info.put("cell_x", getNumx());
             info.put("cell_y", getNumy());
-            info.put("robot_x_default", defaultagentposition[0]);
-            info.put("robot_y_default", defaultagentposition[1]);
+            
             //ciclo sulla matrice degli stati per creare la struttura
             JSONArray ArrayCells = new JSONArray();
             for (int i = 0; i < getNumx(); i++) {
@@ -1641,13 +1662,16 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
                     JSONObject cell = new JSONObject();
                     cell.put("x", i);
                     cell.put("y", j);
-                    cell.put("stato", scene[i][j]);
-                    //salvo solo l'intero dello stato che viene
-                    //scenepato internamente;
+                    String background = scene[i][j];
+                    if(scene[i][j].contains("agent")){
+                      String [] split = scene[i][j].split("\\+");
+                      background=split[0];
+                    }
+                    cell.put("state", background);
                     ArrayCells.put(cell);
                 }
             }
-            info.put("celle", ArrayCells);
+            info.put("cells", ArrayCells);
             //salvo le informazioni in un file JSON della scenea
             Files.write(Paths.get(nome), info.toString(2).getBytes());
         } catch (IOException ex) {
@@ -1658,27 +1682,13 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         return true;
     }
 
-
-
-    public void LoadFiles(File directory) throws ParseException {
-
-        String jsonMapPath = directory.getAbsolutePath() + File.separator + "InfoMap.json";
-        String jsonMovePath = directory.getAbsolutePath() + File.separator + "InfoMove.json";
-        File jsonMap = new File(jsonMapPath);
-        File jsonMove = new File(jsonMovePath);
-
-        LoadScene(jsonMap);
-        LoadMoves(jsonMove);
-    }
-
-
     /*
  * Metodo per il caricamnento di una scena a partire da un file JSON precedentemente creato
  * Viene costruita la mappa e popolata dai valori contenuti nel JSON.
  * @param jsonFile : il file JSON da cui eseguire il load
  */
 @SuppressWarnings("UnnecessaryUnboxing")
-private void LoadScene(File jsonFile) throws ParseException {
+private void LoadJsonMap(File jsonFile) throws ParseException {
     //creo una nuova istanza di scena
 
     try {
@@ -1694,24 +1704,21 @@ private void LoadScene(File jsonFile) throws ParseException {
         int NumCellX = Integer.parseInt(json.get("cell_x").toString());
         int NumCellY = Integer.parseInt(json.get("cell_y").toString());
 
-        //setto il numero di celle nella scena
-        setNumCell(NumCellX, NumCellY);
-        initModelMap(NumCellX, NumCellY, MapWidth, MapHeight);
+        
+        SetNumCell(NumCellX, NumCellY);
+        SetSizeCells();
+        
+        scene = new String[NumCellX][NumCellY];
+        
         //estraggo il JSONArray dalla radice
-        JSONArray arrayCelle = json.getJSONArray("celle");
+        JSONArray arrayCelle = json.getJSONArray("cells");
         for (int i = 0; i < arrayCelle.length(); i++) {
             //ciclo su ogni cella e setto il valore della cella letta nella scena
             JSONObject cell = arrayCelle.getJSONObject(i);
             int x = cell.getInt("x");
             int y = cell.getInt("y");
-            String stato = cell.getString("stato");
-
-            if (stato.contains("agent")) {
-                SetRobotParams(stato, x, y);
-            }
-            setCell(x, y, stato);
-
-            defaultagentposition = new int[]{json.getInt("robot_x_default"), json.getInt("robot_y_default")};
+            String state = cell.getString("state");
+            setCell(x, y, state);
         }
 
         CopyToActive(scene);
@@ -1778,7 +1785,7 @@ private void LoadScene(File jsonFile) throws ParseException {
             }
 
             Info.put("personList", PersonsArray);
-
+            Info.put("time",maxduration);
             Files.write(Paths.get(name), Info.toString(2).getBytes());
             return true;
 
@@ -1837,6 +1844,10 @@ private void LoadScene(File jsonFile) throws ParseException {
                 }
                 Persons.add(p);
             }
+           
+           maxduration = json.getInt("time"); 
+           
+           
         } catch (JSONException ex) {
             AppendLogMessage(ex.getMessage(),"error");
         } catch (IOException ex) {
@@ -1869,10 +1880,15 @@ private void LoadScene(File jsonFile) throws ParseException {
     }
 
 
-    protected int[] MapToGenMap(int i , int j){
-        return new int[]{j-1, scene[0].length - i};
+    protected int[] MapToGenMap(int i , int j,int maxR){
+        return new int[]{j-1, maxR - i};
+    }
+    
+    protected int[] MapToGenMap(int [] pos,int maxR){
+        return new int[]{pos[1]-1, maxR - pos[0]};
     }
 
+    
 
     protected void AppendLogMessage(String newLog, String type){
       String logMessage="";
@@ -1951,4 +1967,11 @@ private void LoadScene(File jsonFile) throws ParseException {
      */
     public abstract void SetRobotParams(String state, int x, int y);
 
+    public abstract void LoadJsonRobotParams(File json);
+    
+    public abstract boolean SaveJsonRobotParams(File json);
+    
+    public abstract void createJsonScene(File map);
+    
+    public abstract void createJsonHistory(File history, File jsonMap);
 }

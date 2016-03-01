@@ -63,6 +63,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private MonitorImages img;
     private JFileChooser fc;
     private JFileChooser save;
+    private JFileChooser json;
     private ProjectDirectory directory;
     private String state;
     private int [] actualPosClicked;
@@ -92,11 +93,14 @@ public final class MapGeneratorTopComponent extends TopComponent {
         directory = ProjectDirectory.getIstance(new File("./"));
         fc = new JFileChooser();
         save = new JFileChooser();
+        json = new JFileChooser();
         fc.setCurrentDirectory(directory.getProjectDirectory());
         fc.setFileFilter(new JSONFilter());
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         save.setCurrentDirectory(directory.getProjectDirectory());
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        json.setCurrentDirectory(directory.getProjectDirectory());
+        json.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         MapButton.setSelected(true);
         MoveButton.setSelected(false);
         MapButton.setEnabled(false);
@@ -174,6 +178,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     jScrollPane6 = new javax.swing.JScrollPane();
     LogArea = new javax.swing.JTextArea();
     ClearButton = new javax.swing.JButton();
+    JsonCreate = new javax.swing.JButton();
 
     javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
     jPanel2.setLayout(jPanel2Layout);
@@ -517,6 +522,13 @@ public final class MapGeneratorTopComponent extends TopComponent {
       }
     });
 
+    org.openide.awt.Mnemonics.setLocalizedText(JsonCreate, org.openide.util.NbBundle.getMessage(MapGeneratorTopComponent.class, "MapGeneratorTopComponent.JsonCreate.text")); // NOI18N
+    JsonCreate.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        JsonCreateActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
     jPanel3.setLayout(jPanel3Layout);
     jPanel3Layout.setHorizontalGroup(
@@ -529,7 +541,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(ClearButton))
+          .addGroup(jPanel3Layout.createSequentialGroup()
+            .addComponent(ClearButton)
+            .addGap(18, 18, 18)
+            .addComponent(JsonCreate)))
         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(0, 0, 0))
     );
@@ -540,7 +555,9 @@ public final class MapGeneratorTopComponent extends TopComponent {
           .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(ClearButton))
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+              .addComponent(ClearButton)
+              .addComponent(JsonCreate)))
           .addGroup(jPanel3Layout.createSequentialGroup()
             .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(18, 18, 18)
@@ -552,7 +569,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-    setLayout(layout);
+    this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -953,6 +970,35 @@ public final class MapGeneratorTopComponent extends TopComponent {
        }
   }//GEN-LAST:event_ClearButtonActionPerformed
 
+  private void JsonCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JsonCreateActionPerformed
+    int jc=json.showOpenDialog(this);
+    if(jc==JFileChooser.APPROVE_OPTION){
+      File dir = json.getSelectedFile();
+      File [] files = dir.listFiles();
+      for(File file : files){
+        if(file.getName().contains("RealMap")){
+          model.createJsonScene(file);
+        }
+      }
+    
+      File jsonMap = new File("./");
+      File history = new File("./");
+      files = dir.listFiles();
+      
+      for(File file: files){
+        if(file.getName().contains("history")){
+          history = file;
+        }
+        if(file.getName().contains("infoMap")){
+          jsonMap = file;
+        }
+      }
+     
+      model.createJsonHistory(history, jsonMap);
+      updateLogArea();
+    }
+  }//GEN-LAST:event_JsonCreateActionPerformed
+
 
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -963,6 +1009,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
   private javax.swing.JLabel DimensionLabel;
   private javax.swing.JLabel Icons;
   private javax.swing.JComboBox InsertionOptionComboBox;
+  private javax.swing.JButton JsonCreate;
   private javax.swing.JButton LoadButton;
   private javax.swing.JTextArea LogArea;
   private javax.swing.JRadioButton MapButton;
