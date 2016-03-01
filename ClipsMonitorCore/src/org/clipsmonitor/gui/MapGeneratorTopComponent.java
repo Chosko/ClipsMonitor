@@ -594,6 +594,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
     private void PreviewMapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreviewMapMouseClicked
 
         try{
+            model.setSizeScreen(PreviewMap.getWidth(), PreviewMap.getHeight());
             int x = evt.getX();
             int y = evt.getY();
             

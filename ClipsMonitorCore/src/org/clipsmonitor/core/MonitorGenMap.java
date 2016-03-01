@@ -84,10 +84,8 @@ public abstract class MonitorGenMap {
      */
     public void initModelMap(int NewNumCellX, int NewNumCellY, float NewMapWidth, float NewMapHeight) {
 
-        MapWidth = NewMapWidth;
-        MapHeight = NewMapHeight;
-        NumCellX = NewNumCellX;
-        NumCellY = NewNumCellY;
+        setSizeScreen(NewMapWidth,NewMapHeight);
+        SetNumCell(NewNumCellX,NewNumCellY);
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
 
@@ -610,20 +608,20 @@ public abstract class MonitorGenMap {
         protected int lastStep;
         protected LinkedList<StepMove> move;
 
-        public Path(String name, int startStep) {
+        public Path(String NewName, int NewStartStep) {
 
-            name = name;
-            startStep = startStep;
+            name = NewName;
+            startStep = NewStartStep;
             lastStep = startStep;
             move = new LinkedList<StepMove>();
 
         }
 
-        private Path(String name, int startStep, int lastStep) {
+        private Path(String NewName, int NewstartStep, int NewlastStep) {
 
-            name = name;
-            startStep = startStep;
-            lastStep = lastStep;
+            name = NewName;
+            startStep = NewstartStep;
+            lastStep = NewlastStep;
             move = new LinkedList<StepMove>();
 
         }
