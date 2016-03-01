@@ -596,7 +596,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         try{
             int x = evt.getX();
             int y = evt.getY();
-
+            
             actualPosClicked = model.getCellPosition(x, y);
             if(MapButton.isSelected()){
                 ExecUpdateMap();
@@ -666,6 +666,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
+                model.setSizeScreen(PreviewMap.getWidth(),PreviewMap.getHeight());
                 File file = fc.getSelectedFile();
                 model.LoadFiles(file);
                 if(!MoveButton.isEnabled()){

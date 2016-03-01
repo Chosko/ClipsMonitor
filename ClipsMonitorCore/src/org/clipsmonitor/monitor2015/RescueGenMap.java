@@ -499,6 +499,8 @@ public class RescueGenMap extends MonitorGenMap {
             int [] InitAgentPos = MapToGenMap(r,c,mapDimension[1]);
             Info.put("robot_x", InitAgentPos[0]);
             Info.put("robot_y", InitAgentPos[1]);
+            Info.put("robot_x_default", InitAgentPos[0]);
+            Info.put("robot_y_default", InitAgentPos[1]);
             Info.put("robot_direction", direction);
             Info.put("robot_loaded", "unloaded");
           }
@@ -543,7 +545,8 @@ public class RescueGenMap extends MonitorGenMap {
             loaded = json.getString("robot_loaded");
             scene[agentposition[0]][agentposition[1]] +="+"+ "agent_"+ direction + "_" + loaded;
             defaulagentcondition=scene[agentposition[0]][agentposition[1]];
-      
+            move = clone(scene);
+            CopyToActive(scene);
       }
       
       catch (JSONException ex) {
@@ -577,7 +580,6 @@ public class RescueGenMap extends MonitorGenMap {
       catch (JSONException ex) {
         AppendLogMessage(ex.getMessage(),"error");
         return false;
-        
         
       } 
       catch (NumberFormatException ex) {

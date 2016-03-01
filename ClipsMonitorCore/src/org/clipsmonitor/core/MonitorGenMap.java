@@ -96,7 +96,6 @@ public abstract class MonitorGenMap {
         SetSizeCells();
         setAgentDefaultPosition();
         initScene(scene);
-        //inizializzo la scena con i valori di default e cioè con i muri su tutto il bordo della scena
         move = clone(scene);
         CopyToActive(scene);
     }
@@ -253,9 +252,9 @@ public abstract class MonitorGenMap {
      * @param NumCellX
      * @param NumCellY
      */
-    public void SetNumCell(int NumCellX, int NumCellY) {
-        NumCellX = NumCellX;
-        NumCellY = NumCellY;
+    public void SetNumCell(int NewNumCellX, int NewNumCellY) {
+        NumCellX = NewNumCellX;
+        NumCellY = NewNumCellY;
 
     }
 
@@ -272,9 +271,9 @@ public abstract class MonitorGenMap {
     }
 
 
-    public void setSizeScreen(float MapWidth, float MapHeight) {
-        MapHeight = MapHeight;
-        MapWidth = MapWidth;
+    public void setSizeScreen(float NewMapWidth, float NewMapHeight) {
+        MapHeight = NewMapHeight;
+        MapWidth = NewMapWidth;
     }
 
 
@@ -1708,7 +1707,10 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
         SetNumCell(NumCellX, NumCellY);
         SetSizeCells();
         
+        //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
+        //initScene(scene);
+        move = clone(scene);
         
         //estraggo il JSONArray dalla radice
         JSONArray arrayCelle = json.getJSONArray("cells");
@@ -1967,6 +1969,7 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
      */
     public abstract void SetRobotParams(String state, int x, int y);
 
+    
     public abstract void LoadJsonRobotParams(File json);
     
     public abstract boolean SaveJsonRobotParams(File json);
