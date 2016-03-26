@@ -161,7 +161,9 @@ public class RescueEnvMap extends MonitorMap implements Observer {
         if (model.getTypeGoalSelected().equals("drill")){
           map[r][c] +="+D";
         }
-        if (model.getTypeGoalSelected().equals("explore")){
+         if (model.getTypeGoalSelected().equals("explore")
+            || model.getTypeGoalSelected().equals("explore-sound")
+           ){
           map[r][c] +="+E";
         }
         if (model.getTypeGoalSelected().equals("done")){

@@ -736,7 +736,7 @@ public abstract class MonitorGenMap {
         }
         String[] nameSplit = name.split("_");
         String color = nameSplit[0];
-        Person p = findByColor(color);
+        Person p = findPersonByColor(color);
         int numPath = Integer.parseInt(nameSplit[1]);
         Path result = p.paths.get(numPath);
         return result;
@@ -744,7 +744,7 @@ public abstract class MonitorGenMap {
 
     public int getLastStepofPerson(String state){
       int lastStep=0;
-        int pos = findPosByColor(state);
+        int pos = findIndexPosByColor(state);
         if (pos != -1) {
             Person p = Persons.get(pos);
             lastStep = p.paths.getLast().lastStep;
@@ -758,7 +758,7 @@ public abstract class MonitorGenMap {
      */
     public String getLastPathOfPerson(String state) {
         String pathName = "empty";
-        int pos = findPosByColor(state);
+        int pos = findIndexPosByColor(state);
         if (pos != -1) {
             Person p = Persons.get(pos);
             pathName = p.paths.getLast().name;
@@ -773,7 +773,7 @@ public abstract class MonitorGenMap {
      *   @param color : colore associato
      *   @return position : indice nella linkedList
      */
-    public int findPosByColor(String color) {
+    public int findIndexPosByColor(String color) {
 
         int position = 0;
         ListIterator<Person> it = Persons.listIterator();
@@ -793,7 +793,7 @@ public abstract class MonitorGenMap {
      *  @param color : stringa del colore associato alla persona
      *  @return p : oggetto Person da restituire
      */
-    public Person findByColor(String color) {
+    public Person findPersonByColor(String color) {
 
         ListIterator<Person> it = Persons.listIterator();
         Person result = null;
@@ -992,7 +992,7 @@ public abstract class MonitorGenMap {
           else{
               Path succ = getPathByName(paramPath);
               String[] split = paramPath.split("_");
-              Person p = findByColor(split[0]);
+              Person p = findPersonByColor(split[0]);
               ListIterator<StepMove> moves = succ.move.listIterator();
               while (moves.hasNext()) {
                   StepMove s = moves.next();
@@ -1310,7 +1310,7 @@ public int UpdateCell(int x, int y, String state) {
         final int IllegalStartCell = 1;
         final int IllegalPerson = 2;
         final int PersonOverride = 3;
-        Person p = findByColor(color);
+        Person p = findPersonByColor(color);
         if (p == null) {
             return IllegalPerson;
 
@@ -1450,9 +1450,9 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
             return PersonOverride;
         }
 
-        if (findPosByColor(color) != -1) {
+        if (findIndexPosByColor(color) != -1) {
 
-            Person p = findByColor(color);
+            Person p = findPersonByColor(color);
             Path first = p.paths.get(0);
             first.move.getFirst().setX(x);
             first.move.getFirst().setY(y);
@@ -1501,7 +1501,7 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
         final int PersonNotFound = 1;
         final int FirstPathRemove = 2;
 
-        Person p = findByColor(color);
+        Person p = findPersonByColor(color);
         if (p != null) {
 
             if (p.paths.size() > 1) {

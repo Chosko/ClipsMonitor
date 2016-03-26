@@ -101,14 +101,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
         save.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         json.setCurrentDirectory(directory.getProjectDirectory());
         json.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        MapButton.setSelected(true);
-        MoveButton.setSelected(false);
-        MapButton.setEnabled(false);
-        MoveButton.setEnabled(true);
-        AddPathButton.setEnabled(false);
-        AddPersonButton.setEnabled(false);
-        DeletePersonButton.setEnabled(false);
-        RemovePathButton.setEnabled(false);
+        setButtons(true);
         setListEnable();
         updateLogArea();
     }
@@ -603,7 +596,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 ExecUpdateMap();
             }
             else{
-                if(model.findPosByColor(state)!=-1){
+                if(model.findIndexPosByColor(state)!=-1){
                     actualPath= model.getLastPathOfPerson(state);
                     ExecUpdateMove();
                 }
@@ -770,7 +763,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             updateLabel(state);
             actualPath = model.getLastPathOfPerson(state);
             if(!actualPath.equals("empty")){
-              int pos = model.findPosByColor(state);
+              int pos = model.findIndexPosByColor(state);
               MakePersonList();
               MakeStepList(-1);
               MakeMoveList(pos,-1,"all");
@@ -806,18 +799,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
 
     private void MapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapButtonActionPerformed
-        MapButton.setSelected(true);
-        MoveButton.setSelected(false);
-        MapButton.setEnabled(false);
-        MoveButton.setEnabled(true);
-        XButton.setEditable(true);
-        YButton.setEditable(true);
-        MaxDur.setEditable(true);
-        AddPathButton.setEnabled(false);
-        AddPersonButton.setEnabled(false);
-        DeletePersonButton.setEnabled(false);
-        RemovePathButton.setEnabled(false);
         model.setMode("scene");
+        setButtons(true);
         InitMapComboBox();
         InsertionOptionComboBox.enable(true);
         Icons.enable(true);
@@ -828,30 +811,14 @@ public final class MapGeneratorTopComponent extends TopComponent {
         MakeMoveList(-1,-1,"all");
         MakePathList(-1);
         PreviewMap.repaint();
-        StepList.setEnabled(false);
-        PersonPathList.setEnabled(false);
-        PersonsList.setEnabled(false);
 
     }//GEN-LAST:event_MapButtonActionPerformed
 
 
 
     private void MoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoveButtonActionPerformed
-        MapButton.setSelected(false);
-        MoveButton.setSelected(true);
-        MapButton.setEnabled(true);
-        MoveButton.setEnabled(false);
-        XButton.setEditable(false);
-        YButton.setEditable(false);
-        MaxDur.setEditable(false);
-        AddPathButton.setEnabled(true);
-        AddPersonButton.setEnabled(true);
-        DeletePersonButton.setEnabled(true);
-        RemovePathButton.setEnabled(true);
         model.setMode("move");
-        StepList.setEnabled(true);
-        PersonPathList.setEnabled(true);
-        PersonsList.setEnabled(true);
+        setButtons(false);
 
         InitColorComboBox();
         if(getActiveColorMap()){
@@ -889,7 +856,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             String val = persons[evt.getFirstIndex()];
             String[] split = val.split("_");
             MakePersonList();
-            int pos = model.findPosByColor(split[1]);
+            int pos = model.findIndexPosByColor(split[1]);
             MakeStepList(-1);
             MakeMoveList(pos,-1,"all");
             MakePathList(pos);
@@ -1142,7 +1109,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(StepList,list);
+        ListRenderer render = new ListRenderer(StepList,list);
 
     }
 
@@ -1155,7 +1122,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(MovementList,list);
+        ListRenderer render = new ListRenderer(MovementList,list);
 
     }
 
@@ -1166,7 +1133,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             list = new String[1];
             list[0]="";
         }
-            ListRenderer render = new ListRenderer(PersonPathList,list);
+        ListRenderer render = new ListRenderer(PersonPathList,list);
 
     }
 
@@ -1183,8 +1150,38 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
 
 
+    private void setButtons(boolean val){
+    
+        MapButton.setSelected(val);
+        MoveButton.setSelected(!val);
+        MapButton.setEnabled(!val);
+        MoveButton.setEnabled(val);
+        XButton.setEditable(val);
+        YButton.setEditable(val);
+        MaxDur.setEditable(val);
+        AddPathButton.setEnabled(!val);
+        AddPersonButton.setEnabled(!val);
+        DeletePersonButton.setEnabled(!val);
+        RemovePathButton.setEnabled(!val);
+        StepList.setEnabled(!val);
+        PersonPathList.setEnabled(!val);
+        PersonsList.setEnabled(!val);
+    
+    }
 
-
+    
+    
+    private void setListEnable(){
+      
+        boolean personTest = !(PersonsList.getModel().getSize()<=1);
+        boolean personPathTest = !(PersonPathList.getModel().getSize()<1);
+        boolean stepTest = !(StepList.getModel().getSize()<1);
+        
+        PersonsList.setEnabled(personTest);
+        PersonPathList.setEnabled(personPathTest);
+        StepList.setEnabled(stepTest);
+      
+    }
     private void ExecRemove(){
 
         boolean result = model.Remove(state);
@@ -1490,8 +1487,10 @@ public final class MapGeneratorTopComponent extends TopComponent {
      *  LOG AREA FUNCTIONS
      ***********************************************/
 
+    
 
-
+    
+    
     void updateLogArea(){
       String log = model.getLog();
       LogArea.setText(log);
@@ -1541,26 +1540,5 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     }
 
-    private void setListEnable(){
-      if(PersonsList.getModel().getSize()<=1){
-        PersonsList.setEnabled(false);
-      }
-      else{
-        PersonsList.setEnabled(true);
-      }
-      if(PersonPathList.getModel().getSize()<1){
-        PersonPathList.setEnabled(false);
-      }
-      else{
-        PersonPathList.setEnabled(true);
-      }
-      if(StepList.getModel().getSize()<1){
-        StepList.setEnabled(false);
-      }
-      else{
-        StepList.setEnabled(true);
-      }
-
-    }
 
 }
