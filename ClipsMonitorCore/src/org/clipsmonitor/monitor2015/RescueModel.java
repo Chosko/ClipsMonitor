@@ -666,8 +666,8 @@ public class RescueModel extends MonitorModel {
       {
         String contains = unchecked[i][RescueFacts.Cell.CONTAINS.index()];
         String injured = unchecked[i][RescueFacts.Cell.INJURED.index()];
-        String discovered = unchecked[i][RescueFacts.Cell.CHECKED.index()];
-        if(contains.equals("debris") && injured.contains("no") && !discovered.equals("done")){
+        String uncheck = unchecked[i][RescueFacts.Cell.CHECKED.index()];
+        if(contains.equals("debris") && injured.contains("no") && !uncheck.equals("yes")){
           count++;
         }
       }

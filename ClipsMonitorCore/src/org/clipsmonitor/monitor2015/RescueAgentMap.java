@@ -178,14 +178,23 @@ public class RescueAgentMap extends MonitorMap implements Observer {
 
     public void updatePersonStatus() throws CLIPSError{
         console.debug("Acquisizione posizione degli altri agenti...");
-        ArrayList<int[]> personPositions = model.getKPersonPostions();
-
-        for (int[] person : personPositions) {
+        ArrayList<int[]> kpersonPositions = model.getKPersonPostions();
+        ArrayList<int[]> personPositions = model.getPersonPositions();
+        
+        for (int[] person : kpersonPositions) {
             int r = person[0] - 1;
             int c = person[1] - 1;
             map[r][c] = map[r][c] + "+person";
         }
-    }
+        
+        for(int[] person : personPositions){
+          int r = person[0] -1 ;
+          int c = person[1] -1 ;
+          if(!map[r][c].contains("person")){
+            map[r][c] +="+personghost";
+          }
+        }
+     }
     
     
     public void updateGoal()throws CLIPSError{
