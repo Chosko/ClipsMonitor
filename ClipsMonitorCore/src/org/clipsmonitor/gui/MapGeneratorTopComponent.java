@@ -622,27 +622,27 @@ public final class MapGeneratorTopComponent extends TopComponent {
         //resizeScene che si preoccuperà di ridimensionare la matrice mantenendo
         // i vecchi dati all'interno
         try {
-            int num_row = Integer.parseInt(XButton.getText());
-            int num_col = Integer.parseInt(YButton.getText());
-            int max_dur = Integer.parseInt(MaxDur.getText());
-            if (num_row >= 5 && num_col >= 5 && max_dur>0) {
-                if(!model.getEmptyPerson()){
-                   String message = "La modifica della griglia può causare l'eliminazione"
-                   + "dei movimenti inseriti in modalità move. Continuare?";
+            int numX = Integer.parseInt(XButton.getText());
+            int numY = Integer.parseInt(YButton.getText());
+            int maxDur = Integer.parseInt(MaxDur.getText());
+            if (numX >= 5 && numY >= 5 && maxDur>0) {
+              if(model.getNumx()!=numX || model.getNumy()!=numY){
+                
+                   String message = "La modifica della griglia comporta l'annullamento di tutte le modifiche fatte. Continuare?";
                    if(JOptionPane.showConfirmDialog(DimensionLabel, message,"Resize",JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION);
                    {
-                     updateMap(num_row,num_col,max_dur);
-                     model.RemoveStepAfterResize();
+                     updateMap(numX,numY,maxDur);
+                     if(!model.getEmptyPerson()){
+                        model.RemoveStepAfterResize();
+                     }
                    }
-                }
-                else{
-                  updateMap(num_row,num_col,max_dur);
-                }
+                
                 PreviewMap.repaint();
                 MakePersonList();
                 MakeStepList(-1);
                 MakeMoveList(-1,-1,"all");
                 setListEnable();
+              }
             }
             else{
                 model.error("Input non valido: Verificare che la griglia sia almeno di dimensione 5x5 ");
