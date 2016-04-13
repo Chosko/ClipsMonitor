@@ -350,7 +350,12 @@ public class RescueGenMap extends MonitorGenMap {
  
     return null;
  } 
-  
+ 
+ /**
+  * Genera un file Json corrispondente ad uno scenario definito nel file map
+  * @param map 
+  */
+ 
  public void createJsonScene(File map){
       try {
         BufferedReader mapread = new BufferedReader(new FileReader(map));
@@ -432,6 +437,12 @@ public class RescueGenMap extends MonitorGenMap {
         Exceptions.printStackTrace(ex);
       }
  }
+ 
+ /**
+  *  Esegue il parsing di un file history e ne costruisce il json corrispondente
+  * @param history
+  * @param jsonMap 
+  */
  
  public void createJsonHistory(File history,File jsonMap){
    try {
@@ -527,6 +538,11 @@ public class RescueGenMap extends MonitorGenMap {
         Exceptions.printStackTrace(ex);
       }
  }
+ 
+  /**
+   * Legge da un file Json e imposta gli attributi del robot  
+   * @param jsonFile 
+   */
  
     public void LoadJsonRobotParams(File jsonFile)
     {

@@ -617,10 +617,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void RefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshButtonActionPerformed
 
-        //controllo che l'input sia intero
-        //leggo le nuove dimensioni della scena e le comunico al metodo
-        //resizeScene che si preoccuperà di ridimensionare la matrice mantenendo
-        // i vecchi dati all'interno
         try {
             int numX = Integer.parseInt(XButton.getText());
             int numY = Integer.parseInt(YButton.getText());
@@ -762,19 +758,18 @@ public final class MapGeneratorTopComponent extends TopComponent {
             setState(InsertionOptionComboBox.getSelectedItem().toString());
             updateLabel(state);
             actualPath = model.getLastPathOfPerson(state);
+            
             if(!actualPath.equals("empty")){
               int pos = model.findIndexPosByColor(state);
-              MakePersonList();
-              MakeStepList(-1);
               MakeMoveList(pos,-1,"all");
             }
             else{
-              MakePersonList();
-              MakeStepList(-1);
               MakeMoveList(-1,-1,"all");
-
             }
+            
             setListEnable();
+            MakePersonList();
+            MakeStepList(-1);
             String[][] move = model.getMoveCellMap(actualPath,-1);
             model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
@@ -907,13 +902,20 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
   private void PersonPathListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_PersonPathListValueChanged
       ListModel<String> listmodel = PersonPathList.getModel();
-      String pathname = listmodel.getElementAt(evt.getFirstIndex());
-      MakeMoveList(-1,-1,pathname);
-      String [][] move = model.getMoveCellMap(pathname,-1);
-      model.ApplyUpdateOnMoveMap(move);
-      model.CopyToActive(model.getMove());
-      PreviewMap.repaint();
-      setListEnable();
+      if(PersonPathList.getSelectedIndex()>=0){
+        String pathname = listmodel.getElementAt(PersonPathList.getSelectedIndex());
+        String [] split = pathname.split("_");
+        state = split[0];
+        setState(state);
+        updateLabel(state);
+        actualPath = model.getLastPathOfPerson(state); 
+        MakeMoveList(-1,-1,pathname);
+        String [][] move = model.getMoveCellMap(pathname,-1);
+        model.ApplyUpdateOnMoveMap(move);
+        model.CopyToActive(model.getMove());
+        PreviewMap.repaint();
+        setListEnable();
+      }
   }//GEN-LAST:event_PersonPathListValueChanged
 
   private void PersonsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PersonsListMouseClicked

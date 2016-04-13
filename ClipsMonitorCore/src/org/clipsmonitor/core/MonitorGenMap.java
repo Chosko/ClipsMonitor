@@ -401,71 +401,77 @@ public abstract class MonitorGenMap {
 * @return newmap : stringa delle celle occupate da un movimento
 */
 
+    
     public String[][] getMoveCellMap(String paramPath, int paramStep) {
 
-   String[][] newmap = new String[NumCellX][NumCellY];
+      String[][] newmap = new String[NumCellX][NumCellY];
 
-   for (int i = 0; i < newmap.length; i++) {
+      for (int i = 0; i < newmap.length; i++) {
+        for (int j = 0; j < newmap[0].length; j++) {
+              newmap[i][j] = "";
+        }
+      }
+      if (paramPath.equals("empty")) {
+          return newmap;
+      }
 
-       for (int j = 0; j < newmap[0].length; j++) {
-           newmap[i][j] = "";
-       }
-   }
-   if (paramPath.equals("empty")) {
-       return newmap;
-   }
+      // caso di richiesta di uno specifico step
+      if (paramPath.equals("none")) {
+          ListIterator<Person> itPerson = Persons.listIterator();
+          while (itPerson.hasNext()) {
+              Person p = itPerson.next();
+              ListIterator<Path> itPath = p.paths.listIterator();
+              Path succ = null;
+              while (itPath.hasNext()) {
+                  succ = itPath.next();
+                
+                  if (paramStep >= succ.startStep && paramStep<= succ.lastStep) {
+                    int offset = paramStep - succ.startStep;
+                    try{
+                        StepMove s = succ.move.get(offset);
+                        String rgba= MonitorImages.getInstance().creatergbafromName(p.associatedColor, 0.25);
+                        newmap[s.x][s.y] = rgba + "+" + personName;
+                        break;
+                    }
+                    catch(IndexOutOfBoundsException ex){
+                     String debug = "Error with ParamStep " + paramStep + " startStep " + succ.startStep + " laststep" + succ.lastStep ;
+                     AppendLogMessage(debug,"error");
+                    }     
+                  }
+              }
+              
+              
+          }
+          
+          
+      }
+      // caso di richiesta di una specifico path agente
+      else {
+          int x = 0;
+          int y = 0;
 
-   // caso di richiesta di uno specifico step
-   if (paramPath.equals("none")) {
-       ListIterator<Person> it = Persons.listIterator();
-       while (it.hasNext()) {
-           Person p = it.next();
-           ListIterator<Path> itPath = p.paths.listIterator();
-           Path succ = null;
-           while (itPath.hasNext()) {
-               succ = itPath.next();
-               if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
-                   break;
-               }
-           }
-           int offset = paramStep - succ.startStep;
-           if (succ.move.size() > offset) {
-               StepMove s = succ.move.get(offset);
-               int r = s.getX();
-               int c = s.getY();
-               String rgba= MonitorImages.getInstance().creatergbafromName(p.associatedColor, 0.25);
-               newmap[r][c] = rgba + "+" + personName;
-           }
-       }
+          Path result = getPathByName(paramPath);
+          String[] splitResult = result.name.split("_");
+          ListIterator<StepMove> it = result.move.listIterator();
 
-   }
-   // caso di richiesta di una specifico path agente
-   else {
-       int r = 0;
-       int c = 0;
+          while (it.hasNext()) {
+              StepMove s = it.next();
+              x = s.getX();
+              y = s.getY();
+              String rgba= MonitorImages.getInstance().creatergbafromName(splitResult[0], 0.25);
+              if(newmap[x][y].equals("")){
+                newmap[x][y]= rgba;
+              }
+              else{
+                 newmap[x][y] +="+"+rgba;
+              }
+          }
 
-       Path result = getPathByName(paramPath);
-       String[] splitResult = result.name.split("_");
-       ListIterator<StepMove> it = result.move.listIterator();
+          newmap[x][y] += "+" + personName;
+      }
 
-       while (it.hasNext()) {
-           StepMove s = it.next();
-           r = s.getX();
-           c = s.getY();
-           String rgba= MonitorImages.getInstance().creatergbafromName(splitResult[0], 0.25);
-           if(newmap[r][c].equals("")){
-             newmap[r][c]= rgba;
-           }
-           else{
-              newmap[r][c] +="+"+rgba;
-           }
-       }
-
-       newmap[r][c] += "+" + personName;
-   }
-
-   return newmap;
-}
+      return newmap;
+      }
 
 
     /*
@@ -742,6 +748,8 @@ public abstract class MonitorGenMap {
         return result;
     }
 
+    
+    
     public int getLastStepofPerson(String state){
       int lastStep=0;
         int pos = findIndexPosByColor(state);
@@ -753,12 +761,14 @@ public abstract class MonitorGenMap {
         return lastStep;
     }
 
-    /*
-     * Restituisce l'ultima occorrenza di path associata alla persona con l'index i
+    /**
+     * Restituisce il nome dell'ultimo percorso associato alla person
+     * @param person name
+     * @return ultimo path name associato alla person
      */
-    public String getLastPathOfPerson(String state) {
+    public String getLastPathOfPerson(String person) {
         String pathName = "empty";
-        int pos = findIndexPosByColor(state);
+        int pos = findIndexPosByColor(person);
         if (pos != -1) {
             Person p = Persons.get(pos);
             pathName = p.paths.getLast().name;
@@ -862,11 +872,10 @@ public abstract class MonitorGenMap {
         return list;
     }
 
+    
     public String getMoveString(String color, int step , String pathname , int x , int y){
-
       return "C: " + color + "\t   S: " + step + "\t   Path: " + pathname
                               + "\t (" + x + "," + y + ")";
-
     }
 
     /*
@@ -958,15 +967,19 @@ public abstract class MonitorGenMap {
                   Path succ = null;
                   while (itPath.hasNext()) {
                       succ = itPath.next();
-                      if (succ.startStep >= paramStep && succ.lastStep <= paramStep) {
-                          break;
-                      }
+                      if (paramStep >= succ.startStep && paramStep<= succ.lastStep) {
+                      int offset = paramStep - succ.startStep;
+                      try{
+                        StepMove s = succ.move.get(offset);
+                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
+                        moveslist.add(move);
+                        break;
+                    }
+                    catch(IndexOutOfBoundsException ex){
+                     String debug = "Error with ParamStep " + paramStep + " startStep " + succ.startStep + " laststep" + succ.lastStep ;
+                     AppendLogMessage(debug,"error");
+                    }     
                   }
-                  int offset = paramStep - succ.startStep;
-                  if (succ.move.size() > paramStep) {
-                      StepMove s = succ.move.get(paramStep);
-                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
-                      moveslist.add(move);
                   }
 
               }
@@ -1056,10 +1069,11 @@ public abstract class MonitorGenMap {
     }
 
     /**
-     *
+     * Restituisce un array di oggetti Path corrispondenti alla persona passata come parametro
      * @param paramPerson
-     * @return
+     * @return un array di Path
      */
+    
     public Path[] getPaths(int paramPerson) {
 
         Path[] paths = null;
@@ -1096,6 +1110,35 @@ public abstract class MonitorGenMap {
 
     }
 
+    /**
+     * Restituisce un array di stringhe corrispondenti all'elenco dei path per la
+     * person passato come parametro
+     * @param paramPerson indice della person 
+     * @return un array di nomi di path
+     */
+    
+    public String[] getPersonPaths(int paramPerson){
+        String[] paths = null;
+        ArrayList<String> listPaths = new ArrayList<String>();
+
+        if (paramPerson >= 0) {
+
+            Person p = Persons.get(paramPerson);
+            ListIterator<Path> itPath = p.paths.listIterator();
+            while (itPath.hasNext()) {
+                Path succ = itPath.next();
+                listPaths.add(succ.name);
+            }
+            
+            paths = new String[listPaths.size()];
+            paths = listPaths.toArray(paths);
+
+        }
+
+        return paths;
+    
+    }
+    
 
     /**
      * Metodo per la verifica e la rimozione delle Move non piu valide a seguito
