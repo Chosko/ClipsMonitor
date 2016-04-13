@@ -78,7 +78,7 @@ ClipsMonitor è un IDE basato su Netbeans Platform. Appare come una serie di fin
 ![ClipsMonitor](snapshots/clipsmonitor.png)
 
 
-#### Controls window
+#### Controls __window__
 
 Questo pannello permette di eseguire delle funzioni base sul progetto
 
@@ -98,6 +98,12 @@ Una volta in fase di esecuzione:
 * **Time** indica il tempo impiegato dall'agente fino ad adesso
 * **Step** indica il numero di step corrente
 * **Penalties** sono le penalità accumulate fino ad adesso
+
+La checkbox *show partial update* serve per abilitare su richiesta, la visualizzazione di alcune peculiarità della vostra implementazione, ad esempio in fase di pianificazione o di esecuzione.
+
+La checkbox *show goals* è utilizzata per abilitare la visualizzazione sulla mappa di alcune celle target di interesse durante l'esecuzione.
+
+Lo slide posto di fianco alle checkbox ha invece il compito di aumentare o diminuire la velocità di esecuzione di ClipsMonitor in real-time, in base alle vostre esigenze.
 
 #### Env map
 
@@ -131,9 +137,12 @@ Il pulsante **Clear output** pulisce la console
 
 La casella di **input**, unita alla **select** e al punsante **Print element** permettono di stampare il codice di un costrutto CLIPS presente in memoria in quel momento. Nel campo di testo bisogna inserire il nome esatto del costrutto.
 
+Al di sotto della casella di input, sono state poste delle checkbox, che servono per abilitare i costrutti di *watch* interni all'ambiente CLIPS, rendendo visibili l'attivazione di fatti, regole, etc.. 
+
 Il pannello della console contiene anche un **Prompt** `CLIPS>`, che accetta ed esegue qualunque comando digitato alla pressione del tasto INVIO.
 
 > NB: Questa versione della console è instabile perchè CLIPSJNI non gestisce correttamente gli errori di sintassi. Usala a tuo rischio e pericolo. Se fai errori di sintassi è necessario riavviare l'environment cliccando su reset.
+
 
 #### Facts, Agenda e Focus windows
 
@@ -159,7 +168,7 @@ Il Map generator prevede due principali modalità di funzionamento attivabili me
 
 Con la modalità Map è possibile creare una mappa personalizzata, indicando le dimensione della griglia atttraverso gli appositi textfield **x** , **y** apposite e modificare i vari elementi della scena utilizzando la comoda *checkbox* **Inserisci**, la quale mostra un anteprima dell'immagine che rappresenta un elemento del dominio.
 
-All'inizio la mappa generata rappresenta una configurazione standard per il vostro progetto, che potrete tranquillamente decidere tramite una classe Java.
+All'inizio la mappa generata rappresenta una configurazione standard per il vostro progetto, il quale è definibile direttamente nel sorgente Java.
 
 Inolte è possibile impostare la posizione iniziale del robot e indicare il time a disposizione dell'agente per completare la sua esecuzione atttraverso
 la textfield **maxduration** presente.
@@ -172,26 +181,45 @@ Se invece si desidera modificare la dimensione della griglia o il time a disposi
 
 #### Move
 
-Con la modalità Move invece sarete in grado di generare path coerenti su cui far muovere altri agenti all'interno della mappa; potete aggiungere più persone, a cui associare uno o più path di movimento personalizzati, decidere gli intervalli di attesa tra un path e l'altro e infine potete rimuovere sia
-interi path, sia singoli movimenti.
+Con la modalità Move invece sarete in grado di generare path coerenti su cui far muovere altri agenti all'interno della mappa; potete aggiungere più persone, a cui associare uno o più path di movimento personalizzati, decidere gli intervalli di attesa tra un path e l'altro oltre che rimuovere agenti, percorsi e singole move.
 
-Per tenere sotto controllo gli elementi inseriti, potete controllare le pratiche liste **Persons, Persons path, Step , Moves** che vi daranno un prospetto degli elementi inseriti ed inoltre grazie cliccando sugli elementi delle liste è possibile filtrare le move inserite e nel caso del filtro mediante path sarà possibile visualizzarlo direttamente sulla mappa.
+Per tenere sotto controllo gli elementi inseriti, potete controllare le pratiche liste **Persons, Paths, Steps , Moves** che vi daranno un prospetto degli elementi inseriti ed inoltre cliccando sugli elementi delle liste è possibile filtrare le move inserite e nel caso del filtro mediante path sarà possibile visualizzarlo direttamente sulla mappa.
 
-Inoltre la mappa farà vedere per ogni Step, la posizione di tutti gli agenti in modo da evitare sovrapposizioni e ottenere quindi una history pulita.
+Inoltre la mappa farà vedere per ogni Step, la posizione di tutti gli agenti in modo da evitare sovrapposizioni e ottenere una history pulita.
 
-Per inserire una nuova persona bisognerà in prima battuta scegliere un colore sempre mediante la *combobox* **Inserisci**, cliccare su un punto della mappa da cui si vuol far partire la person, e successivamente cliccare sul pulsante **Aggiungi** immediatamente sotto la lista **Person**; in caso la si voglia eliminare bisogna utilizzare il pulsante **Rimuovi** sempre al di sotto della lista Person.
+##### Utilizzo del generatore di mappe
 
-Una volta inserita, possiamo iniziare a costruire un primo path, utilizzando esclusivamente la mappa. Cliccando su una cella attigua a dove compare l'icona dell'agente, si chiede al map generator di *spostare* l'agente in una nuova posizione e questo identifica un nuovo movimento che verrà aggiunto.
+Per inserire una nuovo agente nella history bisogna :
+<ol>
+  <li>scegliere un colore da associare mediante la *Color combobox*</li>
+  <li> cliccare su un punto della mappa da cui si vuol far partire i suoi movimenti </li>
+  <li> cliccare sul pulsante **Add** immediatamente sotto la lista **Person**
+</ol>
 
-Una volta aggiunto un passo, è comunque sempre possibile, eliminare l'ultima mossa eseguita, semplicemente cliccando sull'icona dell' agente e quest'ultimo
-retrocederà di un passo.
-Ad ogni aggiunta di passo o rimozione, vedrete sempre il resto degli agenti inseriti in modo aver sempre chiaro, lo sviluppo della history.
+Nel caso in cui lo si voglia eliminare, basta selezionare l'agente dalla *combobox* oppure cliccando sulla entry corrispondente dentro alla lista *Persons* e utilizzare il pulsante **Remove** sempre al di sotto della medesima lista.
 
-Se ad una persona vogliamo associar più di un path allora tenendo su **Inserisci** il colore corrispondente possiamo cliccare il pulsante **Aggiungi** posto sotto la lista **Path** e da quel momento quando ci muoveremo sulla mappa tutti i passi inseriti saranno aggiunti al nuovo path corrente.
+Una volta inserita, possiamo iniziare a costruire un primo path, utilizzando esclusivamente la mappa. 
+Cliccando su una cella attigua a dove compare l'icona dell'agente, si chiede al map generator di *spostare* l'agente in una nuova posizione e questo identifica una nuova move associata a quell'agente .
+
+Una volta aggiunta una move, è comunque possibile, eliminarla, semplicemente cliccando sull'icona dell' agente e quest'ultimo retrocederà alla posizione precedente.
+Ad ogni aggiunta di passo o rimozione, vedrete sempre il resto degli agenti inseriti in modo da aver sempre chiaro, lo sviluppo della history.
+
+Se ad un agente, vogliamo associar più di un path, mantenendo attivo il colore corrispondente, possiamo cliccare il pulsante **Add** posto sotto la lista **Paths**; le prossime move saranno associati all'ultimo path creato.
+
+> NB: non è possibile aggiungere move nei path intermedi degli agenti, ma solo ed esclusivamente all'ultimo creato.
 
 Per rendere totale la flessibilità di costruzione delle history è stata aggiunta una *textfield* **Wait time** la quale viene utilizzata dal map generator in fase di aggiunta del nuovo path come intervallo di tempo (misurato in step) in cui la person resta ferma sulla mappa prima di iniziare una nuova sequenza di passi.
 
+##### Salvataggio e modifica degli scenari
 
+Il generatore di mappe permette il salvataggio dei progressi di creazione di uno scenario,  utilizzando dei file Json.
+Cliccando su **Save**, viene aperta una finestra di dialogo dove scegliere la cartella di destinazione.
+Viceversa cliccando su **Load** possiamo caricare uno scenario (mappa e movimenti degli agenti), salvati in precedenza.
+Nel caso in cui, abbiate a disposizione scenari non creati mediante il generatore di mappe, potete comunque creare il Json corrispondente mediante il pulsante **Json** e modificarlo all'interno del generatore di mappe.
+
+> NB: per poter generare il Json è necessario creare il parser corrispondente al vostro progetto.
+
+Il pulsante **Clear all** permette di ripristinare lo scenario di default in base all'attuale dimensione della griglia.
 
 #### Shortcuts
 
@@ -248,6 +276,25 @@ La struttura delle directory deve essere fatta in questo modo:
 ```
 
 La cartella `img` puoi copiarla integralmente dal progetto di prova.
+
+#### Classi Java per il tuo progetto
+
+ClipsMonitor è stato pensato per poter essere altamente configurabile e riutilizzabile, in base alle specifiche di progetto e in base alla vostra implementazione.
+Per rendere utilizzabile ClipsMonitor secondo le vostre esigenze, potete creare un nuovo *package* di Java con all'interno tutte le classi che sono *estensioni* delle classi che appartengono al core dell'applicazione.
+Il *package* deve contenere :
+<ul>
+<li> una classe estensione di *MonitorModel* </li>
+<li> due classe estensione di *MonitorMap*, per l'aggiornamento delle due mappe</li>
+<li> una classe estensione di *MonitorGenMap* </li>
+</ul>
+
+Lo scopo di queste classi estese è quello di aggiornare il modello in maniera coerente con le specifiche del vostro progetto e di visualizzare correttamente l'ambiente.
+
+Come base di partenza per la vostra implementazione, nei sorgenti di ClipsMonitor sono fornite le classi Java utilizzate per il progetto RESCUE 2014-2015.
+Troverete un ulteriore classe *RescueFacts* la quale non è necessaria ai fini dell'esecuzione dell'applicazione ma a nostro avviso particolarmente utile al fine di avere un interfaccia più pulita con i *deftemplate* definite nel progetto.
+
+> NB Le classi Java contenute nel package monitor2015 rispecchiano l'implementazione fatta nei nostri sorgenti CLIPS, per cui non è necessario mantenere tutti i metodi all'interno contenuti per eseguire ClipsMonitor.    
+
 
 ## Contribuire a ClipsMonitor
 
