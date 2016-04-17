@@ -251,25 +251,28 @@ public class RescueModel extends MonitorModel {
         updateKAgent();
 
         // Update the planning nodes
-        updatePNodes();
+        //  updatePNodes();
 
         // Update the other agents
         updatePeople();
         updateKPeople();
         checkBumpCondition();
         
-        updateGoal();
-        updateGoalsToDo();
 
         // Update all the maps (they read the values created by updateAgent)
         for(MonitorMap map : maps.values()){
             map.updateMap();
         }
 
+        updateGoal();
+        updateGoalsToDo();
         this.setChanged();
         this.notifyObservers("repaint");
     }
 
+    
+    
+    
     private void updateAgent() throws CLIPSError{
         String[] robot = core.findFact("ENV", RescueFacts.AgentStatus.factName(), "TRUE", RescueFacts.AgentStatus.slotsArray());
         if (robot[0] != null) { //Se hai trovato il fatto
@@ -300,7 +303,8 @@ public class RescueModel extends MonitorModel {
     
     public void updateGoal() throws CLIPSError{
       String[] goal = core.findFact("AGENT", RescueFacts.Goal.factName(), "eq ?f:status selected", RescueFacts.Goal.slotsArray());
-      if (goal[0]!=null){
+      if (goal!=null && goal[0]!=null){
+      
           try{
             int row = Integer.parseInt(goal[RescueFacts.Goal.PARAM1.index()]);
             int column = Integer.parseInt(goal[RescueFacts.Goal.PARAM2.index()]);
@@ -325,7 +329,8 @@ public class RescueModel extends MonitorModel {
         instance.pcolumn = -1;
 
         String[][] pnodes = core.findAllFacts("REASONING", RescueFacts.PNode.factName(), "TRUE", RescueFacts.PNode.slotsArray());
-        for(String[] pnode : pnodes){
+        if(pnodes!=null){
+          for(String[] pnode : pnodes){
             if (pnode[0] != null) { //Se hai trovato il fatto
                 int ident = new Integer(pnode[RescueFacts.PNode.IDENT.index()]);
                 String nodetype = pnode[RescueFacts.PNode.NODETYPE.index()];
@@ -351,6 +356,8 @@ public class RescueModel extends MonitorModel {
                 }
             }
         }
+          
+        }
     }
 
     
@@ -358,13 +365,16 @@ public class RescueModel extends MonitorModel {
     
         goalsToDo = new ArrayList<int []>();
         String[][] goals = core.findAllFacts("AGENT", RescueFacts.Goal.factName(), "eq ?f:status to-do", RescueFacts.Goal.slotsArray());
-        for(String [] goal : goals){
+        if(goals!=null){
+          for(String [] goal : goals){
             try{
                 int r = new Integer(goal[RescueFacts.Goal.PARAM1.index()]);
                 int c = new Integer(goal[RescueFacts.Goal.PARAM2.index()]);
                 goalsToDo.add(new int[]{r, c});
             }
             catch(NumberFormatException e){}
+        }
+        
         }
     }
     

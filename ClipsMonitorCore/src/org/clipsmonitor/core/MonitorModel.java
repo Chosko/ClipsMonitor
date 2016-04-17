@@ -552,6 +552,8 @@ public abstract class MonitorModel extends Observable implements Runnable {
           console.error(e.getMessage());
       }
     }
+    
+    
     protected void setup(){
         initModel();
     }

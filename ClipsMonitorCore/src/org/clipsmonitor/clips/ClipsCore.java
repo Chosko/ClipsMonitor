@@ -3,7 +3,6 @@ package org.clipsmonitor.clips;
 import net.sf.clipsrules.jni.Environment;
 import net.sf.clipsrules.jni.MultifieldValue;
 import net.sf.clipsrules.jni.PrimitiveValue;
-import net.sf.clipsrules.jni.FactAddressValue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -190,6 +189,14 @@ public class ClipsCore {
         return result;
     }
     
+    /**
+     * Inietta le regole all'interno dell'interprete CLIPS, senza doverle includerle all'interno dei moduli
+     * @param module
+     * @param eval
+     * @return
+     * @throws CLIPSError 
+     */
+    
     public synchronized boolean build(String module , String eval) throws CLIPSError{
     
 
@@ -268,6 +275,7 @@ public class ClipsCore {
      */
     public synchronized String[][] findAllFacts(String module, String template, String conditions, String[] slots)  {
         router.startRec();
+        
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
@@ -312,32 +320,33 @@ public class ClipsCore {
      * nessun fatto che soddisfa l'interrogazione
      * @throws ClipsException
      */
-    public synchronized String[][] findAllFacts(String template, String conditions, String[] slots) throws CLIPSError {
+    public synchronized String[][] findAllFacts(String template, String conditions, String[] slots){
+        router.startRec(); 
         if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
-        PrimitiveValue fc = clips.eval("(get-focus)");
-        String focus = fc.toString();
-        String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
-        MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
         String[][] result = null;
-        
         try {
+           PrimitiveValue fc = clips.eval("(get-focus)");
+           String focus = fc.toString();
+           String eval = "(find-all-facts ((?f " + template + ")) " + conditions + ")";
+           MultifieldValue facts = (MultifieldValue) evaluate(focus, eval);
+        
             result = new String[facts.size()][slots.length];
             for (int i = 0; i < facts.size(); i++) {
                 for (int j = 0; j < slots.length; j++) {
-                    FactAddressValue fact = (FactAddressValue)facts.get(i);
-                    PrimitiveValue factSlot = fact.getFactSlot(slots[j]);
-                    if (factSlot != null) {
-                        result[i][j] = factSlot.toString();
-                    } else {
-                        result[i][j] = "";
-                    }
+                    FactAddressValue fact = (FactAddressValue) facts.get(i);
+                    String slot = fact.getFactSlot(slots[j]).toString();
+                    result[i][j] = slot;
                 }
             }
         }
-        catch (Exception ex) {
-            console.error(ex);
+        catch (NullPointerException ex) {
+            console.error("Impossible to find fact: " + template + " with conditions: " + conditions);
+        }
+        catch(CLIPSError ex){
+          router.stopRec();
+          console.error(router.getStdout());
         }
         return result;
     }
@@ -359,22 +368,29 @@ public class ClipsCore {
      * null se non c'e' nessun fatto che corrisponde all'interrogazione
      * @throws ClipsException
      */
-    public synchronized String[] findFact(String module, String template, String conditions, String[] slots) throws CLIPSError {
-        if (!conditions.equalsIgnoreCase("TRUE")) {
+    public synchronized String[] findFact(String module, String template, String conditions, String[] slots) {
+      router.startRec();
+      if (!conditions.equalsIgnoreCase("TRUE")) {
             conditions = "(" + conditions + ")";
         }
+      String[] result = new String[slots.length];
+      try {
         String eval = "(find-fact ((?f " + template + ")) " + conditions + ")";
         MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
-        String[] result = new String[slots.length];
-        try {
             if (facts.size() > 0) {
                 for (int j = 0; j < slots.length; j++) {
-                    result[j] = ((FactAddressValue)facts.get(0)).getFactSlot(slots[j]).toString();
+                    FactAddressValue fact = (FactAddressValue) facts.get(0);
+                    String slot = fact.getFactSlot(slots[j]).toString();
+                    result[j] = slot;
                 }
             }
         }
-        catch (Exception ex){
-            console.error(ex);
+        catch (NullPointerException ex) {
+            console.error("Impossible to find fact: " + template + " with conditions: " + conditions + " in module " + module);
+        }
+        catch(CLIPSError ex){
+          router.stopRec();
+          console.error(router.getStdout());
         }
         return result;
     }
@@ -391,20 +407,22 @@ public class ClipsCore {
      * @return il resto del fatto, null se il fatto non esiste
      * @throws ClipsException
      */
-    public synchronized String findOrderedFact(String module, String template) throws CLIPSError {
+    public synchronized String findOrderedFact(String module, String template) {
+        router.startRec();
         String eval = "(find-fact ((?f " + template + ")) TRUE)";
-        MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
         String result = "";
         try{
+           MultifieldValue facts = (MultifieldValue)evaluate(module, eval);
             if (facts.size() != 0) {
-                String fatto = facts.get(0).toString();
-                StringTokenizer st = new StringTokenizer(fatto, "<Fact- >");
+                String fact = facts.get(0).toString();
+                StringTokenizer st = new StringTokenizer(fact, "<Fact- >");
                 facts = (MultifieldValue)clips.eval("(fact-slot-value " + (new Integer(st.nextToken())) + " implied)");
                 result = facts.get(0).toString();
             }
         }
-        catch (Exception ex) {
-            console.error(ex);
+        catch(CLIPSError ex){
+          router.stopRec();
+          console.error(router.getStdout());
         }
         return result;
     }
@@ -613,12 +631,10 @@ public class ClipsCore {
   }
 
   public void RecFromRouter(){
-  
     router.startRec();
   }
   
   public void StopRecFromRouter(){
-  
     router.stopRec();
   }
 
