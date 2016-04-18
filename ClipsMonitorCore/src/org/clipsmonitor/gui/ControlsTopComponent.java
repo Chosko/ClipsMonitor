@@ -76,7 +76,7 @@ import org.openide.util.NbBundle.Messages;
 
 
 public final class ControlsTopComponent extends TopComponent implements Observer,
-        KeyListener ,  ActionListener{
+    KeyListener ,  ActionListener{
     RescueModel model;
     MonitorCore core;
     File projectDirectory;
@@ -567,7 +567,6 @@ public final class ControlsTopComponent extends TopComponent implements Observer
         disableButtons();
         model.setMode(MonitorModel.EX_MODE_BREAK);
         model.resume();
-        //model.step();
         enableButtons();
   }//GEN-LAST:event_BreakButtonActionPerformed
 

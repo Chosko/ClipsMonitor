@@ -103,10 +103,11 @@ public abstract class MonitorModel extends Observable implements Runnable {
                         break;
 
                 }
+                
                 clipsMonitorFact = core.findOrderedFact("AGENT", "clips-monitor");
-
-                console.debug("clipsMonitorFacts: " + clipsMonitorFact);
-
+                if(clipsMonitorFact!=null && console!=null){
+                  console.debug("clipsMonitorFacts: " + clipsMonitorFact);
+                }
                 /*
                     solo in fase di run non si richiede la suspend
                 */
@@ -202,6 +203,7 @@ public abstract class MonitorModel extends Observable implements Runnable {
             core.StopRecFromRouter();
             console.error(core.GetStdoutFromRouter());
         }
+         
     }
 
 

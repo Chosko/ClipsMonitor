@@ -424,7 +424,7 @@ public class RescueModel extends MonitorModel {
 
     protected void updateStatus() throws CLIPSError{
         String[] status = core.findFact("MAIN", RescueFacts.Status.factName(), "TRUE", RescueFacts.Status.slotsArray());
-        if (status[0] != null) {
+        if (status!= null) {
             step = new Integer(status[RescueFacts.Status.STEP.index()]);
             time = new Integer(status[RescueFacts.Status.TIME.index()]);
             result = status[RescueFacts.Status.RESULT.index()];

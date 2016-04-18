@@ -53,8 +53,8 @@ public final class MonitorCore {
      * Perform the operations to run at application startup or reset.
      */
     public void resetApplication(){
-        ClipsConsole.clearInstance();
         ClipsCore.clearInstance();
+        ClipsConsole.clearInstance();
         model.clear();
         startApplication();
         model.restart();
