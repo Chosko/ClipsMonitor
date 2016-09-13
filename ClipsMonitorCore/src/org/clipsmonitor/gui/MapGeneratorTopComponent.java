@@ -597,6 +597,16 @@ public final class MapGeneratorTopComponent extends TopComponent {
             int y = evt.getY();
             
             actualPosClicked = model.getCellPosition(x, y);
+            
+            if(actualPosClicked[0]<0 || actualPosClicked[0]>model.getNumx()){
+                return ;
+            }
+            
+            if(actualPosClicked[1]<0 || actualPosClicked[1]>model.getNumx()){
+                return ;
+            }
+            
+            
             if(MapButton.isSelected()){
                 ExecUpdateMap();
             }
