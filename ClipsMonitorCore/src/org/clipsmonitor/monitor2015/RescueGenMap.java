@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.clipsmonitor.core.MonitorImages;
-import org.clipsmonitor.monitor2015.RescueFacts;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +51,7 @@ public class RescueGenMap extends MonitorGenMap {
 
     }
 
+    
     @Override
     public void init() {
         this.img = MonitorImages.getInstance();
@@ -93,6 +93,8 @@ public class RescueGenMap extends MonitorGenMap {
           "debris", 
           "debris_injured"
         };
+        
+        
         this.setKeyColor=new String[]
         {
           "green",

@@ -41,30 +41,31 @@ public abstract class MonitorGenMap {
 
     protected MonitorImages img;
 
-    protected int NumCellX, NumCellY; //numero di celle sulle x e sulle y
-    protected float CellWidth, CellHeight; //largezza e altezza celle
-    protected float MapWidth, MapHeight;  //largezza e altezza finestra
+    protected int NumCellX, NumCellY;       //numero di celle sulle x e sulle y
+    protected float CellWidth, CellHeight;  //largezza e altezza celle
+    protected float MapWidth, MapHeight;    //largezza e altezza finestra
 
-    protected String[][] scene; //matrice fondamentale rappresentante la scena
-    protected String[][] move; // matrice fondamentale rappresentante i movimenti delle persone
-    protected String[][] mapActive; //matrice per la visualizzazione sull'interfaccia
-    protected String mode; // modalità di esecuzione del generatore
+    protected String[][] scene;             //matrice fondamentale rappresentante la scena
+    protected String[][] move;              // matrice fondamentale rappresentante i movimenti delle persone
+    protected String[][] mapActive;         //matrice per la visualizzazione sull'interfaccia
+    protected String mode;                  // modalità di esecuzione del generatore
 
-    protected int maxduration; // massima durata temporale di attività del robot nell scena
-    protected ClipsConsole console;    // istanza della console clips
+    protected int maxduration;              // massima durata temporale di attività del robot nell scena
+    protected ClipsConsole console;         // istanza della console clips
 
-    protected String[] setKeyMap; // array dei possibili valori di scene corrispondenti alle
-    // chiavi di accesso per l'hash map delle immagini
-    protected String[] setKeyColor; // set di chiavi colori disponibili
-    protected int NumPerson; // numero di persone attualmente inserite
-    protected int MaxNumPerson; // numero massimo di persone rappresentabili
-    protected String personName; //chiave che identifa le persona all'interno dell'hashmap
-    protected int[] agentposition; // posizione attuale dell'agente all'inizio dello scenario
-    protected int[] defaultagentposition; // posizione iniziale di default dell'agente
-    protected LinkedList<Person> Persons; // Struttura che contiene i path delle varie persone
-    protected String defaulagentcondition; // stringa di default utilizzata per inizializzare la scena
-    // formata come background_keyagentdefault
-    protected String direction; // direzione iniziale del robot;
+    protected String[] setKeyMap;           // array dei possibili valori di scene corrispondenti alle
+                                            // chiavi di accesso per l'hash map delle immagini
+    
+    protected String[] setKeyColor;         // set di chiavi colori disponibili
+    protected int NumPerson;                // numero di persone attualmente inserite
+    protected int MaxNumPerson;             // numero massimo di persone rappresentabili
+    protected String personName;            //chiave che identifa le persona all'interno dell'hashmap
+    protected int[] agentposition;          // posizione attuale dell'agente all'inizio dello scenario
+    protected int[] defaultagentposition;   // posizione iniziale di default dell'agente
+    protected LinkedList<Person> Persons;   // Struttura che contiene i path delle varie persone
+    protected String defaulagentcondition;  // stringa di default utilizzata per inizializzare la scena
+                                            // formata come background_keyagentdefault
+    protected String direction;             // direzione iniziale del robot;
     protected String log;
 
     /*
@@ -107,7 +108,8 @@ public abstract class MonitorGenMap {
      * @param NumCellY
      */
     public void SetSizeCells() {
-    //creo una scena con la nuova dimensione
+        
+        //creo una scena con la nuova dimensione
         //salvo il numero di celle sulle x e sulle y
         //calcolo la larghezza delle celle
         CellWidth = (MapWidth - 20) / NumCellX;
@@ -128,9 +130,6 @@ public abstract class MonitorGenMap {
         agentposition[0] = defaultagentposition[0];
         agentposition[1] = defaultagentposition[1];
     }
-
-
-    
     
     
     
@@ -144,14 +143,14 @@ public abstract class MonitorGenMap {
      * @param MapWidth : larghezza in pixel del pannello della mappa
      * @param MapHeight : altezza in pixel del pannello della mappa
      */
-    public void drawScene(Graphics2D g, float MapWidth, float MapHeight) {
+    public void drawScene(Graphics2D g, float mapWidth, float mapHeight) {
 
         BufferedImage[][] icons = makeIconMatrix();
 
 
         //aggiorno le dimensioni della finestra
-        MapWidth = MapWidth;
-        MapHeight = MapHeight;
+        MapWidth = mapWidth;
+        MapHeight = mapHeight;
 
         //calcolo la larghezza delle celle
         CellWidth = (MapWidth - 20) / NumCellX;
@@ -194,8 +193,8 @@ public abstract class MonitorGenMap {
 
     /**
      * Metodo per clonare le mappe di stringhe, viene utilizzato per trasportare
-     * la scena all'interno della mappa di move per ottenere una nuova copia su
-     * cui lavorare
+ la scena all'interno della mappa di moves per ottenere una nuova copia su
+ cui lavorare
      *
      * @param map : mappa in input da clonare
      */
@@ -280,7 +279,7 @@ public abstract class MonitorGenMap {
     }
 
     public void setMode(String mode) {
-      mode = mode;
+      this.mode = mode;
     }
 
 
@@ -289,7 +288,7 @@ public abstract class MonitorGenMap {
     }
 
     public void setLog(String log){
-      log= log;
+      this.log= log;
 
     }
 
@@ -354,9 +353,9 @@ public abstract class MonitorGenMap {
     }
 
     /**
-     * Copia la nuova scena come base per le nuove move in modo da far
-     * coincidere la mappa dello scenario con la mappa in cui si determinano le
-     * moves
+     * Copia la nuova scena come base per le nuove moves in modo da far
+ coincidere la mappa dello scenario con la mappa in cui si determinano le
+ moves
      */
     public void CopySceneToMove() {
 
@@ -364,10 +363,10 @@ public abstract class MonitorGenMap {
     }
 
      /*
-     * Restituisce un mappa temporanea di move per la visualizzazione delle modifiche
-     * sulla mappa. La move map restituita e soltanto temporanea
-     * @param x : riga della cella da inserire la move
-     * @param y : colonna della cella da inserire la move
+     * Restituisce un mappa temporanea di moves per la visualizzazione delle modifiche
+     * sulla mappa. La moves map restituita e soltanto temporanea
+     * @param x : riga della cella da inserire la moves
+     * @param y : colonna della cella da inserire la moves
      * @param color : colore temporaneo
      */
     public String[][] getTmpMoveMap(int x, int y, String color) {
@@ -377,7 +376,7 @@ public abstract class MonitorGenMap {
         for (int i = 0; i < newmap.length; i++) {
 
             for (int j = 0; j < newmap[0].length; j++) {
-                String result = CheckBusyCellFromPerson(i, j, 0);
+                String result = CheckBusyCell(i, j, 0);
                 if (!(result.equals("empty"))) {
                     String[] resultSplit = result.split("_");
                     newmap[i][j] = resultSplit[0];
@@ -416,6 +415,7 @@ public abstract class MonitorGenMap {
       }
 
       // caso di richiesta di uno specifico step
+      
       if (paramPath.equals("none")) {
           ListIterator<Person> itPerson = Persons.listIterator();
           while (itPerson.hasNext()) {
@@ -428,21 +428,21 @@ public abstract class MonitorGenMap {
                   if (paramStep >= succ.startStep && paramStep<= succ.lastStep) {
                     int offset = paramStep - succ.startStep;
                     try{
-                        StepMove s = succ.move.get(offset);
+                        StepMove s = succ.moves.get(offset);
                         String rgba= MonitorImages.getInstance().creatergbafromName(p.associatedColor, 0.25);
                         newmap[s.x][s.y] = rgba + "+" + personName;
                         break;
                     }
                     catch(IndexOutOfBoundsException ex){
-                     String debug = "Error with ParamStep " + paramStep + " startStep " + succ.startStep + " laststep" + succ.lastStep ;
+                     String debug = "Error with ParamStep " + paramStep +
+                                    " startStep " + succ.startStep + 
+                                    " laststep" + succ.lastStep ;
                      AppendLogMessage(debug,"error");
                     }     
                   }
               }
-              
-              
+             
           }
-          
           
       }
       // caso di richiesta di una specifico path agente
@@ -452,7 +452,7 @@ public abstract class MonitorGenMap {
 
           Path result = getPathByName(paramPath);
           String[] splitResult = result.name.split("_");
-          ListIterator<StepMove> it = result.move.listIterator();
+          ListIterator<StepMove> it = result.moves.listIterator();
 
           while (it.hasNext()) {
               StepMove s = it.next();
@@ -475,7 +475,7 @@ public abstract class MonitorGenMap {
 
 
     /*
-     * Questo metodo serve per generare la nuova mappa di stringhe move a partire
+     * Questo metodo serve per generare la nuova mappa di stringhe moves a partire
      * dalle celle coinvolte. Le celle coinvolte sono state generate prelevando
      * le informazioni dalla lista linkata delle persone
      */
@@ -485,12 +485,12 @@ public abstract class MonitorGenMap {
     }
 
     /*
-     * Metodo per il caricamento delle move da visualizzare sulla mappa.Il metodo
+     * Metodo per il caricamento delle moves da visualizzare sulla mappa.Il metodo
      * prende in input due mappe di stringhe, la prima rappresenta i valori della
      * scena, il background. Il secondo una mappa dove vengono messe le etichette dei
      * colori raffiguranti le celle occupate dai movimenti di un certo agente
      * @param map : la mappa delle stringhe di background
-     * @param move : la mappa delle celle occupate da un certo movimento
+     * @param moves : la mappa delle celle occupate da un certo movimento
      *
      * @return : la matrice di stringhe risultante
      */
@@ -612,14 +612,14 @@ public abstract class MonitorGenMap {
         protected String name;
         protected int startStep;
         protected int lastStep;
-        protected LinkedList<StepMove> move;
+        protected LinkedList<StepMove> moves;
 
         public Path(String NewName, int NewStartStep) {
 
             name = NewName;
             startStep = NewStartStep;
             lastStep = startStep;
-            move = new LinkedList<StepMove>();
+            moves = new LinkedList<StepMove>();
 
         }
 
@@ -628,13 +628,13 @@ public abstract class MonitorGenMap {
             name = NewName;
             startStep = NewstartStep;
             lastStep = NewlastStep;
-            move = new LinkedList<StepMove>();
+            moves = new LinkedList<StepMove>();
 
         }
 
         public LinkedList<StepMove> getMoves() {
 
-            return move;
+            return moves;
         }
 
         public String getName(){
@@ -652,15 +652,15 @@ public abstract class MonitorGenMap {
 
         public void AddMove(int r, int c) {
 
-            int step = (move.size() == 0) ? startStep : lastStep + 1;
-            move.add(new StepMove(r, c, step));
+            int step = (moves.size() == 0) ? startStep : lastStep + 1;
+            moves.add(new StepMove(r, c, step));
             lastStep = step;
         }
 
         public void RemoveLast() {
-            if (move.size() > 1) {
-                move.removeLast();
-                lastStep = move.getLast().step;
+            if (moves.size() > 1) {
+                moves.removeLast();
+                lastStep = moves.getLast().step;
             }
         }
 
@@ -785,16 +785,13 @@ public abstract class MonitorGenMap {
      */
     public int findIndexPosByColor(String color) {
 
-        int position = 0;
-        ListIterator<Person> it = Persons.listIterator();
-        Person p = null;
-        while (it.hasNext()) {
-            p = it.next();
-            if (p.associatedColor.equals(color)) {
-                return position;
+        for(int pos = 0; pos<Persons.size(); pos++) {
+           Person currPers = Persons.get(pos);
+            if (currPers.associatedColor.equals(color)) {
+                return pos;
             }
-            position++;
         }
+        
         return -1;
     }
 
@@ -805,17 +802,14 @@ public abstract class MonitorGenMap {
      */
     public Person findPersonByColor(String color) {
 
-        ListIterator<Person> it = Persons.listIterator();
         Person result = null;
-        Person succ = null;
-        while (it.hasNext()) {
+        for(int i = 0 ; i< Persons.size(); i++) {
 
-            succ = it.next();
-            if (succ.associatedColor.equals(color)) {
-                result = succ;
-                return result;
+            Person currPers = Persons.get(i);
+            if (currPers.associatedColor.equals(color)) {
+                result = currPers;
+                break;
             }
-
         }
         return result;
 
@@ -824,27 +818,31 @@ public abstract class MonitorGenMap {
     /*
      *  Restituisce un array di tutti colori attualmente attivi nella mappa in modo
      *  da controllare quali risultano essere le opzioni disponibili al generatore
-     *  delle move.
+     *  delle moves.
      */
     public String[] getListColorActive() {
 
-        ListIterator<Person> it = Persons.listIterator();
+        int p = 0;
         ArrayList<String> listColor = new ArrayList<String>();
         String[] colors;
 
-        while (it.hasNext()) {
+        while (p<Persons.size()) {
 
-            Person p = it.next();
-            listColor.add(p.associatedColor);
+            Person currP = Persons.get(p);
+            listColor.add(currP.associatedColor);
+            p++;
         }
 
+        // inizializzo lista colori
+        
+        colors = new String[1];
+        colors[0] = "";
+        
         if (listColor.size() > 0) {
             colors = new String[listColor.size()];
             colors = listColor.toArray(colors);
-        } else {
-            colors = new String[1];
-            colors[0] = "";
-        }
+        } 
+        
         return colors;
     }
 
@@ -858,12 +856,11 @@ public abstract class MonitorGenMap {
         if (Persons.size() > 0) {
 
             list = new String[Persons.size() + 1];
-            ListIterator<Person> it = Persons.listIterator();
             int i = 0;
 
-            while (it.hasNext()) {
-
-                list[i] = "person_" + it.next().getColor();
+            while (i<Persons.size()) {
+                Person currP = Persons.get(i);
+                list[i] = "person_" + currP.getColor();
                 i++;
             }
 
@@ -878,24 +875,32 @@ public abstract class MonitorGenMap {
                               + "\t (" + x + "," + y + ")";
     }
 
+    
+    
     /*
      *  Ritorna una stringa indicante il numero di step disponibili alla modifica in base
      *  al parametro che li viene dato .
      * @param : param>-1 può indicare l'indice della persona su cui costruire la lista
      *          param==-1 indica che bisogna richiedere la lista globale di tutti gli step
-     *                    in cui è stato definito almeno un move
+     *                    in cui è stato definito almeno un moves
      */
+    
+    
     public String[] getListStep(int param) {
 
         String[] list = null;
         int maxStep = 0;
+        Person currPers;
         if (param == -1) {
-            ListIterator<Person> it = Persons.listIterator();
-            while (it.hasNext()) {
-                ListIterator<Path> itp = it.next().paths.listIterator();
+            
+            for(int p = 0; p<Persons.size(); p++ ){
+                
+                currPers = Persons.get(p);
                 int numStepPerson = 0;
-                while (itp.hasNext()) {
-                    int numStepPath = itp.next().move.size();
+                
+                for (int path=0; path<currPers.paths.size();path++) {
+                    Path currPath = currPers.paths.get(path);
+                    int numStepPath = currPath.moves.size();
                     numStepPerson += numStepPath;
                 }
                 if (numStepPerson > maxStep) {
@@ -903,18 +908,20 @@ public abstract class MonitorGenMap {
                 }
             }
 
-            list = new String[maxStep];
 
         } else {
 
-            Person paramPerson = Persons.get(param);
-            ListIterator<Path> itp = paramPerson.paths.listIterator();
+            currPers = Persons.get(param);
             int numStepPerson = 0;
-            while (itp.hasNext()) {
-                int numStepPath = itp.next().move.size();
-                numStepPerson += numStepPath;
-            }
-            list = new String[numStepPerson];
+            
+            for (int path=0; path<currPers.paths.size();path++) {
+                    Path currPath = currPers.paths.get(path);
+                    int numStepPath = currPath.moves.size();
+                    numStepPerson += numStepPath;
+                }
+            
+            maxStep=numStepPerson;
+            
         }
 
         list = new String[maxStep];
@@ -924,92 +931,120 @@ public abstract class MonitorGenMap {
 
         return list;
     }
+    
+    
+    
 
     /*
      *   Ritorna la lista dei movimenti definiti fino a questo istante in base al parametro param
-     *    @paramPerson : paramPerson>-1  indica l'indice della persona da cui prelevare tutti le move definite
-     *                   paramPerson==-1 indica la richiesta delle move per tutti le persone nella lista
+     *    @paramPerson : paramPerson>-1  indica l'indice della persona da cui prelevare tutti le moves definite
+     *                   paramPerson==-1 indica la richiesta delle moves per tutti le persone nella lista
      *
-     *   @paramStep : paramStep>-1  indica il numero dello step da cui prelevare tutti le move definite
-     *                paramStep==-1 indica la richieste delle move per tutti gli step
+     *   @paramStep : paramStep>-1  indica il numero dello step da cui prelevare tutti le moves definite
+     *                paramStep==-1 indica la richieste delle moves per tutti gli step
      */
     public String[] getListMove(int paramPerson, int paramStep, String paramPath) {
 
         String[] list = null;
         ArrayList<String> moveslist = new ArrayList<String>();
         // richiesta della lista completa degli step;
+        Person currPers;
+        
         if (paramPerson == -1 && paramStep == -1 && paramPath.equals("all")) {
+            
+            
+            for (int pers=0;pers<Persons.size(); pers++) {
+                currPers = Persons.get(pers);
+                
+                // per ogni percorso legato all'agente
+                
+                for (int path=0; path<currPers.paths.size();path++) {
 
-
-            ListIterator<Person> it = Persons.listIterator();
-            while (it.hasNext()) {
-                Person p = it.next();
-                ListIterator<Path> itpath = p.paths.listIterator();
-                while (itpath.hasNext()) {
-
-                    Path succ = itpath.next();
-                    ListIterator<StepMove> moves = succ.move.listIterator();
-                    while (moves.hasNext()) {
-                        StepMove s = moves.next();
-                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
+                    Path currPath = currPers.paths.get(path);
+                    
+                 // per ogni movimento legato allo stesso percorso 
+                 
+                    for (int m=0; m<currPath.moves.size();m++ ) {
+                        StepMove s = currPath.moves.get(m);
+                        
+                        String move = getMoveString(currPers.associatedColor,s.step,currPath.getName(),s.x,s.y);
                         moveslist.add(move);
                     }
                 }
             }
         }
+        
         else{
-          // richiesta della lista completa delle move in un determinato step
+          
+          // richiesta della lista completa delle moves in un determinato step
+          
           if (paramStep > -1) {
-              ListIterator<Person> itPerson = Persons.listIterator();
-              while (itPerson.hasNext()) {
-                  Person p = itPerson.next();
-                  ListIterator<Path> itPath = p.paths.listIterator();
-                  Path succ = null;
-                  while (itPath.hasNext()) {
-                      succ = itPath.next();
-                      if (paramStep >= succ.startStep && paramStep<= succ.lastStep) {
-                      int offset = paramStep - succ.startStep;
-                      try{
-                        StepMove s = succ.move.get(offset);
-                        String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
-                        moveslist.add(move);
-                        break;
+              
+              for(int pers = 0; pers< Persons.size(); pers++) {
+                  
+                  currPers = Persons.get(pers);
+                  
+                  for(int path=0; path< currPers.paths.size();path++){
+                    
+                    Path currPath = currPers.paths.get(path);
+                    
+                    if (paramStep >= currPath.startStep && paramStep<= currPath.lastStep) {
+                      
+                        int offset = paramStep - currPath.startStep;
+                        try{
+                            StepMove s = currPath.moves.get(offset);
+                            String move = getMoveString(currPers.associatedColor,s.step,currPath.getName(),s.x,s.y);
+                            moveslist.add(move);
+                            break;
+                        }
+                        catch(IndexOutOfBoundsException ex){
+                            
+                            String debug = "Error with ParamStep " + paramStep 
+                                       + " startStep " + currPath.startStep 
+                                       + " laststep" + currPath.lastStep ;
+                            AppendLogMessage(debug,"error");
+                        }     
                     }
-                    catch(IndexOutOfBoundsException ex){
-                     String debug = "Error with ParamStep " + paramStep + " startStep " + succ.startStep + " laststep" + succ.lastStep ;
-                     AppendLogMessage(debug,"error");
-                    }     
-                  }
                   }
 
               }
           }
 
-          // richiesta della lista delle move eseguita da una determinata persona
+          // richiesta della lista delle moves eseguita da una determinata persona
+          
           else if (paramPerson > -1) {
 
-              Person p = Persons.get(paramPerson);
-              ListIterator<Path> itPath = p.paths.listIterator();
-              while (itPath.hasNext()) {
-                  Path succ = itPath.next();
-                  ListIterator<StepMove> moves = succ.move.listIterator();
-                  while (moves.hasNext()) {
-                      StepMove s = moves.next();
-                      String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
+              currPers = Persons.get(paramPerson);
+              
+              for(int path=0; path<currPers.paths.size(); path++) {
+                  
+                  Path currPath = currPers.paths.get(path);
+                  
+                  
+                  for(int m = 0; m<currPath.moves.size(); m++) {
+                      
+                      StepMove s = currPath.moves.get(m);
+                      String move = getMoveString(currPers.associatedColor,s.step,currPath.getName(),s.x,s.y);
                       moveslist.add(move);
                   }
               }
 
           }
-          // richiesta della lista delle move eseguite all'interno di un determinato path
+          
+          
+          // richiesta della lista delle moves eseguite all'interno di un determinato path
+          
           else{
-              Path succ = getPathByName(paramPath);
+              
+              Path currPath = getPathByName(paramPath);
+              
               String[] split = paramPath.split("_");
-              Person p = findPersonByColor(split[0]);
-              ListIterator<StepMove> moves = succ.move.listIterator();
-              while (moves.hasNext()) {
-                  StepMove s = moves.next();
-                  String move = getMoveString(p.associatedColor,s.step,succ.getName(),s.x,s.y);
+              
+         
+              for (int m = 0; m<currPath.moves.size(); m++) {
+                  
+                  StepMove s = currPath.moves.get(m);
+                  String move = getMoveString(split[0],s.step,currPath.getName(),s.x,s.y);
                   moveslist.add(move);
               }
 
@@ -1028,35 +1063,35 @@ public abstract class MonitorGenMap {
      * Può essere richiesto o l'elenco totale o l'elenco dei path specifici per una determinata person
      * Le stringhe sono costruite tutte con la struttura personName_pathName.
      * @paramPerson : paramPerson>-1  indica l'indice della persona da cui prelevare tutti i path definite
-     *                   paramPerson==-1 indica la richiesta dei path per tutti le persone nella lista
+     *                paramPerson==-1 indica la richiesta dei path per tutti le persone nella lista
      * @return : array di stringhe equivalente all'elenco
      */
     public String[] getStringPaths(int paramPerson) {
 
         String[] paths = null;
         ArrayList<String> listPaths = new ArrayList<String>();
-
+        Person currPers;
+        
         if (paramPerson == -1) {
 
-            ListIterator<Person> it = Persons.listIterator();
-            while (it.hasNext()) {
+            
+            for(int pers=0 ; pers<Persons.size(); pers ++) {
 
-                Person p = it.next();
-                ListIterator<Path> itPath = p.paths.listIterator();
-                while (itPath.hasNext()) {
-                    Path succ = itPath.next();
-                    listPaths.add(succ.name);
+               currPers  = Persons.get(pers);
+                
+                for(int path=0; path < currPers.paths.size() ; path++){
+                    Path currPath = currPers.paths.get(path);
+                    listPaths.add(currPath.name);
                 }
 
             }
         } else {
 
-            Person p = Persons.get(paramPerson);
+            currPers = Persons.get(paramPerson);
 
-            ListIterator<Path> itPath = p.paths.listIterator();
-            while (itPath.hasNext()) {
-                Path succ = itPath.next();
-                listPaths.add(succ.name);
+            for(int path=0; path<currPers.paths.size(); path++) {
+                Path currPath = currPers.paths.get(path);
+                listPaths.add(currPath.name);
             }
 
         }
@@ -1078,27 +1113,29 @@ public abstract class MonitorGenMap {
 
         Path[] paths = null;
         ArrayList<Path> listPaths = new ArrayList<Path>();
+        Person currPers;
 
         if (paramPerson == -1) {
+            
+            for(int pers = 0 ; pers < Persons.size() ; pers++ ) {
 
-            ListIterator<Person> it = Persons.listIterator();
-            while (it.hasNext()) {
-
-                Person p = it.next();
-                ListIterator<Path> itPath = p.paths.listIterator();
-                while (itPath.hasNext()) {
-                    Path succ = itPath.next();
-                    listPaths.add(succ);
+                currPers = Persons.get(pers);
+                
+                for(int path=0; path< currPers.paths.size(); path++){
+                    
+                    Path currPath = currPers.paths.get(path); 
+                    listPaths.add(currPath);
                 }
 
             }
         } else {
 
-            Person p = Persons.get(paramPerson);
-            ListIterator<Path> itPath = p.paths.listIterator();
-            while (itPath.hasNext()) {
-                Path succ = itPath.next();
-                listPaths.add(succ);
+            currPers = Persons.get(paramPerson);
+            
+            for(int path=0; path< currPers.paths.size(); path++){
+                    
+                Path currPath = currPers.paths.get(path); 
+                listPaths.add(currPath);
             }
 
         }
@@ -1123,11 +1160,11 @@ public abstract class MonitorGenMap {
 
         if (paramPerson >= 0) {
 
-            Person p = Persons.get(paramPerson);
-            ListIterator<Path> itPath = p.paths.listIterator();
-            while (itPath.hasNext()) {
-                Path succ = itPath.next();
-                listPaths.add(succ.name);
+            Person currPers = Persons.get(paramPerson);
+            for(int path=0; path< currPers.paths.size(); path++){
+                    
+                Path currPath = currPers.paths.get(path); 
+                listPaths.add(currPath.name);
             }
             
             paths = new String[listPaths.size()];
@@ -1142,63 +1179,85 @@ public abstract class MonitorGenMap {
 
     /**
      * Metodo per la verifica e la rimozione delle Move non piu valide a seguito
-     * di un resize della mappa.Il metodo scorre la lista linkata e rimuove
-     * tutte le move a partire dalla prima occorrenza non può valida. Se ad un
-     * certo step la move non è valida non lo saranno più tutte quelle
-     * successivamente create
+ di un resize della mappa.Il metodo scorre la lista linkata e rimuove
+ tutte le moves a partire dalla prima occorrenza non può valida. Se ad un
+ certo step la moves non è valida non lo saranno più tutte quelle
+ successivamente create
      */
     public int [] RemoveStepAfterResize() {
 
+        
+        
         int [] pos = new int [2];
-        ListIterator<Person> it = Persons.listIterator();
-        while (it.hasNext()) {
-            Person p = it.next();
-            ListIterator<Path> itPath = p.paths.listIterator();
-            while (itPath.hasNext()) {
-                Path actual = itPath.next();
-                ListIterator<StepMove> its = actual.move.listIterator();
-                StepMove s = its.next();
-                boolean flag = false;
-                while (its.hasNext()) {
-                    if (s.getX() < 0 || s.getX() > NumCellX || s.getY() < 0 || s.getY() > NumCellY
-                         || !PersonPositionIsValid(scene[s.getX()][s.getY()])) {
+        Path currPath;
+        boolean flag;
+        // per ogni agente sulla lista
+        
+        for(int pers=0; pers < Persons.size(); pers++){
+            
+            Person currPers = Persons.get(pers);
+            
+            // per ogni percorso associato all'agente currPers
+            int path = 0;
+            while(path<currPers.paths.size()){
+                
+                currPath = currPers.paths.get(path);
+                int m = 0;
+                flag  = false;
+                
+                while (m<currPath.moves.size()) {
+                    StepMove s = currPath.moves.get(m);
+                    
+                    // se trovo una posizione dell'agente non valida
+                    
+                    if (s.getX() < 0 || s.getX() >= NumCellX || s.getY() < 0 || s.getY() >= NumCellY) {
                       flag = true;
                       break;
                     }
-                    s = its.next();
+                    
+                    if(!PersonPositionIsValid(scene[s.getX()][s.getY()]))
+                    {
+                        flag=true;
+                        break;
+                    }
+                    
+                    m++;
                 }
-               if(flag){
+                
+                
+               // se è stata trovata una posizione non valida 
+               
+                if(flag){
+                    
+                    for(int index = currPath.moves.size()-1;index>=m;index--){
+                   
+                        // rimuovo tutti i passi successivi a quello non valido
 
-                  int end = its.nextIndex();
+                        currPath.moves.remove(index);
+                        
+                    }
+                    break;
+                }
+           
+                path++;
+            }
 
-                  for(int index = actual.move.size()-1;index>=end-1;index--){
-                    actual.move.remove(index);
-                  }
-
-
-                  if(itPath.hasNext()){
-                    ListIterator<Path> its2 = p.paths.listIterator(itPath.nextIndex());
-                    while(its2.hasNext()){
-                      Path succ = its2.next();
-                      succ.move.addFirst(actual.getMoves().getLast());
-                      succ.move.getFirst().setStep(succ.startStep);
-                      ListIterator<StepMove> its3 = succ.move.listIterator(1);
-                      int steps = succ.startStep;
-                      while(its3.hasNext()){
-                        its3.next().setStep(steps++);
-                      }
+            if(path<currPers.paths.size()-1){
+                     
+                   for(int nextPath =currPers.paths.size()-1; nextPath>path ;nextPath--){
+                       currPers.paths.remove(nextPath);
                    }
-                 }
-               }
             }
+                           
 
-
-            if(p.paths.getFirst().move.isEmpty()){
-              RemoveLastPath(p.associatedColor);
-              Remove(p.associatedColor);
+            if(currPers.paths.getFirst().moves.isEmpty()){
+                
+              currPers.paths.clear();
+              Remove(currPers.associatedColor);
             }
+            
             else{
-              StepMove s = p.paths.getLast().getMoves().getLast();
+              StepMove s = currPers.paths.getLast().getMoves().getLast();
               pos[0]=s.x;
               pos[1]=s.y;
             }
@@ -1208,20 +1267,60 @@ public abstract class MonitorGenMap {
     }
 
 
-    /********************************************************************
-     *          UPDATE AND MODIFIDY MAPS
-     *
-     *******************************************************************/
-
-
-
-
 /********************************************************************
  *          UPDATE AND MODIFIDY MAPS
  *
  *******************************************************************/
 
+    
+    
+public enum MapGenMessage{
+    SUCCESS(0,"Operazione eseguita con successo"),
+    ILLEGALPOS(1,"Posizione del robot non valida"),
+    ILLEGALPERSPOS(2,"Posizione per l'agente non valida"),
+    KEYCOLOREMPTY(3,"Nessun agente trovato"),
+    KEYCOLORFULL(4,"Nessun slot di colore libero"),
+    PERSONOVERRIDE(5,"Soprapposizione di due agenti"),
+    ILLEGALMAPPOS(6,"Posizione della mappa non valida"),
+    INTEGERMISMATCH(7,"Necessità di numero intero"),
+    NOPERSONWITHCOLOR(8, "Agente non presente"),
+    STEPROLLBACK(9,"Ultimo step eliminato"),
+    UNAVAIBLEMOVE(10, "Movimento non disponibile"),
+    FIRSTPATH(11,"Impossibile eliminare il primo percorso agente");
 
+    private int code;
+    private String message;
+    MapGenMessage(int code, String message)
+    {
+        this.code = code;
+        this.message = message;
+    }
+    
+    public int getCode(){
+        return code;
+    }
+    
+    public String getMessage(){
+        return message;
+    }
+    
+    
+    public static String getMessage(int code){
+    
+     for(MapGenMessage mgm : MapGenMessage.values())
+     {
+         if(mgm.code==code)
+         {
+            return "Codice (" + code + ") : " + mgm.getMessage();
+         }
+     }    
+    
+    return "Nessun messaggio con codice (" + code + ") \n" ;
+   }
+    
+}
+    
+    
 /**
  * Metodo per l'aggiornamento consistente delle celle. Il metodo ritorna
  * interi corrispondenti ad un particolare conclusione dell'esecuzione.
@@ -1233,70 +1332,75 @@ public abstract class MonitorGenMap {
  *
  * @param x ,y : possibile in riga e colonna della cella da modificare
  * @param state : nuovo stato da inserire
- * @return Success ==0 : aggiornamento consistente IllegalPosition ==1 :
- * posizione del cursore non valida KeyColorEmpty ==2 : le chiavi dei colori
- * non sono state correttamente generate KeyColorFull ==3 : le chiavi per
- * nuove person sono terminate IllegalRobotPosition ==4 : posizione del
- * robot non valida IllegalAgentPosition ==5 : posizione dell'agente umano
- * non valida PersonOverride ==6 : sovrascrittura di un agente umano
  */
 
 public int UpdateCell(int x, int y, String state) {
 
-    final int Success = 0;
-    final int IllegalPosition = 1;
-    final int IllegalRobotPosition = 2;
+   
 
-    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
-
-        // se è stato richiesto un aggiornamento della posizione di agent
-        // controllo se attualmente non si trova nella stessa cella in cui vado a fare la modifica
-        if (state.contains("agent")) {
-
-            // se la nuova posizione agente è diversa dalla precedente
-            if (x != agentposition[0] || y != agentposition[1]) {
-
-                if (RobotPositionIsValid(scene[x][y])) {
-
-                    // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
-                    // e successivamente inserisco il nuovo agente
-                    String [] split = scene[agentposition[0]][agentposition[1]].split("\\+");
-                    String background = split[0];
-                    scene[x][y] += "+" + state;
-                    scene[agentposition[0]][agentposition[1]] = background;
-                    SetRobotParams(state, x, y);
-                }
-                else {
-                    return IllegalRobotPosition;
-                }
-
-            }
-            else { // stessa posizione attuale dell'agent position
-
-                String [] split = scene[x][y].split("\\+");
-                String background = split[0];
-                scene[x][y] = background + "+" + state;
-            }
-        }
-        // si richiedono modifiche alla scena diverse da tipologie di state agent
-        else {
-            // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
-            // allora semplicemente reimposto la posizione di default dell'agente
-            if (x == agentposition[0] && y == agentposition[1]) {
-                scene[x][y] = state;
-                agentposition[0] = defaultagentposition[0];
-                agentposition[1] = defaultagentposition[1];
-                scene[agentposition[0]][agentposition[1]] = defaulagentcondition;
-            } else {
-                scene[x][y] = state;
-            }
-        }
-    } else {  // punto della mappa non disponibile per la modifica
-
-        return IllegalPosition;
+    if(x< 0 || x >= NumCellX || y < 0 || y >= NumCellY)
+    {
+        return MapGenMessage.ILLEGALMAPPOS.code;
     }
-    return Success;
+    
+    // se è stato richiesto un aggiornamento della posizione di agent
+    // controllo se attualmente non si trova nella stessa cella in cui 
+    // vado a fare la modifica
+    
+    if (state.contains("agent")) {
+
+        // se la nuova posizione agente è diversa dalla precedente
+        
+        if (x != agentposition[0] || y != agentposition[1]) {
+
+            if (RobotPositionIsValid(scene[x][y])) {
+
+                // rimuovo l'agente dalla posizione corrente sostuiendolo con un empty
+                // e successivamente inserisco il nuovo agente
+                
+                String [] split = scene[agentposition[0]][agentposition[1]].split("\\+");
+                String background = split[0];
+                scene[x][y] += "+" + state;
+                scene[agentposition[0]][agentposition[1]] = background;
+                SetRobotParams(state, x, y);
+            }
+            else {
+                return MapGenMessage.ILLEGALPOS.code;
+            }
+
+        }
+        else { // stessa posizione attuale dell'agent position
+
+            String [] split = scene[x][y].split("\\+");
+            String background = split[0];
+            scene[x][y] = background + "+" + state;
+        }
+    
+    }
+    
+    // si richiedono modifiche alla scena diverse da tipologie di state agent
+    
+    else {
+        
+        scene[x][y] = state;
+        
+        // nel caso in cui dovessi sovrascrivere la posizione attuale dell'agente
+        // allora semplicemente reimposto la posizione di default dell'agente
+        
+        if (x == agentposition[0] && y == agentposition[1]) {
+        
+            agentposition[0] = defaultagentposition[0];
+            agentposition[1] = defaultagentposition[1];
+            scene[agentposition[0]][agentposition[1]] = defaulagentcondition;
+        
+        } 
+        
+    }
+    
+    return MapGenMessage.SUCCESS.code;
 }
+
+
 
 
     /*
@@ -1304,30 +1408,38 @@ public int UpdateCell(int x, int y, String state) {
      *   cella oppure restituisce -1 in caso la cella sia libera.
      *   @param x : numero di riga della cella
      *   @param y : numero di colonna della cella
-     *   @param
+     *   @param Step : numero di step in cui si controlla la cella
      */
-    public String CheckBusyCellFromPerson(int x, int y, int Step) {
-        ListIterator<Person> it = Persons.listIterator();
-        Person p = null;
-        while (it.hasNext()) {
-            p = it.next();
-            ListIterator<Path> itp = p.paths.listIterator();
-            Path succ = null;
-            while (itp.hasNext()) {
-                succ = itp.next();
-                if (succ.startStep <= Step && succ.lastStep >= Step) {
-                    break;
+    public String CheckBusyCell(int x, int y, int Step) {
+        
+        Person currPers;
+        
+        for(int pers=0; pers<Persons.size();pers++) {
+            
+            currPers = Persons.get(pers);
+            
+            Path currPath;
+            
+            for(int path=0; path<currPers.paths.size();path++) {
+                currPath=currPers.paths.get(path);
+                if (currPath.startStep <= Step && currPath.lastStep >= Step) {
+                    
+                    int offset = Step - currPath.startStep;
+                    if (offset < currPath.moves.size()) {
+                        
+                        StepMove moveSelect = currPath.moves.get(offset);
+                        
+                        if (moveSelect.getX() == x && moveSelect.getY() == y) {
+                            return currPath.name;
+                        }
+                    }
+                    
                 }
 
             }
 
-            int offset = Step - succ.startStep;
-            if (offset < succ.move.size()) {
-                if (succ.move.get(offset).getX() == x && succ.move.get(offset).getY() == y) {
-                    return succ.name;
-                }
-            }
         }
+        
         return "empty";
 
     }
@@ -1336,44 +1448,43 @@ public int UpdateCell(int x, int y, String state) {
 
     /**
      * Crea un nuovo path e lo aggiunge alla lista dei path della persona
-     * indicata. L'aggiunta del path comporta sempre l'inserimento di una move
-     * che determina lo stato iniziale per il nuovo path da eseguire. Un path
+     * indicata. L'aggiunta del path comporta sempre l'inserimento di una move 
+     * he determina lo stato iniziale per il nuovo path da eseguire. Un path
      * viene etichettato attraverso una label che risulta composta nel seguente
      * modo : (color_numPathPerson)
      *
-     * @param color : colore associato alla person a cui si vuole aggiungere il
-     * path
+     * @param color : colore associato alla person a cui si vuole aggiungere il path
      * @param xstartStep : riga della cella iniziale del path
      * @param ystartStep : colonna della cella iniziale del path
      * @param waitStep : tempo di attesa dalla fine del path precedente
-     */
+     **/
+    
+    
     public int AddNewPathToPerson(String color, int waitStep) {
 
-        final int Success = 0;
-        final int IllegalStartCell = 1;
-        final int IllegalPerson = 2;
-        final int PersonOverride = 3;
         Person p = findPersonByColor(color);
         if (p == null) {
-            return IllegalPerson;
-
+            return MapGenMessage.NOPERSONWITHCOLOR.code;
         }
+        
         int start = p.paths.getLast().lastStep + waitStep + 1;
-        int xStartStep = p.paths.getLast().move.getLast().x;
-        int yStartStep = p.paths.getLast().move.getLast().y;
-        String result = CheckBusyCellFromPerson(xStartStep, yStartStep, start);
+        int xStartStep = p.paths.getLast().moves.getLast().x;
+        int yStartStep = p.paths.getLast().moves.getLast().y;
+        String result = CheckBusyCell(xStartStep, yStartStep, start);
 
         if (result.equals("empty")) {
+            
             if (PersonPositionIsValid(scene[xStartStep][yStartStep])) {
                 p.AddPath(waitStep);
                 p.paths.getLast().AddMove(xStartStep, yStartStep);
-                return Success;
-            } else {
-                return IllegalStartCell;
+                return MapGenMessage.SUCCESS.code;
+            } 
+            else {
+                return MapGenMessage.ILLEGALPERSPOS.code;
             }
-        } else {
-
-            return PersonOverride;
+        } 
+        else {
+            return MapGenMessage.PERSONOVERRIDE.code;
         }
 
     }
@@ -1381,74 +1492,69 @@ public int UpdateCell(int x, int y, String state) {
 
 
     /**
- * Questo metodo genera l'aggiornamento delle celle della mappa del
- * generatore in modalità move, determinando quali movimenti sono possibili
- * per un agente e in tal caso aggiorna la lista dei movimenti
- *
- * @param x : numero di riga
- * @param y : numero di colonna
- * @param p : persona a cui aggiungere la move
- */
-public int UpdateMoveCell(int x, int y, String path) {
+    * Questo metodo genera l'aggiornamento delle celle della mappa del
+    * generatore in modalità moves, determinando quali movimenti sono possibili
+    * per un agente e in tal caso aggiorna la lista dei movimenti
+    *
+    * @param x : numero di riga
+    * @param y : numero di colonna
+    * @param p : persona a cui aggiungere la moves
+    */
+    
+    public int UpdateMoveCell(int x, int y, String path) {
 
-    final int Success = 0;
-    final int IllegalPosition = 1;
-    final int UnavaibleCellScenario = 2;
-    final int PersonOverride = 3;
-    final int LastMoveRemove = 4;
+        String[] pathSplit = path.split("_");
+        String color = pathSplit[0];
 
-    String[] pathSplit = path.split("_");
-    String color = pathSplit[0];
+        Path p = getPathByName(path);
 
-    Path p = getPathByName(path);
-
-    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
+        if (!(x >= 0 && x < NumCellX && y >= 0 && y < NumCellY)) {
+            return MapGenMessage.ILLEGALMAPPOS.code;
+        }
 
         StepMove s = p.getMoves().getLast();
         int step = p.getMoves().getLast().getStep() + 1;
-        String result = CheckBusyCellFromPerson(x, y, step);
+        String result = CheckBusyCell(x, y, step);
+
         if (!(result.equals("empty"))) {
-            return PersonOverride;
+            return MapGenMessage.PERSONOVERRIDE.code;
         }
+
         // distanza di manhattam e check sulla attraversabilità della cella
+
         if (ManhattamDistance(s.getX(), s.getY(), x, y) == 1 &&
                 PersonPositionIsValid(scene[x][y])) {
             p.AddMove(x, y);
-            return Success;
-        } else if (ManhattamDistance(s.getX(), s.getY(), x, y) == 0) {
+            return MapGenMessage.SUCCESS.code;
+        } 
+        else if (ManhattamDistance(s.getX(), s.getY(), x, y) == 0) {
             p.RemoveLast();
-            return LastMoveRemove;
-        } else {
-            return UnavaibleCellScenario;
+            return MapGenMessage.STEPROLLBACK.code;
+        } 
+        else {
+            return MapGenMessage.UNAVAIBLEMOVE.code;
         }
-
-    } else {
-
-        return IllegalPosition;
 
     }
 
-}
-
-
-
     /**
      * Rimuove una persona in base al colore ad esso assegnata
-     *
      * @param color : colore rappresentante la persona da rimuovere
      * @return boolean : verifica se la rimozione è avvenuta correttamente
      */
+    
     public boolean Remove(String color) {
+        
+        int i = 0;
+        while(i<Persons.size()) {
 
-        ListIterator<Person> it = Persons.listIterator();
-        while (it.hasNext()) {
-
-            Person p = it.next();
-            if (p.getColor().equals(color)) {
+            Person p = Persons.get(i);
+            if (p.associatedColor.equals(color)) {
                 Persons.remove(p);
                 NumPerson--;
                 return true;
             }
+            i++;
         }
 
         return false;
@@ -1457,79 +1563,83 @@ public int UpdateMoveCell(int x, int y, String path) {
 
 
     /**
- * Aggiunge una nuova persona allo scenario dichiarandone il colore
- * associato e la posizione di partenza
- *
- * @param x : riga della cella iniziale
- * @param y : colonna della cella iniziale
- * @param color : colore da associare
- */
-public int AddNewPerson(int x, int y, String color, int waitTime) {
-
-    final int Success = 0;
-    final int IllegalPosition = 1;
-    final int keyColorEmpty = 2;
-    final int keyColorFull = 3;
-    final int IllegalAgentPosition = 5;
-    final int PersonOverride = 6;
-    String result = "";
-
-    if (x >= 0 && x < NumCellX && y >= 0 && y < NumCellY) {
-
-        // keycolor non ancora inizializzato
-        if (setKeyColor.length == 0) {
-            return keyColorEmpty;
-        }
-
-        // sovrascrittura dell'agente
-        if (x == agentposition[0] && y == agentposition[1]) {
-
-            return IllegalAgentPosition;
-        }
-
-        result = CheckBusyCellFromPerson(x, y, 0);
-        if (!result.equals("empty")) {
-
-            return PersonOverride;
-        }
-
-        if (findIndexPosByColor(color) != -1) {
-
-            Person p = findPersonByColor(color);
-            Path first = p.paths.get(0);
-            first.move.getFirst().setX(x);
-            first.move.getFirst().setY(y);
-            return PersonOverride;
-
-        }
-
-        // ho ancora disponibilita di colori per indicare le person
-        if (NumPerson < MaxNumPerson) {
-            NumPerson++;
-            Persons.add(new Person(color));
-            Persons.getLast().AddPath(waitTime);
-
-            if (PersonPositionIsValid(move[x][y])) {
-                Persons.getLast().paths.getLast().AddMove(x, y);
-                String background = move[x][y];
-                move[x][y] = background + "+" + color + "+" + personName;
-            } else {
-
-                return IllegalAgentPosition;
-            }
-        } // ho terminato il numero di aggiunte che posso fare
-        else {
-            return keyColorFull;
-        }
-
-        return Success;
-    } else {
-
-        return IllegalPosition;
-    }
-}
+   * Aggiunge una nuova persona allo scenario dichiarandone il colore
+   * associato e la posizione di partenza
+   *
+   * @param x : riga della cella iniziale
+   * @param y : colonna della cella iniziale
+   * @param color : colore da associare
+   */
+  
+    public int AddNewPerson(int x, int y, String color, int waitTime) {
 
 
+      // posizione illegale sulla mappa
+
+      if (!(x >= 0 && x < NumCellX && y >= 0 && y < NumCellY)){
+
+           return MapGenMessage.ILLEGALMAPPOS.code;
+      }
+
+      // keycolor non ancora inizializzato
+      if (setKeyColor.length == 0) {
+          return MapGenMessage.KEYCOLOREMPTY.code;
+      }
+
+      // sovrascrittura del robot
+      if (x == agentposition[0] && y == agentposition[1]) {
+
+          return MapGenMessage.ILLEGALPERSPOS.code;
+      }
+
+      // sovrascrittura di un agente
+
+      String result = CheckBusyCell(x, y, 0);
+      if (!result.equals("empty")) {
+
+          return MapGenMessage.PERSONOVERRIDE.code;
+      }
+
+
+
+      if (findIndexPosByColor(color) != -1) {
+
+          Person p = findPersonByColor(color);
+          Path first = p.paths.getFirst();
+          first.moves.getFirst().setX(x);
+          first.moves.getFirst().setY(y);
+          return MapGenMessage.PERSONOVERRIDE.code;
+
+      }
+
+      // ho ancora dei colori liberi
+
+      if (NumPerson < MaxNumPerson) {
+          NumPerson++;
+          Persons.add(new Person(color));
+          Persons.getLast().AddPath(waitTime);
+
+          if (PersonPositionIsValid(move[x][y])) {
+
+              Persons.getLast().paths.getLast().AddMove(x, y);
+              String background = move[x][y];
+              move[x][y] = background + "+" + color + "+" + personName;
+
+          } 
+          else {
+              return MapGenMessage.ILLEGALPOS.code;
+          }
+      } 
+      else {
+          
+          // nessun colore disponibile per l'aggiunta
+          return MapGenMessage.KEYCOLORFULL.code;
+      }
+
+          return MapGenMessage.SUCCESS.code;
+
+      } 
+   
 
 
     /**
@@ -1540,22 +1650,21 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
      */
     public int RemoveLastPath(String color) {
 
-        final int Success = 0;
-        final int PersonNotFound = 1;
-        final int FirstPathRemove = 2;
 
         Person p = findPersonByColor(color);
-        if (p != null) {
-
-            if (p.paths.size() > 1) {
-                p.RemoveLastPath();
-                return Success;
-            } else {
-                return FirstPathRemove;
-            }
-        } else {
-            return PersonNotFound;
+        if (p == null) {
+            return MapGenMessage.NOPERSONWITHCOLOR.code;
         }
+
+        
+        if (p.paths.size() > 1) {
+             p.RemoveLastPath();
+             return MapGenMessage.SUCCESS.code;
+        } 
+        else {
+              return MapGenMessage.FIRSTPATH.code;
+        }
+        
 
     }
 
@@ -1620,8 +1729,8 @@ public int AddNewPerson(int x, int y, String color, int waitTime) {
     }
 
     /**
-     * Scrive su file di testo la history sviluppata mediante il tool move
-     * all'interno del generatore
+     * Scrive su file di testo la history sviluppata mediante il tool moves
+ all'interno del generatore
      *
      * @param directory
      * @return
@@ -1781,7 +1890,7 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
 
 
     /*
-     * Genera un file JSON corrispondente alla lista linkata salvata per le move fino ad ora definite
+     * Genera un file JSON corrispondente alla lista linkata salvata per le moves fino ad ora definite
      * per la history. Il JSON viene utilizzato per semplificare il caricamente della history e dello
      * scenario.
      *@param name : nome del file su cui scrivere il JSON
@@ -1795,24 +1904,24 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
 
             for (int i = 0; i < Persons.size(); i++) {
 
-                Person p = Persons.get(i);
+                Person currPers = Persons.get(i);
                 JSONObject person = new JSONObject();
-                person.put("color", p.associatedColor);
+                person.put("color", currPers.associatedColor);
                 JSONArray paths = new JSONArray();
 
-                for (int j = 0; j < p.paths.size(); j++) {
+                for (int j = 0; j < currPers.paths.size(); j++) {
 
-                    Path pts = p.paths.get(j);
+                    Path pts = currPers.paths.get(j);
                     JSONObject path = new JSONObject();
                     path.put("name", pts.name);
                     path.put("startStep", pts.startStep);
                     path.put("lastStep", pts.lastStep);
                     JSONArray moves = new JSONArray();
 
-                    for (int k = 0; k < pts.move.size(); k++) {
+                    for (int k = 0; k < pts.moves.size(); k++) {
 
                         JSONObject move = new JSONObject();
-                        StepMove s = pts.move.get(k);
+                        StepMove s = pts.moves.get(k);
                         move.put("x", s.x);
                         move.put("y", s.y);
                         move.put("step", s.step);
@@ -1882,7 +1991,7 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
                         int x = move.getInt("x");
                         int y = move.getInt("y");
                         int step = move.getInt("step");
-                        p.paths.getLast().move.add(new StepMove(x, y, step));
+                        p.paths.getLast().moves.add(new StepMove(x, y, step));
                     }
                 }
                 Persons.add(p);
@@ -1969,12 +2078,18 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
             return null;
         }
     }
+    
+    
 
-    // PARTE ASTRATTA
+    /******************************************
+     * PARTE ASTRATTA
+    *******************************************/
+    
+    
     /*
      Metodo per l'inizializzazione della mappa. Dichiarato astratto poichè ogni progetto
      determina caratteristiche custom da dare all'envirorment
-     */
+    */
     public abstract void initScene(String[][] scene);
 
 
@@ -2009,8 +2124,8 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
      * Setta le impostazioni del robot nel modello
      */
     public abstract void SetRobotParams(String state, int x, int y);
-
     
+  
     public abstract void LoadJsonRobotParams(File json);
     
     public abstract boolean SaveJsonRobotParams(File json);

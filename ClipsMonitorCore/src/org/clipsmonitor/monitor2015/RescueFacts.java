@@ -5,6 +5,8 @@
  */
 package org.clipsmonitor.monitor2015;
 
+import org.clipsmonitor.core.MonitorFacts;
+
 /**
  *
  * @author Ruben Caliandro , Marco Corona
@@ -14,14 +16,11 @@ package org.clipsmonitor.monitor2015;
  * attraverso l'enumerazione dei quest'ultimi
  *
  */
-public final class RescueFacts{
+public final class RescueFacts extends MonitorFacts{
 
-    private interface RescueFact{
-        public int index();
-        public String slot();
-    }
 
-    public enum RealCell implements RescueFact{
+
+    public enum RealCell implements Fact{
         POSR (0, "pos-r"),
         POSC (1, "pos-c"),
         CONTAINS (2, "contains"),
@@ -47,9 +46,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -92,7 +91,7 @@ public final class RescueFacts{
 
 
 
-    public enum Cell implements RescueFact{
+    public enum Cell implements Fact{
         POSR (0, "pos-r"),
         POSC (1, "pos-c"),
         CONTAINS(2, "contains"),
@@ -122,9 +121,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -136,7 +135,7 @@ public final class RescueFacts{
     }
 
 
-    public enum KAgent implements RescueFact {
+    public enum KAgent implements Fact {
         STEP(0, "step"),
         TIME(1, "time"),
         POSR(2, "pos-r"),
@@ -164,9 +163,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -177,7 +176,7 @@ public final class RescueFacts{
         }
     }
 
-    public enum PAgent implements RescueFact {
+    public enum PAgent implements Fact {
         POSR(0, "pos-r"),
         POSC(1, "pos-c"),
         DIRECTION(2, "direction"),
@@ -203,9 +202,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -216,7 +215,7 @@ public final class RescueFacts{
         }
     }
 
-    public enum PNode implements RescueFact {
+    public enum PNode implements Fact {
         IDENT(0, "ident"),
         NODETYPE(1, "nodetype");
 
@@ -240,9 +239,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -253,7 +252,7 @@ public final class RescueFacts{
         }
     }
         
-        public enum Goal implements RescueFact {
+        public enum Goal implements Fact {
           IDENT(0, "ident"),
           PRIORITY(1, "priority"),
           ACTION(2,"action"),
@@ -283,9 +282,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -298,7 +297,7 @@ public final class RescueFacts{
 
 
 
-    public enum AgentStatus implements RescueFact{
+    public enum AgentStatus implements Fact{
         STEP(0, "step"),
         TIME(1, "time"),
         POSR (2, "pos-r"),
@@ -326,9 +325,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -343,7 +342,7 @@ public final class RescueFacts{
 
 
 
-    public enum Status implements RescueFact{
+    public enum Status implements Fact{
         STEP (0, "step"),
         TIME (1, "time"),
         RESULT (2, "result");
@@ -368,9 +367,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -385,7 +384,7 @@ public final class RescueFacts{
 
 
 
-    public enum PersonStatus implements RescueFact{
+    public enum PersonStatus implements Fact{
         POSR (0, "pos-r"),
         POSC (1, "pos-c"),
         IDENT(2, "ident"),
@@ -413,9 +412,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -444,7 +443,7 @@ public final class RescueFacts{
     }
 
 
-    public enum PersonMove implements RescueFact{
+    public enum PersonMove implements Fact{
 
         STEP(0,"step"),
         IDENT(1,"ident"),
@@ -470,9 +469,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -500,7 +499,7 @@ public final class RescueFacts{
     }
 
 
-    public enum KCell implements RescueFact{
+    public enum KCell implements Fact{
         POSR (0, "pos-r"),
         POSC (1, "pos-c"),
         CONTAINS(2, "contains"),
@@ -531,9 +530,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -545,7 +544,7 @@ public final class RescueFacts{
     }
 
 
-    public enum KPerson implements RescueFact{
+    public enum KPerson implements Fact{
 
         STEP(0, "step"),
         TIME(1, "time"),
@@ -572,9 +571,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;
@@ -587,7 +586,7 @@ public final class RescueFacts{
 
         }
 
-        public enum SpecialCondition implements RescueFact{
+        public enum SpecialCondition implements Fact{
 
         BUMPED(0, "bumped");
 
@@ -612,9 +611,9 @@ public final class RescueFacts{
         }
 
         public static String[] slotsArray() {
-            RescueFact[] fact = values();
+            Fact[] fact = values();
             String[] slots = new String[fact.length];
-            for (RescueFact slot : fact) {
+            for (Fact slot : fact) {
                 slots[slot.index()] = slot.slot();
             }
             return slots;

@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.filechooser.FileFilter;
+import org.clipsmonitor.core.MonitorGenMap;
 import org.clipsmonitor.core.MonitorImages;
 import org.clipsmonitor.core.ProjectDirectory;
 import org.clipsmonitor.monitor2015.RescueGenMap;
@@ -652,6 +653,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 MakePersonList();
                 MakeStepList(-1);
                 MakeMoveList(-1,-1,"all");
+                MakePathList(-1);
                 setListEnable();
               }
             }
@@ -675,6 +677,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 File file = fc.getSelectedFile();
                 model.LoadFiles(file);
                 if(!MoveButton.isEnabled()){
+                    
                     InitColorComboBox();
                     if(getActiveColorMap()){
                         InsertionOptionComboBox.enable(true);
@@ -694,10 +697,12 @@ public final class MapGeneratorTopComponent extends TopComponent {
                     }
 
                 }
+                
                 PreviewMap.repaint();
                 MakePersonList();
                 MakeStepList(-1);
                 MakeMoveList(-1,-1,"all");
+                MakePathList(-1);
                 setListEnable();
 
             } catch (ParseException ex) {
@@ -738,6 +743,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
                 PreviewMap.repaint();
                 MakePersonList();
                 MakeStepList(-1);
+                MakePathList(-1);
                 MakeMoveList(-1,-1,"all");
                 setListEnable();
 
@@ -785,6 +791,7 @@ public final class MapGeneratorTopComponent extends TopComponent {
             setListEnable();
             MakePersonList();
             MakeStepList(-1);
+            MakePathList(-1);
             String[][] move = model.getMoveCellMap(actualPath,-1);
             model.ApplyUpdateOnMoveMap(move);
             model.CopyToActive(model.getMove());
@@ -1169,13 +1176,19 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void setButtons(boolean val){
     
+        // condizioni valide in modalità map
+        
         MapButton.setSelected(val);
-        MoveButton.setSelected(!val);
-        MapButton.setEnabled(!val);
         MoveButton.setEnabled(val);
+        RefreshButton.setEnabled(val);
         XButton.setEditable(val);
         YButton.setEditable(val);
         MaxDur.setEditable(val);
+        
+        // condizioni valide in modalità move
+        
+        MapButton.setEnabled(!val);
+        MoveButton.setSelected(!val);
         AddPathButton.setEnabled(!val);
         AddPersonButton.setEnabled(!val);
         DeletePersonButton.setEnabled(!val);
@@ -1183,7 +1196,6 @@ public final class MapGeneratorTopComponent extends TopComponent {
         StepList.setEnabled(!val);
         PersonPathList.setEnabled(!val);
         PersonsList.setEnabled(!val);
-    
     }
 
     
@@ -1199,6 +1211,8 @@ public final class MapGeneratorTopComponent extends TopComponent {
         StepList.setEnabled(stepTest);
       
     }
+    
+    
     private void ExecRemove(){
 
         boolean result = model.Remove(state);
@@ -1226,101 +1240,65 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void ExecAddPerson(){
 
-        final int Success = 0;
-        final int IllegalPosition = 1 ;
-        final int keyColorEmpty = 2;
-        final int keyColorFull = 3;
-        final int IllegalRobotPosition = 4;
-        final int IllegalAgentPosition = 5;
-        final int PersonOverride = 6;
-
         int wait = Integer.parseInt(WaitTime.getText());
 
         int result = model.AddNewPerson(actualPosClicked[0],actualPosClicked[1], state,wait);
-            switch(result){
-                case Success :
-                    model.log("Modifica della mappa eseguita con successo");
-                    actualPath = model.getLastPathOfPerson(state);
-                    String [][]move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
-                    model.ApplyUpdateOnMoveMap(move);
-                    model.CopyToActive(model.getMove());
-                    PreviewMap.repaint();
-                    MakePersonList();
-                    MakeStepList(-1);
-                    MakeMoveList(-1,-1,"all");
-                    MakePathList(-1);
-                    setListEnable();
-                break;
-
-                case IllegalPosition :
-                    model.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
-                break;
-                case keyColorEmpty :
-                    model.error("Color set vuoto");
-                break;
-                case keyColorFull :
-                    model.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
-                break;
-                case IllegalRobotPosition :
-                    model.error("Posizione del robot non valida");
-                break;
-                case IllegalAgentPosition:
-                    model.error("Posizione dell'agente non valida");
-                break;
-
-                case PersonOverride :
-                     model.error("La cella è già occupata da un altro agente");
-                break;
-                default :
-
-                break;
-
-            }
-            updateLogArea();
+        
+        
+        if(result == MonitorGenMap.MapGenMessage.SUCCESS.getCode()){
+            
+            model.log(MonitorGenMap.MapGenMessage.SUCCESS.getMessage());
+            actualPath = model.getLastPathOfPerson(state);
+            String [][]move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
+            model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,"all");
+            MakePathList(-1);
+            setListEnable();
+        }
+        else{
+            model.error(MonitorGenMap.MapGenMessage.getMessage(result));
+        }
+        
+        updateLogArea();
     }
 
 
     private void ExecAddPath(){
 
-        final int Success = 0;
-        final int IllegalStartCell = 1;
-        final int IllegalPerson = 2;
-        final int PersonOverride = 3;
-
         try{
             int wait = Integer.parseInt(WaitTime.getText());
+            
             if(wait<0){
-                throw new NumberFormatException();
+               throw new NumberFormatException();
             }
+            
 
             int result = model.AddNewPathToPerson(state,wait);
-            switch(result){
-
-                case Success :
-                    model.log("Path aggiunto correttamente");
-                    actualPath = model.getLastPathOfPerson(state);
-                    String[][] move = model.getMoveCellMap(actualPath,-1);
-                    model.ApplyUpdateOnMoveMap(move);
-                    model.CopyToActive(model.getMove());
-                    PreviewMap.repaint();
-                    MakePersonList();
-                    MakeStepList(-1);
-                    MakeMoveList(-1,-1,"all");
-                    MakePathList(-1);
-                    setListEnable();
-                break;
-                case IllegalStartCell :
-                    model.error("Illegal start cell");
-                break;
-                case IllegalPerson :
-                    model.error("Illegal Person");
-                break;
-                case PersonOverride :
-                    model.error("Person ovveride");
-
-                break;
-
+            
+            if(result==MonitorGenMap.MapGenMessage.SUCCESS.getCode()){
+                
+                model.log(MonitorGenMap.MapGenMessage.SUCCESS.getMessage());
+                actualPath = model.getLastPathOfPerson(state);
+                String[][] move = model.getMoveCellMap(actualPath,-1);
+                model.ApplyUpdateOnMoveMap(move);
+                model.CopyToActive(model.getMove());
+                PreviewMap.repaint();
+                MakePersonList();
+                MakeStepList(-1);
+                MakeMoveList(-1,-1,"all");
+                MakePathList(-1);
+                setListEnable();
             }
+            else
+            {
+                model.error(MonitorGenMap.MapGenMessage.getMessage(result));
+            }
+            
         }
         catch(NumberFormatException er){
            model.error("Valore di Waitstep non valido: Input deve essere necessariamente un intero positivo");
@@ -1330,38 +1308,29 @@ public final class MapGeneratorTopComponent extends TopComponent {
     }
 
 
+    
     public void ExecRemovePath(){
 
-        final int Success = 0;
-        final int PersonNotFound = 1;
-        final int FirstPathRemove = 2;
-
+        
         int result = model.RemoveLastPath(state);
-        switch(result){
+             
+        if(result==MonitorGenMap.MapGenMessage.SUCCESS.getCode()){
 
-            case Success :
-                model.log("Rimozione eseguita correttamente");
-                actualPath = model.getLastPathOfPerson(state);
-                String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
-                model.ApplyUpdateOnMoveMap(move);
-                model.CopyToActive(model.getMove());
-                PreviewMap.repaint();
-                MakePersonList();
-                MakeStepList(-1);
-                MakeMoveList(-1,-1,"all");
-                MakePathList(-1);
-                setListEnable();
-            break;
+            model.log(MonitorGenMap.MapGenMessage.SUCCESS.getMessage());
+            actualPath = model.getLastPathOfPerson(state);
+            String[][] move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
+            model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,"all");
+            MakePathList(-1);
+            setListEnable();
 
-            case PersonNotFound :
-                model.error("Persona attualmente non attiva");
-            break;
-
-            case FirstPathRemove :
-                model.error("Impossibile rimuovere il primo path");
-            break;
-
-
+        }
+        else{
+            model.error(MonitorGenMap.MapGenMessage.getMessage(result));
         }
 
         updateLogArea();
@@ -1375,56 +1344,30 @@ public final class MapGeneratorTopComponent extends TopComponent {
     */
 
     private void ExecUpdateMove(){
-        final int Success = 0;
-        final int IllegalPosition = 1 ;
-        final int UnavaiblePosition = 2 ;
-        final int PersonOverride = 3;
-        final int LastMoveRemove = 4;
+        
         actualPath = model.getLastPathOfPerson(state);
         String[][] move;
         int result = model.UpdateMoveCell(actualPosClicked[0],actualPosClicked[1],actualPath);
-        switch(result){
-                case Success :
-                    model.log("Movimento agente aggiunto con successo");
-                    move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
-                    model.ApplyUpdateOnMoveMap(move);
-                    model.CopyToActive(model.getMove());
-                    PreviewMap.repaint();
-                    MakePersonList();
-                    MakeStepList(-1);
-                    MakeMoveList(-1,-1,actualPath);
-                    MakePathList(-1);
-                    setListEnable();
-                break;
+        
+        if(result== MonitorGenMap.MapGenMessage.SUCCESS.getCode() 
+            || result== MonitorGenMap.MapGenMessage.STEPROLLBACK.getCode()){
 
-                case IllegalPosition :
-                    model.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
-                break;
-                case UnavaiblePosition :
-
-                    model.error("Movimento non disponibile ");
-                break;
-                case PersonOverride :
-                    model.error("La cella è occupata da un altro agente");
-                break;
-                case LastMoveRemove :
-                    model.log("Movimento agente rimosso con successo");
-
-                    move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
-                    model.ApplyUpdateOnMoveMap(move);
-                    model.CopyToActive(model.getMove());
-                    PreviewMap.repaint();
-                    MakePersonList();
-                    MakeStepList(-1);
-                    MakeMoveList(-1,-1,actualPath);
-                    MakePathList(-1);
-                    setListEnable();
-                break;
-                default :
-
-                break;
+            model.log(MonitorGenMap.MapGenMessage.SUCCESS.getMessage());
+                    
+            move = model.getMoveCellMap("none",model.getLastStepofPerson(state));
+            model.ApplyUpdateOnMoveMap(move);
+            model.CopyToActive(model.getMove());
+            PreviewMap.repaint();
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,actualPath);
+            MakePathList(-1);
+            setListEnable();
         }
-
+        else{
+            model.error(MonitorGenMap.MapGenMessage.getMessage(result));
+        }
+      
         updateLogArea();
     }
 
@@ -1436,49 +1379,21 @@ public final class MapGeneratorTopComponent extends TopComponent {
 
     private void ExecUpdateMap(){
 
-        final int Success = 0;
-        final int IllegalPosition = 1 ;
-        final int keyColorEmpty = 2;
-        final int keyColorFull = 3;
-        final int IllegalRobotPosition = 4;
-        final int IllegalAgentPosition = 5;
-        final int PersonOverride = 6;
 
         int result = model.UpdateCell(actualPosClicked[0],actualPosClicked[1], state);
-        switch(result){
-            case Success :
-                 model.log("Modifica della mappa eseguita con successo");
-                 model.CopyToActive(model.getScene());
-                 PreviewMap.repaint();
-                 MakePersonList();
-                 MakeStepList(-1);
-                 MakeMoveList(-1,-1,"all");
-                 MakePathList(-1);
-                 setListEnable();
-            break;
+        if(result==MonitorGenMap.MapGenMessage.SUCCESS.getCode()){
 
-            case IllegalPosition :
-                model.error("Posizione del cursore illegale: Nessuna cella disponibile \n");
-            break;
-            case keyColorEmpty :
-                model.error("Color set vuoto");
-            break;
-            case keyColorFull :
-                model.error("Color set completo: Impossibile aggiungere ulteriore persona alla scena");
-            break;
-            case IllegalRobotPosition :
-                model.error("Posizione del robot non valida");
-            break;
-            case IllegalAgentPosition:
-                model.error("Posizione dell'agente non valida");
-            break;
-
-            case PersonOverride :
-                 model.error("La cella è già occupata da un altro agente");
-            break;
-            default :
-
-            break;
+            model.log(MonitorGenMap.MapGenMessage.SUCCESS.getMessage());
+            model.CopyToActive(model.getScene());
+            PreviewMap.repaint();
+            MakePersonList();
+            MakeStepList(-1);
+            MakeMoveList(-1,-1,"all");
+            MakePathList(-1);
+            setListEnable();
+        }
+        else{
+            model.error(MonitorGenMap.MapGenMessage.getMessage(result));
         }
         updateLogArea();
     }
