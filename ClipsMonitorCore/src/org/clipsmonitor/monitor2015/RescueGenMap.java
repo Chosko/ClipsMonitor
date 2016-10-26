@@ -61,8 +61,7 @@ public class RescueGenMap extends MonitorGenMap {
         this.NumCellY = 0;
         this.MapWidth = 0;
         this.MapHeight = 0;
-        this.CellHeight = 0;
-        this.CellWidth = 0;
+        this.CellDimension = 25;
         this.direction = "north";
         this.loaded = "unloaded";
         this.maxduration = 300;

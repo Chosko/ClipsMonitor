@@ -42,17 +42,16 @@ public abstract class MonitorGenMap {
     protected MonitorImages img;
 
     protected int NumCellX, NumCellY;       //numero di celle sulle x e sulle y
-    protected float CellWidth, CellHeight;  //largezza e altezza celle
+    protected float CellDimension;          // dimensione in pixel della cella
     protected float MapWidth, MapHeight;    //largezza e altezza finestra
-
+    protected float PreferredWidth, PreferredHeight ;  // larghezza in pixel della mappa
+    
     protected String[][] scene;             //matrice fondamentale rappresentante la scena
     protected String[][] move;              // matrice fondamentale rappresentante i movimenti delle persone
     protected String[][] mapActive;         //matrice per la visualizzazione sull'interfaccia
     protected String mode;                  // modalità di esecuzione del generatore
-
     protected int maxduration;              // massima durata temporale di attività del robot nell scena
     protected ClipsConsole console;         // istanza della console clips
-
     protected String[] setKeyMap;           // array dei possibili valori di scene corrispondenti alle
                                             // chiavi di accesso per l'hash map delle immagini
     
@@ -92,7 +91,7 @@ public abstract class MonitorGenMap {
 
         //genero la scena della dimensione specificata
 
-        SetSizeCells();
+        SetPreferredSizeMap();
         setAgentDefaultPosition();
         initScene(scene);
         move = clone(scene);
@@ -101,26 +100,17 @@ public abstract class MonitorGenMap {
 
 
     /**
-     * Metodo per il ridimensionamento delle celle a seguito della modifica
-     * della dimensione della griglia.
+     * Metodo per determinare la dimensione in pixel della mappa dato 
+     * il numero di celle 
      *
-     * @param NumCellX
-     * @param NumCellY
      */
-    public void SetSizeCells() {
+    
+    
+    public void SetPreferredSizeMap() {
         
-        //creo una scena con la nuova dimensione
-        //salvo il numero di celle sulle x e sulle y
-        //calcolo la larghezza delle celle
-        CellWidth = (MapWidth - 20) / NumCellX;
-        CellHeight = (MapHeight - 20) / NumCellY;
-
-        if (CellWidth > CellHeight) {
-            CellWidth = CellHeight;
-        } else {
-            CellHeight = CellWidth;
-        }
-
+        PreferredWidth = (NumCellX + 2) * CellDimension;
+        PreferredHeight = (NumCellY + 2) * CellDimension;
+        
     }
 
     public void setAgentDefaultPosition(){
@@ -143,6 +133,8 @@ public abstract class MonitorGenMap {
      * @param MapWidth : larghezza in pixel del pannello della mappa
      * @param MapHeight : altezza in pixel del pannello della mappa
      */
+    
+    
     public void drawScene(Graphics2D g, float mapWidth, float mapHeight) {
 
         BufferedImage[][] icons = makeIconMatrix();
@@ -152,52 +144,46 @@ public abstract class MonitorGenMap {
         MapWidth = mapWidth;
         MapHeight = mapHeight;
 
-        //calcolo la larghezza delle celle
-        CellWidth = (MapWidth - 20) / NumCellX;
-        CellHeight = (MapHeight - 20) / NumCellY;
 
-        //verifico chi delle due dimensioni é minore e setto quella maggiore uguale a quella minore
-        // per rendere le celle quadrate
-        if (CellWidth > CellHeight) {
-            CellWidth = CellHeight;
-        } else {
-            CellHeight = CellWidth;
-        }
 
         //calcolo le coordinate di inizio della scena partendo a disegnare
-        //dall'angolo in alto a sinistra della nostra scena
-        float x0 = (MapWidth - CellWidth * NumCellX) / 2;
-        float y0 = (MapHeight - CellHeight * NumCellY) / 2;
+        //dall'angolo in alto a sinistra
+        
+        float x0 = (MapWidth - CellDimension * NumCellX) / 2;
+        float y0 = (MapHeight - CellDimension * NumCellY) / 2;
 
         //setto colore delle scritte
+        
         g.setColor(Color.BLACK);
 
+        
         //doppio ciclo sulla matrice
         for (int i = 0; i < NumCellX; i++) {
             for (int j = 0; j < NumCellY; j++) {
                 //calcolo la posizione x,y dell'angolo in alto a sinistra della
                 //cella corrente
-                int x = (int) (x0 + i * CellWidth);
-                int y = (int) (y0 + j * CellHeight);
+                int x = (int) (x0 + i * CellDimension );
+                int y = (int) (y0 + j * CellDimension);
                 //se la cella non è vuota, allora disegno l'immagine corrispondente
                 if (!scene[i][j].equals("")) {
                     //disegno l'immagine corretta usando la stringa che definisce la chiave per l'hashmap
-                    g.drawImage(icons[i][j], x, y, (int) (CellWidth - 1), (int) (CellHeight - 1), null);
+                    g.drawImage(icons[i][j], x, y, (int) (CellDimension - 1), (int) (CellDimension - 1), null);
                 }
 
                 //traccio il rettangolo della cella
-                g.drawRect(x, y, (int) (CellWidth - 1), (int) (CellHeight - 1));
+                g.drawRect(x, y, (int) (CellDimension - 1), (int) (CellDimension - 1));
             }
         }
     }
 
     /**
      * Metodo per clonare le mappe di stringhe, viene utilizzato per trasportare
- la scena all'interno della mappa di moves per ottenere una nuova copia su
- cui lavorare
+     * la scena all'interno della mappa di moves per ottenere una nuova copia su
+     * cui lavorare
      *
      * @param map : mappa in input da clonare
-     */
+     **/
+    
     public String[][] clone(String[][] map) {
 
         String[][] clone = new String[map.length][map[0].length];
@@ -226,12 +212,12 @@ public abstract class MonitorGenMap {
     public int[] getCellPosition(int x, int y) {
 
         int[] posCell = new int[2];
-        float x0 = (MapWidth - CellWidth * NumCellX) / 2;
-        float y0 = (MapHeight - CellHeight * NumCellY) / 2;
+        float x0 = (MapWidth - CellDimension * NumCellX) / 2;
+        float y0 = (MapHeight - CellDimension * NumCellY) / 2;
         float cordx = x - x0;
         float cordy = y - y0;
-        cordx = cordx / CellWidth;
-        cordy = cordy / CellHeight;
+        cordx = cordx / CellDimension ;
+        cordy = cordy / CellDimension ;
         posCell[0] = (int) cordx;
         posCell[1] = (int) cordy;
 
@@ -266,7 +252,7 @@ public abstract class MonitorGenMap {
     public void setCell(int x, int y, String value) {
         scene[x][y] = value;
     }
-
+    
 
     public void setSizeScreen(float NewMapWidth, float NewMapHeight) {
         MapHeight = NewMapHeight;
@@ -337,6 +323,14 @@ public abstract class MonitorGenMap {
           return mode;
     }
 
+
+    public float getPreferredWidth(){
+        return PreferredWidth;
+    }
+    
+    public float getPreferredHeight(){
+        return PreferredHeight;
+    }
 
 
 
@@ -494,6 +488,7 @@ public abstract class MonitorGenMap {
      *
      * @return : la matrice di stringhe risultante
      */
+    
     public String[][] loadMoveonMap(String[][] map, String[][] move) {
 
         String[][] newmap = new String[map.length][map[0].length];
@@ -507,9 +502,6 @@ public abstract class MonitorGenMap {
         }
         return newmap;
     }
-
-
-
 
 
 
@@ -550,23 +542,19 @@ public abstract class MonitorGenMap {
 
         return iconMatrix;
     }
-    /*
-     * Restituisce la distanza di Manhattam tra due celle
-     */
-    public int ManhattamDistance(int xstart, int ystart, int xtarget, int ytarget) {
+    
 
-        return Math.abs(ytarget - ystart) + Math.abs(xtarget - xstart);
-    }
+    
 
 
 
-// Metodi per l'utilizzo del generatore della history dei movimenti
     /**
      * Classe utilizzata per memorizzare i movimenti che possono essere eseguiti
      * da agenti che si trovano a condividere l'ambiente con l'agente robotico.
      * Ogni istanza di StepMove descrive la posizione di un agente ad un certo
      * step
      */
+
     protected class StepMove {
 
         protected int x;
@@ -607,6 +595,14 @@ public abstract class MonitorGenMap {
 
     }
 
+    
+    /**
+     * Classe per la gestione dei singoli percorsi agente, ognuno dei quali possiede
+     * un nome specifico, un inizio ed una fine e da una lista di posizione in cui
+     * l'agente deve trovarsi nei vari step
+     */
+    
+    
     protected class Path {
 
         protected String name;
@@ -666,12 +662,13 @@ public abstract class MonitorGenMap {
 
     }
 
-    /*
-     Classe che descrive gli agenti che condividono l'ambiente assieme all'agente robotico
-     Per il loro riconoscimento sono stati utilizzati dei colori i quali vengono utilizzati
-     sulla mappa per indicare gli spostamenti di cella di un determinato agentes
-     Ad ogni agenete viene definita una lista di tutti i movimenti fino ad adesso introdotti
-     nella scena.
+    
+    /**
+     * Classe che descrive gli agenti che condividono l'ambiente assieme all'agente robotico
+     * Per il loro riconoscimento sono stati utilizzati dei colori i quali vengono utilizzati
+     * sulla mappa per indicare gli spostamenti di cella di un determinato agentes
+     * Ad ogni agenete viene definita una lista di tutti i movimenti fino ad adesso introdotti
+     * nella scena.
      */
     protected class Person {
 
@@ -723,7 +720,7 @@ public abstract class MonitorGenMap {
 
 
     /**************************************************************
-     *    SEARCH  AND GET DATA FROM LINKED LISTS
+     *   Ricerca e reperimento informazione dalle Linked list
      *
      *************************************************************/
 
@@ -734,6 +731,8 @@ public abstract class MonitorGenMap {
      * sulla sintassi adottata, ovvero nomepath = color_numPath
      * @param name : nome del path da ricercare
      */
+    
+    
     public Path getPathByName(String name) {
 
         if (name.equals("empty")) {
@@ -1272,7 +1271,10 @@ public abstract class MonitorGenMap {
  *
  *******************************************************************/
 
-    
+/**
+ *  Classe enumerativa per una gestione uniforme dei messaggi di Log
+ *  per il generatore di mappe
+ */
     
 public enum MapGenMessage{
     SUCCESS(0,"Operazione eseguita con successo"),
@@ -1490,6 +1492,16 @@ public int UpdateCell(int x, int y, String state) {
     }
 
 
+    
+    /**
+     *  Restituisce la distanza di Manhattam tra due celle 
+     */
+    
+    public int ManhattamDistance(int xstart, int ystart, int xtarget, int ytarget) {
+
+        return Math.abs(ytarget - ystart) + Math.abs(xtarget - xstart);
+    }
+
 
     /**
     * Questo metodo genera l'aggiornamento delle celle della mappa del
@@ -1503,9 +1515,7 @@ public int UpdateCell(int x, int y, String state) {
     
     public int UpdateMoveCell(int x, int y, String path) {
 
-        String[] pathSplit = path.split("_");
-        String color = pathSplit[0];
-
+        
         Path p = getPathByName(path);
 
         if (!(x >= 0 && x < NumCellX && y >= 0 && y < NumCellY)) {
@@ -1692,13 +1702,16 @@ public int UpdateCell(int x, int y, String state) {
     }
 
     /**
-     *
-     * @param directory
+     * Scrive la scena generata con MapGenerator all'interno di un file RealMap.txt
+     * 
+     * @param directory in cui salvare il file RealMap.txt
      * @return
      * @throws JSONException
      */
     private String WriteSceneOnFile(File directory) throws JSONException {
+        
         //richiamo l'export della scena il quale mi dará una stringa con tutto il codice clips corrispondente
+        
         String sceneFile = exportScene();
 
         String DirName = "";
@@ -1730,7 +1743,7 @@ public int UpdateCell(int x, int y, String state) {
 
     /**
      * Scrive su file di testo la history sviluppata mediante il tool moves
- all'interno del generatore
+     * all'interno del generatore
      *
      * @param directory
      * @return
@@ -1796,6 +1809,7 @@ public int UpdateCell(int x, int y, String state) {
      * @return boolean : valuta se la scrittura sul JSON è stata eseguita
      * correttamente
      */
+    
     public boolean saveJSONMap(String nome) throws JSONException {
 
         try {
@@ -1831,12 +1845,13 @@ public int UpdateCell(int x, int y, String state) {
         return true;
     }
 
-    /*
+/**
  * Metodo per il caricamnento di una scena a partire da un file JSON precedentemente creato
  * Viene costruita la mappa e popolata dai valori contenuti nel JSON.
  * @param jsonFile : il file JSON da cui eseguire il load
  */
-@SuppressWarnings("UnnecessaryUnboxing")
+
+    @SuppressWarnings("UnnecessaryUnboxing")
 private void LoadJsonMap(File jsonFile) throws ParseException {
     //creo una nuova istanza di scena
 
@@ -1855,7 +1870,7 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
 
         
         SetNumCell(NumCellX, NumCellY);
-        SetSizeCells();
+        SetPreferredSizeMap();
         
         //imposto la dimensione iniziale della scena
         scene = new String[NumCellX][NumCellY];
@@ -1889,12 +1904,13 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
 
 
 
-    /*
+    /**
      * Genera un file JSON corrispondente alla lista linkata salvata per le moves fino ad ora definite
      * per la history. Il JSON viene utilizzato per semplificare il caricamente della history e dello
      * scenario.
-     *@param name : nome del file su cui scrivere il JSON
+     * @param name : nome del file su cui scrivere il JSON
      */
+
     private boolean saveJSONMoves(String name) throws JSONException {
 
         try {
@@ -2022,7 +2038,21 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
 
        return newpath;
     }
+    
+    
 
+    /***************************************************************
+     * Metodi di conversione delle coordinate tra il sistema adottato
+     * dal MapGenerator e quello adottato da MonitorModel
+     * 
+     * N.B : Risulta necessario ai fini di rendere compatibili le vostre
+     * mappe con il simulatore vero e prorio eseguire le conversione qui
+     * sotto indicati quando dovete esportare i files dello scenario
+     * 
+     **************************************************************/
+    
+    
+    
     protected int[] GenMapToMap(int i, int j){
         return new int[]{scene[0].length - j, i+1};
     }
@@ -2041,6 +2071,21 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
     }
 
     
+    /******************************************************
+     *  Gestione della console Log 
+     *****************************************************/
+    
+    
+    /**
+     * Aggiorna il testo del Log da visualizzare sulla console, incapsulando
+     * il testo del messaggio (newLog) sulla base del tipo di questo messaggio
+     * Quest'ultimo può essere :
+     *   - Log  (informazioni e feedback positivo delle operazioni)
+     *   - Error (informazioi relative agli errori in esecu<ione )
+     * 
+     * @param newLog
+     * @param type 
+     */
 
     protected void AppendLogMessage(String newLog, String type){
       String logMessage="";
@@ -2053,6 +2098,12 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
       log= log + logMessage + "\n";
     }
 
+    
+    /**
+     * Crea una stringa di LOG
+     * @param message
+     * @return 
+     */
 
     protected String CreateLogMessage(String message){
 
@@ -2061,6 +2112,13 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
       return newString;
     }
 
+    /**
+     * Crea una stringa di ERROR
+     * 
+     * @param message
+     * @return 
+     */
+    
     protected String CreateErrorMessage(String message){
       String newString = "[ERROR] : ";
       newString += message;
@@ -2125,12 +2183,37 @@ private void LoadJsonMap(File jsonFile) throws ParseException {
      */
     public abstract void SetRobotParams(String state, int x, int y);
     
+    /**
+     * Carica dal JSON i parametri da settare sul Robot
+     * @param json 
+     */
   
     public abstract void LoadJsonRobotParams(File json);
     
+    /**
+     * Salva la configurazione dei parametri del robot sul formato JSON
+     * e restiutisce un flag per informare del fallimento-successo dell'operazione
+     * 
+     * @param json
+     * @return 
+     */
+    
     public abstract boolean SaveJsonRobotParams(File json);
     
+    /**
+     * Genera il Json delle informazioni della scena contenuta nel file map
+     * 
+     * @param map 
+     */
+    
     public abstract void createJsonScene(File map);
+    
+    /**
+     * Genera il Json delle informazioni della history contenuta nel file history
+     * 
+     * @param history
+     * @param jsonMap 
+     */
     
     public abstract void createJsonHistory(File history, File jsonMap);
 }
